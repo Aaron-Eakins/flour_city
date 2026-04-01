@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Quote {
+  id              String   @id @default(cuid())
+  fileName        String
+  materialCost    Float
+  electricityCost Float
+  laborCost       Float
+  depreciation    Float
+  totalCost       Float
+  printTimeHours  Float
+  weightGrams     Float
+  status          String   @default("QUOTED") // QUOTED, PAID, PRINTING, SHIPPED
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PricingConfig {
+  id                    Int      @id @default(1)
+  materialCostPerKg     Float    @default(25.0)
+  printerKwhUsage       Float    @default(0.15)
+  electricityCostPerKwh Float    @default(0.20)
+  machineLifeHours      Float    @default(5000)
+  machineCost           Float    @default(699)
+  fixedLaborFee         Float    @default(2.0)
+  failureBufferPercent  Float    @default(0.1)
+  profitMarginPercent   Float    @default(0.5)
+  updatedAt             DateTime @updatedAt
+}
