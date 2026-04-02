@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,8 +8,14 @@ datasource db {
 }
 
 model Quote {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   fileName        String
+  material        String    @default("PLA")
+  quality         String    @default("Standard")
+  infill          Int       @default(15)
+  color           String    @default("Black")
+  quantity        Int       @default(1)
+  customerNotes   String?
   materialCost    Float
   electricityCost Float
   laborCost       Float
@@ -20,14 +23,15 @@ model Quote {
   totalCost       Float
   printTimeHours  Float
   weightGrams     Float
-  status          String   @default("QUOTED") // QUOTED, PAID, PRINTING, SHIPPED
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  status          String    @default("QUOTED")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  expiresAt       DateTime?
+  customerEmail   String?
 }
 
 model PricingConfig {
-  id                    Int      @id @default(1)
-  materialCostPerKg     Float    @default(25.0)
+  id                    Int      @id @default(autoincrement())
   printerKwhUsage       Float    @default(0.15)
   electricityCostPerKwh Float    @default(0.20)
   machineLifeHours      Float    @default(5000)
@@ -35,5 +39,42 @@ model PricingConfig {
   fixedLaborFee         Float    @default(2.0)
   failureBufferPercent  Float    @default(0.1)
   profitMarginPercent   Float    @default(0.5)
+  minimumPrice          Float    @default(5.0)
+  notifyOnQuote         Boolean  @default(false)
   updatedAt             DateTime @updatedAt
 }
+
+model Material {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  costPerKg Float
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Quality {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  timeMultiplier Float    @default(1.0)
+  enabled        Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model InfillOption {
+  id        String   @id @default(cuid())
+  value     Int      @unique
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Color {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
