@@ -1,13 +1,15 @@
 import Stripe from 'stripe';
 import prisma from '@/lib/db';
 import Link from 'next/link';
+import { sendOrderStatusEmail } from '@/lib/email';
+
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock', {
   apiVersion: '2023-10-16' as any,
 });
 
-export default async function SuccessPage({ searchParams }: { searchParams: { session_id?: string } }) {
-  const sessionId = searchParams.session_id;
+export default async function SuccessPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
+  const { session_id: sessionId } = await searchParams;
 
   if (!sessionId) {
     return (
@@ -25,11 +27,28 @@ export default async function SuccessPage({ searchParams }: { searchParams: { se
 
     if (!quoteId) throw new Error('No quote ID found in session metadata');
 
-    // Update the database to mark it as PAID!
-    const quote = await prisma.quote.update({
-      where: { id: quoteId },
-      data: { status: 'PAID' }
-    });
+    const customerEmail = session.customer_details?.email || null;
+
+    // Check if the webhook already processed this
+    const currentQuote = await prisma.quote.findUnique({ where: { id: quoteId } });
+    if (!currentQuote) throw new Error('Quote not found in database');
+
+    let quote = currentQuote;
+    
+    // Only update and send email if it hasn't been updated yet
+    if (currentQuote.status !== 'PAID' && currentQuote.status !== 'PRINTING' && currentQuote.status !== 'SHIPPED') {
+      quote = await prisma.quote.update({
+        where: { id: quoteId },
+        data: { 
+          status: 'PAID',
+          customerEmail: customerEmail
+        }
+      });
+
+      if (customerEmail && process.env.RESEND_API_KEY) {
+        await sendOrderStatusEmail(customerEmail, 'PAID', quote.id, quote.fileName);
+      }
+    }
 
     return (
       <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>

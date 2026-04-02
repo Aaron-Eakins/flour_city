@@ -1,5 +1,5 @@
 {
-  "name": "3d-print-quoter",
+  "name": "flour-city-prints",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -16,6 +16,7 @@
     "next": "16.2.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "resend": "^6.10.0",
     "stripe": "^21.0.1",
     "three": "^0.183.2"
   },

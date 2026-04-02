@@ -6,8 +6,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 
 export const metadata: Metadata = {
-  title: 'Automated 3D Print Quoting',
-  description: 'Upload your STL or 3MF files for an instant 3D printing quote via Bambu Labs P1S.',
+  title: 'Flour City Prints | Instant 3D Printing Quotes',
+  description: 'Precision 3D printing services. Upload STL/3MF for instant quotes based on real slice data.',
 };
 
 export default function RootLayout({

@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, Center } from '@react-three/drei';
 import * as THREE from 'three';
+// @ts-ignore
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+// @ts-ignore
 import { ThreeMFLoader } from 'three/examples/jsm/loaders/3MFLoader';
 
 export default function ModelViewer({ file }: { file: File }) {
@@ -41,7 +43,7 @@ export default function ModelViewer({ file }: { file: File }) {
         } else {
           setError('Unsupported file format for preview.');
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error parsing model:', err);
         setError('Failed to render preview. Model might be corrupt or too complex.');
       } finally {

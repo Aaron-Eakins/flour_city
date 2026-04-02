@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
             currency: 'usd',
             product_data: {
               name: `3D Print: ${quote.fileName}`,
-              description: `Material: ${Math.round(quote.weightGrams)}g PLA | Est. Time: ${Math.round(quote.printTimeHours)}h`,
+              description: `Material: ${(quote as any).material || 'PLA'} (${(quote as any).color || 'Black'}) | x${(quote as any).quantity || 1} | Weight: ${Math.round(quote.weightGrams)}g`,
             },
             unit_amount: totalAmountCents,
           },

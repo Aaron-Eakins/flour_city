@@ -146,3 +146,41 @@ h1, h2, h3, h4, h5, h6 {
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out forwards;
 }
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-primary:hover::after {
+  opacity: 1;
+}
+
+.card-hover {
+  transition: var(--transition);
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+
+.text-metallic {
+  background: linear-gradient(135deg, #fff 0%, #a5a6f6 50%, #fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
