@@ -14,43 +14,70 @@ export interface QuoteResult {
   };
 }
 
-// These constants will eventually come from a database/admin UI
-const PRICING_CONSTANTS = {
-  materialCostPerKg: 25.0, // $25 per kg spool
-  printerKwhUsage: 0.15, // 150W average for Bambu P1S
-  electricityCostPerKwh: 0.20, // $0.20 per kWh
-  machineLifeHours: 5000, 
-  machineCost: 699, // P1S Cost
-  fixedLaborFee: 2.0, // $2 for minimal post-processing (plate removal, packing)
-  failureBufferPercent: 0.1, // 10% added to base cost
-  profitMarginPercent: 0.5, // 50% profit margin
-};
+export function calculateQuote(
+  baseWeightGrams: number, 
+  basePrintTimeHours: number,
+  config: any,
+  options: { 
+    material: string, 
+    quality: string, 
+    infill: number, 
+    quantity: number, 
+    materialCostPerKg?: number,
+    qualityMultiplier?: number
+  }
+): QuoteResult {
+  
+  // Adjust base weight and time based on options (Simulated logic since CLI is basic)
+  
+  // Infill: Assume sliced at 15%. If higher, increase weight and time.
+  let weightRatio = options.infill / 15.0; 
+  if (weightRatio < 1) weightRatio = 1; // don't go below baseline if they pick 10%
+  // Time increases by 50% of the weight ratio increase
+  let timeRatio = 1 + ((weightRatio - 1) * 0.5);
 
-export function calculateQuote(weightGrams: number, printTimeHours: number): QuoteResult {
+  // Quality: Dynamic multiplier from DB. Default to 1.0 if not provided.
+  const qualityMultiplier = options.qualityMultiplier || 1.0;
+  timeRatio *= qualityMultiplier;
+
+  const adjustedWeightPerPart = baseWeightGrams * weightRatio;
+  const adjustedTimePerPart = basePrintTimeHours * timeRatio;
+
+  const totalWeight = adjustedWeightPerPart * options.quantity;
+  const totalTime = adjustedTimePerPart * options.quantity;
+
   // 1. Material
-  const materialCost = (weightGrams / 1000) * PRICING_CONSTANTS.materialCostPerKg;
+  const materialCostPerKg = options.materialCostPerKg || 25.0;
+
+  const materialCost = (totalWeight / 1000) * materialCostPerKg;
+
 
   // 2. Electricity
-  const electricityCost = printTimeHours * PRICING_CONSTANTS.printerKwhUsage * PRICING_CONSTANTS.electricityCostPerKwh;
+  const electricityCost = totalTime * (config.printerKwhUsage || 0.15) * (config.electricityCostPerKwh || 0.20);
 
   // 3. Machine Depreciation
-  const hourlyDepreciation = PRICING_CONSTANTS.machineCost / PRICING_CONSTANTS.machineLifeHours;
-  const machineDepreciation = printTimeHours * hourlyDepreciation;
+  const hourlyDepreciation = (config.machineCost || 699) / (config.machineLifeHours || 5000);
+  const machineDepreciation = totalTime * hourlyDepreciation;
 
-  // 4. Labor
-  const labor = PRICING_CONSTANTS.fixedLaborFee;
+  // 4. Labor (Fixed per order + slight increase for multiple parts)
+  const labor = (config.fixedLaborFee || 2.0) + (options.quantity > 1 ? (options.quantity - 1) * 0.5 : 0);
 
   // Base production cost
   const baseCost = materialCost + electricityCost + machineDepreciation + labor;
 
   // 5. Buffer / Waste
-  const buffer = baseCost * PRICING_CONSTANTS.failureBufferPercent;
+  const buffer = baseCost * (config.failureBufferPercent || 0.1);
   const costWithBuffer = baseCost + buffer;
 
   // 6. Final Margin
-  const margin = costWithBuffer * PRICING_CONSTANTS.profitMarginPercent;
+  const margin = costWithBuffer * (config.profitMarginPercent || 0.5);
 
-  const totalCost = costWithBuffer + margin;
+  let totalCost = costWithBuffer + margin;
+
+  // Enforce minimum price
+  if (totalCost < (config.minimumPrice || 5.0)) {
+    totalCost = config.minimumPrice || 5.0;
+  }
 
   return {
     totalCost: Number(totalCost.toFixed(2)),
@@ -63,19 +90,8 @@ export function calculateQuote(weightGrams: number, printTimeHours: number): Quo
       margin: Number(margin.toFixed(2)),
     },
     metrics: {
-      printTimeHours: Number(printTimeHours.toFixed(2)),
-      weightGrams: Number(weightGrams.toFixed(2)),
+      printTimeHours: Number(totalTime.toFixed(2)),
+      weightGrams: Number(totalWeight.toFixed(2)),
     }
   };
-}
-
-// MOCK FUNCTION for Phase 1
-export function generateMockQuote(file: File): QuoteResult {
-  // Use the file size to generate a somewhat deterministic fake print time and weight
-  // A small 1MB file might be 40g and take 1 hour.
-  const sizeMb = file.size / (1024 * 1024);
-  const mockWeightGrams = Math.max(10, sizeMb * 15); // e.g., 20MB file -> 300g
-  const mockTimeHours = Math.max(0.5, sizeMb * 0.4); // e.g., 20MB file -> 8 hours
-
-  return calculateQuote(mockWeightGrams, mockTimeHours);
 }

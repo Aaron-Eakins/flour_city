@@ -6,6 +6,7 @@ import { execFile } from 'child_process';
 import { promisify } from 'util';
 import prisma from '@/lib/db';
 import { calculateQuote } from '@/lib/quoteEngine';
+import { sendQuoteGeneratedEmail } from '@/lib/email';
 
 const execFileAsync = promisify(execFile);
 
@@ -28,6 +29,12 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File | null;
 
     if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+
+    const material = formData.get('material') as string || 'PLA';
+    const quality = formData.get('quality') as string || 'Standard';
+    const infill = parseInt((formData.get('infill') as string) || '15', 10);
+    const color = formData.get('color') as string || 'Black';
+    const quantity = parseInt((formData.get('quantity') as string) || '1', 10);
 
     const ext = file.name.toLowerCase().endsWith('.3mf') ? '.3mf' : '.stl';
     const uuid = `upload_${Date.now()}_${Math.random().toString(36).slice(2)}`;
@@ -85,13 +92,40 @@ export async function POST(req: NextRequest) {
     weightGrams = weightGrams || 10;
     printTimeHours = printTimeHours || 1;
 
+    const config = await prisma.pricingConfig.findFirst() || {};
+    
+    // Fetch all dynamic options from DB to validate and get multipliers
+    const [materialData, qualityData, infillData, colorData] = await Promise.all([
+      prisma.material.findUnique({ where: { name: material, enabled: true } }),
+      prisma.quality.findUnique({ where: { name: quality, enabled: true } }),
+      prisma.infillOption.findUnique({ where: { value: infill, enabled: true } }),
+      prisma.color.findUnique({ where: { name: color, enabled: true } })
+    ]);
+
+    if (!materialData || !qualityData || !infillData || !colorData) {
+      return NextResponse.json({ 
+        error: 'One or more selected options are no longer available. Please refresh and try again.' 
+      }, { status: 400 });
+    }
+
+    const materialCostPerKg = materialData.costPerKg;
+    const qualityMultiplier = (qualityData as any).timeMultiplier || 1.0;
+
     // Calculate quote programmatically
-    const quoteBreakdown = calculateQuote(weightGrams, printTimeHours);
+    const quoteBreakdown = calculateQuote(weightGrams, printTimeHours, config, {
+      material, quality, infill, quantity, materialCostPerKg, qualityMultiplier
+    });
+
 
     // Save Quote to the Database using Prisma
     const savedQuote = await prisma.quote.create({
       data: {
         fileName: file.name,
+        material,
+        quality,
+        infill,
+        color,
+        quantity,
         materialCost: quoteBreakdown.breakdown.materialCost,
         electricityCost: quoteBreakdown.breakdown.electricityCost,
         laborCost: quoteBreakdown.breakdown.labor,
@@ -102,6 +136,15 @@ export async function POST(req: NextRequest) {
         status: "QUOTED"
       }
     });
+
+    try {
+      if ((config as any)?.notifyOnQuote && process.env.RESEND_API_KEY) {
+        const adminEmail = process.env.ADMIN_EMAIL || 'onboarding@resend.dev';
+        await sendQuoteGeneratedEmail(adminEmail, savedQuote.fileName, savedQuote.totalCost, savedQuote.id);
+      }
+    } catch (metricErr) {
+      console.error('Non-fatal error notifying admin:', metricErr);
+    }
 
     // Return the saved quote payload with DB ID
     return NextResponse.json({
