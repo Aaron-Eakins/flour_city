@@ -31,17 +31,20 @@ export default async function StatusPage({ searchParams }: { searchParams: Promi
           Enter your Quote ID to track the progress of your 3D print.
         </p>
 
-        <form method="GET" action="/status" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+        <form method="GET" action="/status" style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
           <input 
             type="text" 
             name="quoteId" 
             defaultValue={quoteId || ''} 
-            placeholder="e.g. clt... " 
+            placeholder="Paste your order ID" 
             style={{ flex: 1, padding: '0.8rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'white' }} 
             required 
           />
           <button type="submit" className="btn-primary" style={{ padding: '0 1.5rem' }}>Track</button>
         </form>
+        <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', textAlign: 'left', marginBottom: '2rem' }}>
+          Your order ID was emailed to you at checkout.
+        </p>
 
         {errorMsg && (
           <div style={{ color: 'var(--error)', background: 'rgba(239, 68, 68, 0.1)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>

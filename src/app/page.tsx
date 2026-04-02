@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import styles from './page.module.css';
 import UploadDropzone from '../components/UploadDropzone';
 import ModelViewer from '../components/ModelViewer';
@@ -157,10 +158,9 @@ export default function Home() {
           <div style={{ width: '24px', height: '24px', background: 'var(--primary)', borderRadius: '4px' }}></div>
           Flour City Prints
         </div>
-        <div style={{ display: 'flex', gap: '2rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
-          <a href="/" style={{ color: 'white', fontWeight: 600 }}>Home</a>
-          <a href="/status" style={{ textDecoration: 'none', color: 'inherit' }}>Order Status</a>
-          <a href="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>Admin</a>
+        <div className="fcp-nav-links" style={{ display: 'flex', gap: '2rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
+          <Link href="/" style={{ color: 'white', fontWeight: 600 }}>Home</Link>
+          <Link href="/status" style={{ textDecoration: 'none', color: 'inherit' }}>Order Status</Link>
         </div>
       </nav>
 
@@ -168,12 +168,12 @@ export default function Home() {
         <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--primary)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
           Powered by Precision
         </div>
-        <h1 className={styles.title} style={{ fontSize: '4rem', lineHeight: '1.1', marginBottom: '1.5rem' }}>
+        <h1 className={styles.title + ' fcp-hero-title'} style={{ fontSize: '4rem', lineHeight: '1.1', marginBottom: '1.5rem' }}>
           Flour City <br />
           <span className="text-gradient-primary">Prints</span>
         </h1>
         <p className={styles.subtitle} style={{ maxWidth: '600px', margin: '0 auto 2rem auto', fontSize: '1.15rem', color: 'rgba(255,255,255,0.6)' }}>
-          High-performance 3D printing. Upload your models for <br />
+          High-performance 3D printing. Upload your models for
           instant, slice-accurate quoting on our Bambu P1S fleet.
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', fontSize: '0.85rem' }}>
@@ -187,15 +187,29 @@ export default function Home() {
             <span style={{ color: 'var(--success)' }}>●</span> Fast Shipping
           </div>
         </div>
+
+        {/* Social Proof Bar */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '1.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', opacity: 0.8 }}>
+          <span>500+ prints completed</span>
+          <span>•</span>
+          <span>Rochester, NY based</span>
+          <span>•</span>
+          <span>Bambu P1S fleet</span>
+        </div>
       </div>
 
       <div className={styles.uploadContainer} style={fileToUpload ? { maxWidth: '1000px', width: '100%' } : {}}>
         {!fileToUpload && (
-          <UploadDropzone onFileAccepted={handleFileAccepted} />
+          <>
+            <UploadDropzone onFileAccepted={handleFileAccepted} />
+            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.35)', textAlign: 'center', marginTop: '0.75rem' }}>
+              Most prints run $3 – $40 depending on size and material.
+            </p>
+          </>
         )}
 
         {fileToUpload && (
-          <div className="glass animate-fade-in card-hover" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 1fr)', gap: '2rem', padding: '2rem' }}>
+          <div className={styles.quoteGrid + ' glass animate-fade-in card-hover'} style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 1fr)', gap: '2rem', padding: '2rem' }}>
             
             {/* Left Column: 3D Preview */}
             <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '12px', overflow: 'hidden', minHeight: '400px', position: 'relative' }}>
@@ -290,6 +304,15 @@ export default function Home() {
                     <h2 style={{ fontSize: '3rem', margin: '0' }} className="text-gradient">${quote.totalCost.toFixed(2)}</h2>
                   </div>
 
+                  {/* Config Summary Chips */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    {[material, quality, `${infill}%`, color, `x${quantity}`].map((text, idx) => (
+                      <span key={idx} style={{ background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '100px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
+                        {text}
+                      </span>
+                    ))}
+                  </div>
+
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px' }}>
                       <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginBottom: '0.2rem' }}>Estimated Time</p>
@@ -321,6 +344,16 @@ export default function Home() {
                     </div>
                   </div>
 
+                  {/* What Happens Next Box */}
+                  <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.15)', borderRadius: '8px', padding: '0.875rem 1rem', fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
+                    <strong style={{ display: 'block', color: 'white', marginBottom: '0.4rem' }}>📦 What to expect</strong>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: '0.5rem 0 0 0' }}>
+                      <li>• We'll start printing within 1 business day</li>
+                      <li>• Most orders ship or are ready for local pickup within 3–5 days</li>
+                      <li>• You'll get email updates at each stage</li>
+                    </ul>
+                  </div>
+
                   <div style={{ display: 'flex', gap: '1rem' }}>
                     <button 
                       className="btn-primary" 
@@ -339,15 +372,19 @@ export default function Home() {
         )}
       </div>
 
+      <footer style={{ width: '100%', padding: '2rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <div>© 2025 Flour City Prints · Rochester, NY</div>
+        <a href="mailto:roc@flourcityprints.com" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>roc@flourcityprints.com</a>
+      </footer>
+
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        @media (max-width: 800px) {
-          .glass {
-            grid-template-columns: 1fr !important;
-          }
+        @media (max-width: 600px) {
+          .fcp-nav-links { gap: 1rem !important; font-size: 0.8rem !important; }
+          .fcp-hero-title { font-size: 2.8rem !important; }
         }
       `}} />
     </main>

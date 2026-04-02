@@ -41,3 +41,15 @@
     font-size: 3rem;
   }
 }
+
+.quoteGrid {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(350px, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 800px) {
+  .quoteGrid {
+    grid-template-columns: 1fr !important;
+  }
+}

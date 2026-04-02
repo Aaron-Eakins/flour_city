@@ -43,6 +43,36 @@ export default function CustomDropdown({
   const selectedOption = options.find(opt => opt[valueField]?.toString() === value?.toString());
   const displayText = selectedOption ? selectedOption[displayField] : placeholder || 'Select...';
 
+  const colorMap: Record<string, string> = {
+    'Black': '#1a1a1a',
+    'White': '#f5f5f5',
+    'Gray': '#808080',
+    'Red': '#ef4444',
+    'Blue': '#3b82f6',
+    'Green': '#22c55e',
+    'Yellow': '#eab308',
+    'Orange': '#f97316',
+    'Purple': '#a855f7',
+    'Pink': '#ec4899',
+    'Natural': '#d4b896'
+  };
+
+  const renderColorSwatch = (colorName: string) => {
+    if (label !== 'Color') return null;
+    const hex = colorMap[colorName] || '#888888';
+    return (
+      <span style={{ 
+        display: 'inline-block', 
+        width: '12px', 
+        height: '12px', 
+        borderRadius: '50%', 
+        background: hex, 
+        marginRight: '8px',
+        border: hex === '#f5f5f5' ? '1px solid rgba(0,0,0,0.1)' : 'none'
+      }} />
+    );
+  };
+
   return (
     <div ref={dropdownRef} style={{ position: 'relative', width: '100%', marginBottom: '1.5rem', ...style }}>
       {label && (
@@ -78,7 +108,10 @@ export default function CustomDropdown({
           boxShadow: isOpen ? '0 0 0 3px rgba(99,102,241,0.15)' : 'none',
         }}
       >
-        <span style={{ opacity: selectedOption ? 1 : 0.6 }}>{displayText}</span>
+        <span style={{ opacity: selectedOption ? 1 : 0.6, display: 'flex', alignItems: 'center' }}>
+          {selectedOption && renderColorSwatch(selectedOption[displayField])}
+          {displayText}
+        </span>
         <svg 
           width="16" 
           height="16" 
@@ -153,7 +186,10 @@ export default function CustomDropdown({
                 }
               }}
             >
-              {opt[displayField]}
+              <span style={{ display: 'flex', alignItems: 'center' }}>
+                {renderColorSwatch(opt[displayField])}
+                {opt[displayField]}
+              </span>
             </button>
           ))}
         </div>

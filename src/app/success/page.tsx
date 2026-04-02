@@ -14,9 +14,16 @@ export default async function SuccessPage({ searchParams }: { searchParams: Prom
   if (!sessionId) {
     return (
       <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--error)' }}>Invalid Session</h1>
-        <p>No checkout session ID provided.</p>
-        <Link href="/" className="btn-primary" style={{ marginTop: '2rem', textDecoration: 'none' }}>Return Home</Link>
+        <div className="glass animate-fade-in" style={{ padding: '4rem 2rem', textAlign: 'center', maxWidth: '600px', width: '100%', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>⚠️</div>
+          <h1 className="text-gradient" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Session Not Found</h1>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem', marginBottom: '2rem', lineHeight: '1.6' }}>
+            This link may have expired. If you completed a purchase, check your email for your order confirmation.
+          </p>
+          <Link href="/" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', width: '100%', maxWidth: '300px' }}>
+            Return Home
+          </Link>
+        </div>
       </main>
     );
   }
@@ -90,9 +97,16 @@ export default async function SuccessPage({ searchParams }: { searchParams: Prom
     console.error('Error verifying Stripe session:', err);
     return (
       <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--error)' }}>Verification Failed</h1>
-        <p>There was an issue verifying your payment. Please contact support.</p>
-        <Link href="/" className="btn-primary" style={{ marginTop: '2rem', textDecoration: 'none' }}>Return Home</Link>
+        <div className="glass animate-fade-in" style={{ padding: '4rem 2rem', textAlign: 'center', maxWidth: '600px', width: '100%', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>⚠️</div>
+          <h1 className="text-gradient" style={{ fontSize: '2.2rem', marginBottom: '1rem' }}>Session Not Found</h1>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.1rem', marginBottom: '2rem', lineHeight: '1.6' }}>
+            This link may have expired. If you completed a purchase, check your email for your order confirmation.
+          </p>
+          <Link href="/" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', width: '100%', maxWidth: '300px' }}>
+            Return Home
+          </Link>
+        </div>
       </main>
     );
   }
