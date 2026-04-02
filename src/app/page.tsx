@@ -5,6 +5,7 @@ import styles from './page.module.css';
 import UploadDropzone from '../components/UploadDropzone';
 import ModelViewer from '../components/ModelViewer';
 import { QuoteResult } from '../lib/quoteEngine';
+import CustomDropdown from '../components/CustomDropdown';
 
 export default function Home() {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
@@ -28,10 +29,10 @@ export default function Home() {
   });
 
   // Print Options Selection State
-  const [material, setMaterial] = useState('PLA');
-  const [quality, setQuality] = useState('Standard');
-  const [infill, setInfill] = useState('15');
-  const [color, setColor] = useState('Black');
+  const [material, setMaterial] = useState('');
+  const [quality, setQuality] = useState('');
+  const [infill, setInfill] = useState('');
+  const [color, setColor] = useState('');
   const [quantity, setQuantity] = useState('1');
 
   useEffect(() => {
@@ -39,12 +40,23 @@ export default function Home() {
       try {
         const res = await fetch('/api/config');
         const data = await res.json();
-        setOptions(data);
+        
+        // Add % display field to infills for the custom dropdown
+        const formattedInfills = (data.infillOptions || []).map((i: any) => ({
+          ...i,
+          display: `${i.value}%`,
+          stringValue: i.value.toString()
+        }));
+
+        setOptions({
+          ...data,
+          infillOptions: formattedInfills
+        });
         
         // Set defaults from fetched data if not empty
         if (data.materials?.length) setMaterial(data.materials[0].name);
         if (data.qualities?.length) setQuality(data.qualities[0].name);
-        if (data.infillOptions?.length) setInfill(data.infillOptions[0].value.toString());
+        if (formattedInfills.length) setInfill(formattedInfills[0].stringValue);
         if (data.colors?.length) setColor(data.colors[0].name);
       } catch (err) {
         console.error('Failed to fetch options:', err);
@@ -178,7 +190,7 @@ export default function Home() {
 
       <div className={styles.uploadContainer} style={fileToUpload ? { maxWidth: '1000px', width: '100%' } : {}}>
         {!fileToUpload && (
-            <UploadDropzone onFileAccepted={handleFileAccepted} />
+          <UploadDropzone onFileAccepted={handleFileAccepted} />
         )}
 
         {fileToUpload && (
@@ -192,64 +204,44 @@ export default function Home() {
             {/* Right Column: Quoting Logic */}
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               
-              {!quote && (
+              {!quote ? (
                 <div style={{ textAlign: 'left' }}>
                   <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Configure Print</h2>
                   
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.3rem' }}>Material</label>
-                      <select 
-                        value={material} 
-                        onChange={e => setMaterial(e.target.value)} 
-                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px' }}
-                      >
-                        {options.materials.map(m => (
-                          <option key={m.id} value={m.name}>{m.name}</option>
-                        ))}
-                        {options.materials.length === 0 && <option value="PLA">PLA (Standard)</option>}
-                      </select>
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.3rem' }}>Quality</label>
-                      <select 
-                        value={quality} 
-                        onChange={e => setQuality(e.target.value)} 
-                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px' }}
-                      >
-                        {options.qualities.map(q => (
-                          <option key={q.id} value={q.name}>{q.name}</option>
-                        ))}
-                        {options.qualities.length === 0 && <option value="Standard">Standard (0.20mm)</option>}
-                      </select>
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.3rem' }}>Infill Density</label>
-                      <select 
-                        value={infill} 
-                        onChange={e => setInfill(e.target.value)} 
-                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px' }}
-                      >
-                        {options.infillOptions.map(i => (
-                          <option key={i.id} value={i.value.toString()}>{i.value}%</option>
-                        ))}
-                        {options.infillOptions.length === 0 && <option value="15">15% (Standard)</option>}
-                      </select>
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.3rem' }}>Color</label>
-                      <select 
-                        value={color} 
-                        onChange={e => setColor(e.target.value)} 
-                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px' }}
-                      >
-                        {options.colors.map(c => (
-                          <option key={c.id} value={c.name}>{c.name}</option>
-                        ))}
-                        {options.colors.length === 0 && <option value="Black">Black</option>}
-                      </select>
-                    </div>
-
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.5rem' }}>
+                    <CustomDropdown 
+                      label="Material"
+                      options={options.materials}
+                      value={material}
+                      onChange={setMaterial}
+                      placeholder="Select Material"
+                    />
+                    <CustomDropdown 
+                      label="Quality"
+                      options={options.qualities}
+                      value={quality}
+                      onChange={setQuality}
+                      placeholder="Select Quality"
+                    />
+                  </div>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.5rem' }}>
+                    <CustomDropdown 
+                      label="Infill Density"
+                      options={options.infillOptions}
+                      value={infill}
+                      onChange={setInfill}
+                      displayField="display"
+                      valueField="stringValue"
+                      placeholder="Select Infill"
+                    />
+                    <CustomDropdown 
+                      label="Color"
+                      options={options.colors}
+                      value={color}
+                      onChange={setColor}
+                      placeholder="Select Color"
+                    />
                   </div>
 
                   <div style={{ marginBottom: '1.5rem' }}>
@@ -270,12 +262,12 @@ export default function Home() {
                     style={{ width: '100%' }}
                   >
                     {isAnalyzing ? (
-                      <>
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                         <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'spin 1s linear infinite' }}>
                           <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                         Calculating Price...
-                      </>
+                      </span>
                     ) : (
                       'Generate Quote'
                     )}
@@ -286,9 +278,7 @@ export default function Home() {
                     </button>
                   </div>
                 </div>
-              )}
-
-              {quote && (
+              ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div style={{ textAlign: 'center' }}>
                     <p style={{ color: 'var(--success)', fontSize: '0.9rem', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '2px' }}>Analysis Complete</p>
@@ -309,7 +299,7 @@ export default function Home() {
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px', fontSize: '0.9rem' }}>
                     <h4 style={{ marginBottom: '1rem', fontSize: '1rem', color: 'rgba(255,255,255,0.8)' }}>Cost Breakdown</h4>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>Material (PLA):</span>
+                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>Material:</span>
                       <span>${quote.breakdown.materialCost.toFixed(2)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
@@ -321,7 +311,7 @@ export default function Home() {
                       <span>${quote.breakdown.labor.toFixed(2)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>Depreciation & Maint:</span>
+                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>Machine Overhead:</span>
                       <span>${quote.breakdown.machineDepreciation.toFixed(2)}</span>
                     </div>
                   </div>
@@ -339,7 +329,6 @@ export default function Home() {
                   </div>
                 </div>
               )}
-
             </div>
           </div>
         )}
