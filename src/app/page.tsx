@@ -373,7 +373,7 @@ export default function Home() {
       </div>
 
       <footer style={{ width: '100%', padding: '2rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <div>© 2025 Flour City Prints · Rochester, NY</div>
+        <div>© {new Date().getFullYear()} Flour City Prints · Rochester, NY</div>
         <a href="mailto:roc@flourcityprints.com" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>roc@flourcityprints.com</a>
       </footer>
 
