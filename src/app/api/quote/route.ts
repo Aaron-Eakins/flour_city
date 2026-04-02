@@ -57,14 +57,18 @@ export async function POST(req: NextRequest) {
 
     console.log(`Downloading model from: ${blobUrl}`);
     
+    // Vercel Blob storage can sometimes have a tiny consistency delay (404) immediately after upload.
+    // We retry up to 3 times with exponential backoff (1s, 2s, 4s).
     let blobResponse = await fetch(blobUrl);
-    
-    // Retry once after a short delay if we get a 404 or transient error.
-    // Sometimes Vercel Blob URLs take a few hundred ms to become globally available.
-    if (!blobResponse.ok && (blobResponse.status === 404 || blobResponse.status >= 500)) {
-      console.warn(`Initial fetch failed with ${blobResponse.status}. Retrying in 1s...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    let attempts = 1;
+    const maxAttempts = 3;
+
+    while (!blobResponse.ok && (blobResponse.status === 404 || blobResponse.status >= 500) && attempts < maxAttempts) {
+      const delay = Math.pow(2, attempts - 1) * 1000;
+      console.warn(`Fetch attempt ${attempts} failed with ${blobResponse.status}. Retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
       blobResponse = await fetch(blobUrl);
+      attempts++;
     }
 
     if (!blobResponse.ok) {
@@ -149,17 +153,39 @@ export async function POST(req: NextRequest) {
     }
 
     // Fetch all dynamic options
-    const [materialData, qualityData, infillData, colorData] = await Promise.all([
-      prisma.material.findUnique({ where: { name: material, enabled: true } }).catch(() => null),
+    // Material: Try a direct match first, then fall back to a "contains" search if needed.
+    let materialData = await prisma.material.findUnique({ where: { name: material, enabled: true } }).catch(() => null);
+    
+    if (!materialData) {
+      // Robust fallback: Find first enabled material that matches or contains the search string
+      materialData = await prisma.material.findFirst({
+        where: {
+          OR: [
+            { name: { contains: material, mode: 'insensitive' } },
+            // If the input is "ABS", it matches "ABS (Heat Resistant)"
+            { name: { startsWith: material.split(' ')[0], mode: 'insensitive' } }
+          ],
+          enabled: true,
+        }
+      }).catch(() => null);
+    }
+
+    const [qualityData, infillData, colorData] = await Promise.all([
       prisma.quality.findUnique({ where: { name: quality, enabled: true } }).catch(() => null),
       prisma.infillOption.findUnique({ where: { value: infill, enabled: true } }).catch(() => null),
       prisma.color.findUnique({ where: { name: color, enabled: true } }).catch(() => null),
     ]);
 
     if (!materialData || !qualityData || !infillData || !colorData) {
-      console.warn('Configuration mismatch -- one or more options missing in DB');
+      const missing = [];
+      if (!materialData) missing.push(`Material '${material}'`);
+      if (!qualityData) missing.push(`Quality '${quality}'`);
+      if (!infillData) missing.push(`Infill '${infill}%'`);
+      if (!colorData) missing.push(`Color '${color}'`);
+      
+      console.warn(`Configuration mismatch -- missing: ${missing.join(', ')}`);
       return NextResponse.json({
-        error: 'One or more selected options are no longer available. Please refresh and try again.',
+        error: `One or more selected options (${missing.join(', ')}) are no longer available. Please refresh and try again.`,
       }, { status: 400 });
     }
 
@@ -221,14 +247,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Delete the blob now that we've processed the file
-    if (blobUrl) {
+    // Delete the blob now that we've processed the file (requires BLOB_READ_WRITE_TOKEN)
+    if (blobUrl && process.env.BLOB_READ_WRITE_TOKEN) {
       try {
         await del(blobUrl);
         console.log('Blob deleted:', blobUrl);
       } catch (blobDeleteErr) {
         console.warn('Blob delete failed (non-fatal):', blobDeleteErr);
       }
+    } else if (blobUrl && !process.env.BLOB_READ_WRITE_TOKEN) {
+      console.warn('BLOB_READ_WRITE_TOKEN is missing. Skipping blob deletion.');
     }
   }
 }
