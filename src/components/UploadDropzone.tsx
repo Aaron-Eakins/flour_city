@@ -7,7 +7,7 @@ interface UploadDropzoneProps {
   onFileAccepted: (file: File) => void;
 }
 
-const MAX_FILE_SIZE_MB = 4.5;
+const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_SIZE_BYTES = Math.floor(MAX_FILE_SIZE_MB * 1024 * 1024);
 const ALLOWED_EXTENSIONS = ['.stl', '.3mf'];
 

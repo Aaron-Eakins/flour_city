@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { upload } from '@vercel/blob/client';
 import styles from './page.module.css';
 import UploadDropzone from '../components/UploadDropzone';
 import ModelViewer from '../components/ModelViewer';
@@ -11,6 +12,7 @@ import CustomNumberInput from '../components/CustomNumberInput';
 
 export default function Home() {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [quote, setQuote] = useState<QuoteResult | null>(null);
   const [dbQuoteId, setDbQuoteId] = useState<string | null>(null);
@@ -99,23 +101,36 @@ export default function Home() {
 
   const handleAnalyze = async () => {
     if (!fileToUpload) return;
-    setIsAnalyzing(true);
     setErrorMsg(null);
-    setQuote(null); // Clear previous quote if any
-    
-    try {
-      const formData = new FormData();
-      formData.append('file', fileToUpload);
-      formData.append('material', material);
-      formData.append('quality', quality);
-      formData.append('infill', infill);
-      formData.append('color', color);
-      formData.append('quantity', quantity);
+    setQuote(null);
 
-      console.log('Sending analyze request to /api/quote...');
+    try {
+      // Phase 1: Upload file directly from browser to Vercel Blob.
+      // This bypasses the 4.5MB Vercel serverless function body limit.
+      setIsUploading(true);
+      console.log('Uploading file to blob storage...');
+      const blob = await upload(fileToUpload.name, fileToUpload, {
+        access: 'public',
+        handleUploadUrl: '/api/upload',
+      });
+      console.log('Blob upload complete:', blob.url);
+      setIsUploading(false);
+
+      // Phase 2: Send a tiny JSON payload to /api/quote with the blob URL.
+      setIsAnalyzing(true);
+      console.log('Requesting quote from /api/quote...');
       const response = await fetch('/api/quote', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          blobUrl: blob.url,
+          fileName: fileToUpload.name,
+          material,
+          quality,
+          infill,
+          color,
+          quantity,
+        }),
       });
 
       if (!response.ok) {
@@ -123,10 +138,8 @@ export default function Home() {
         try {
           const errData = await response.json();
           errorMessage = errData.error || errorMessage;
-        } catch (parseErr) {
-          console.error('Failed to parse error JSON:', parseErr);
-          if (response.status === 504) errorMessage = 'Server timeout. The model might be too complex to slice in the cloud.';
-          if (response.status === 413) errorMessage = 'File is too large for the server to process.';
+        } catch {
+          if (response.status === 504) errorMessage = 'Server timed out. Try a smaller file.';
         }
         throw new Error(errorMessage);
       }
@@ -141,8 +154,9 @@ export default function Home() {
       console.log('Quote analysis successful.');
     } catch (err) {
       console.error('Analysis Error:', err);
-      setErrorMsg((err as Error).message || 'An unexpected error occurred. Please try a smaller file or refresh.');
+      setErrorMsg((err as Error).message || 'An unexpected error occurred. Please try again.');
     } finally {
+      setIsUploading(false);
       setIsAnalyzing(false);
     }
   };
@@ -291,15 +305,15 @@ export default function Home() {
                   <button 
                     className="btn-primary" 
                     onClick={handleAnalyze}
-                    disabled={isAnalyzing}
+                    disabled={isUploading || isAnalyzing}
                     style={{ width: '100%' }}
                   >
-                    {isAnalyzing ? (
+                    {(isUploading || isAnalyzing) ? (
                       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                        <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'spin 1s linear infinite' }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'spin 1s linear infinite' }}>
                           <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        Calculating Price...
+                        {isUploading ? 'Uploading...' : 'Calculating Price...'}
                       </span>
                     ) : (
                       'Generate Quote'
