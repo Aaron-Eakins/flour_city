@@ -184,3 +184,29 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Fix dropdown colors */
+select {
+  color-scheme: dark;
+  background-color: rgba(255, 255, 255, 0.07);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: border-color var(--transition);
+}
+
+select:focus {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--primary);
+  outline: none;
+}
+
+select option {
+  background-color: #1a1a1e !important;
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* For browsers that support styling the picker */
+select::-ms-expand {
+  display: none;
+}

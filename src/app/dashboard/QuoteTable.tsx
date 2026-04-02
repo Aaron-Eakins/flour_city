@@ -115,15 +115,7 @@ export default function QuoteTable({ initialQuotes }: { initialQuotes: Quote[] }
                   value={quote.status} 
                   onChange={(e) => handleStatusChange(quote.id, e.target.value)}
                   disabled={updating === quote.id}
-                  style={{ 
-                    background: 'rgba(0,0,0,0.5)', 
-                    color: 'white', 
-                    border: '1px solid rgba(255,255,255,0.2)', 
-                    padding: '8px', 
-                    borderRadius: '6px',
-                    outline: 'none',
-                    cursor: updating === quote.id ? 'wait' : 'pointer'
-                  }}
+                  style={{ cursor: updating === quote.id ? 'wait' : 'pointer' }}
                 >
                   <option value="QUOTED">QUOTED</option>
                   <option value="PAID">PAID</option>

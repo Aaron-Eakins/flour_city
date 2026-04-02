@@ -202,17 +202,7 @@ export default function Home() {
                       <select 
                         value={material} 
                         onChange={e => setMaterial(e.target.value)} 
-                        style={{ 
-                          width: '100%', 
-                          padding: '0.6rem', 
-                          borderRadius: '8px', 
-                          background: 'rgba(255,255,255,0.07)', 
-                          color: 'white', 
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          colorScheme: 'dark',
-                          cursor: 'pointer',
-                          outline: 'none'
-                        }}
+                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px' }}
                       >
                         {options.materials.map(m => (
                           <option key={m.id} value={m.name}>{m.name}</option>
@@ -225,17 +215,7 @@ export default function Home() {
                       <select 
                         value={quality} 
                         onChange={e => setQuality(e.target.value)} 
-                        style={{ 
-                          width: '100%', 
-                          padding: '0.6rem', 
-                          borderRadius: '8px', 
-                          background: 'rgba(255,255,255,0.07)', 
-                          color: 'white', 
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          colorScheme: 'dark',
-                          cursor: 'pointer',
-                          outline: 'none'
-                        }}
+                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px' }}
                       >
                         {options.qualities.map(q => (
                           <option key={q.id} value={q.name}>{q.name}</option>
@@ -248,17 +228,7 @@ export default function Home() {
                       <select 
                         value={infill} 
                         onChange={e => setInfill(e.target.value)} 
-                        style={{ 
-                          width: '100%', 
-                          padding: '0.6rem', 
-                          borderRadius: '8px', 
-                          background: 'rgba(255,255,255,0.07)', 
-                          color: 'white', 
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          colorScheme: 'dark',
-                          cursor: 'pointer',
-                          outline: 'none'
-                        }}
+                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px' }}
                       >
                         {options.infillOptions.map(i => (
                           <option key={i.id} value={i.value.toString()}>{i.value}%</option>
@@ -271,17 +241,7 @@ export default function Home() {
                       <select 
                         value={color} 
                         onChange={e => setColor(e.target.value)} 
-                        style={{ 
-                          width: '100%', 
-                          padding: '0.6rem', 
-                          borderRadius: '8px', 
-                          background: 'rgba(255,255,255,0.07)', 
-                          color: 'white', 
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          colorScheme: 'dark',
-                          cursor: 'pointer',
-                          outline: 'none'
-                        }}
+                        style={{ width: '100%', padding: '0.6rem', borderRadius: '8px' }}
                       >
                         {options.colors.map(c => (
                           <option key={c.id} value={c.name}>{c.name}</option>
