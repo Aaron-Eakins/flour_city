@@ -166,7 +166,7 @@ export default function Home() {
 
       <div className={`${styles.hero} animate-fade-in`} style={{ marginBottom: fileToUpload ? '2rem' : '4rem', marginTop: '6rem' }}>
         <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--primary)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
-          Powered by Precision
+          Precision Printing
         </div>
         <h1 className={styles.title + ' fcp-hero-title'} style={{ fontSize: '4rem', lineHeight: '1.1', marginBottom: '1.5rem' }}>
           Flour City <br />
