@@ -25,10 +25,16 @@ export async function POST(req: NextRequest) {
   let tempDir = '';
 
   try {
+    console.log('Incoming quote request...');
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
 
-    if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+    if (!file) {
+      console.error('No file in request');
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+    }
+
+    console.log(`Processing file: ${file.name} (${file.size} bytes)`);
 
     const material = formData.get('material') as string || 'PLA';
     const quality = formData.get('quality') as string || 'Standard';
@@ -47,62 +53,96 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
     await fs.writeFile(tempFilePath, buffer);
 
-    const slicerPath = process.env.SLICER_PATH || 'orca-slicer';
+    console.log(`Temp file written to ${tempFilePath}`);
 
+    const slicerPath = process.env.SLICER_PATH || 'orca-slicer';
     let weightGrams = 0;
     let printTimeHours = 0;
 
+    // Check if we should even try the slicer (often missing on Vercel)
+    let slicerFound = false;
     try {
-      const command = process.platform === 'linux' ? 'xvfb-run' : slicerPath;
-      const args = process.platform === 'linux' 
-        ? ['-a', slicerPath, '--slice', '0', '--outputdir', tempDir, tempFilePath] 
-        : ['--slice', '0', '--outputdir', tempDir, tempFilePath];
-      
-      await execFileAsync(command, args, { timeout: 30000 });
-
-      const filesInDir = await fs.readdir(tempDir);
-      const gcodeFiles = filesInDir.filter(f => f.endsWith('.gcode'));
-
-      if (gcodeFiles.length === 0) {
-        throw new Error('Slicer completed but no G-code was generated. Ensure the STL/3MF has valid print settings.');
+      if (slicerPath === 'orca-slicer') {
+        // Just checking if orca-slicer is in PATH might be hard, 
+        // we'll rely on the exec throw but with cleaner message
+        slicerFound = true; 
+      } else {
+        await fs.access(slicerPath, fs.constants.X_OK);
+        slicerFound = true;
       }
+    } catch {
+      slicerFound = false;
+    }
 
-      for (const gcodeFile of gcodeFiles) {
-        const gcodePath = path.join(tempDir, gcodeFile);
-        const gcodeContent = await fs.readFile(gcodePath, 'utf8');
+    if (slicerFound) {
+      try {
+        console.log('Attempting to run slicer CLI...');
+        const command = process.platform === 'linux' ? 'xvfb-run' : slicerPath;
+        const args = process.platform === 'linux' 
+          ? ['-a', slicerPath, '--slice', '0', '--outputdir', tempDir, tempFilePath] 
+          : ['--slice', '0', '--outputdir', tempDir, tempFilePath];
         
-        const weightMatch = gcodeContent.match(/;\s*total filament used \[g\]\s*=\s*([0-9.]+)/);
-        if (weightMatch) weightGrams += parseFloat(weightMatch[1]);
+        await execFileAsync(command, args, { timeout: 30000 });
+        console.log('Slicer completed successfully.');
 
-        const timeMatch = gcodeContent.match(/;\s*estimated printing time[^=]*=\s*(.+)/);
-        if (timeMatch) printTimeHours += parsePrintTime(timeMatch[1]);
+        const filesInDir = await fs.readdir(tempDir);
+        const gcodeFiles = filesInDir.filter(f => f.endsWith('.gcode'));
+
+        if (gcodeFiles.length > 0) {
+          for (const gcodeFile of gcodeFiles) {
+            const gcodePath = path.join(tempDir, gcodeFile);
+            const gcodeContent = await fs.readFile(gcodePath, 'utf8');
+            
+            const weightMatch = gcodeContent.match(/;\s*total filament used \[g\]\s*=\s*([0-9.]+)/);
+            if (weightMatch) weightGrams += parseFloat(weightMatch[1]);
+
+            const timeMatch = gcodeContent.match(/;\s*estimated printing time[^=]*=\s*(.+)/);
+            if (timeMatch) printTimeHours += parsePrintTime(timeMatch[1]);
+          }
+        }
+      } catch (e: any) {
+        console.warn("Slicer CLI failed or timeout. Checking for fallback...", e.message);
+        if (process.env.MOCK_FALLBACK === 'false') {
+          throw new Error(`Slicer execution failed: ${e.stderr || e.message}`);
+        }
       }
+    } else {
+      console.log('Slicer binary not found/not executable. Skipping to fallback.');
+    }
 
-    } catch (e: any) {
-      console.warn("Slicer CLI failed or timeout.", e);
+    // Secondary Check: if slicer produced no metrics (or we skipped it)
+    if (weightGrams === 0 || printTimeHours === 0) {
       if (process.env.MOCK_FALLBACK !== 'false') {
+        console.log('Using mock pricing fallback logic.');
         const sizeMb = buffer.length / (1024 * 1024);
         weightGrams = Math.max(10, sizeMb * 15);
         printTimeHours = Math.max(0.5, sizeMb * 0.4);
       } else {
-        return NextResponse.json({ error: `Slicer execution failed: ${e.stderr || e.message}` }, { status: 500 });
+        return NextResponse.json({ error: 'Slicer failed and mock fallback is disabled.' }, { status: 500 });
       }
     }
 
-    weightGrams = weightGrams || 10;
-    printTimeHours = printTimeHours || 1;
+    console.log(`Final metrics: ${weightGrams}g, ${printTimeHours}h`);
 
-    const config = await prisma.pricingConfig.findFirst() || {};
+    // Fetch pricing config from DB
+    let config;
+    try {
+      config = await prisma.pricingConfig.findFirst() || {};
+    } catch (dbErr) {
+      console.error('Database error fetching PricingConfig:', dbErr);
+      config = {}; // Fallback to hardcoded defaults in engine
+    }
     
-    // Fetch all dynamic options from DB to validate and get multipliers
+    // Fetch all dynamic options
     const [materialData, qualityData, infillData, colorData] = await Promise.all([
-      prisma.material.findUnique({ where: { name: material, enabled: true } }),
-      prisma.quality.findUnique({ where: { name: quality, enabled: true } }),
-      prisma.infillOption.findUnique({ where: { value: infill, enabled: true } }),
-      prisma.color.findUnique({ where: { name: color, enabled: true } })
+      prisma.material.findUnique({ where: { name: material, enabled: true } }).catch(() => null),
+      prisma.quality.findUnique({ where: { name: quality, enabled: true } }).catch(() => null),
+      prisma.infillOption.findUnique({ where: { value: infill, enabled: true } }).catch(() => null),
+      prisma.color.findUnique({ where: { name: color, enabled: true } }).catch(() => null)
     ]);
 
     if (!materialData || !qualityData || !infillData || !colorData) {
+      console.warn('Configuration mismatch - one or more options missing in DB');
       return NextResponse.json({ 
         error: 'One or more selected options are no longer available. Please refresh and try again.' 
       }, { status: 400 });
@@ -111,13 +151,11 @@ export async function POST(req: NextRequest) {
     const materialCostPerKg = materialData.costPerKg;
     const qualityMultiplier = (qualityData as any).timeMultiplier || 1.0;
 
-    // Calculate quote programmatically
     const quoteBreakdown = calculateQuote(weightGrams, printTimeHours, config, {
       material, quality, infill, quantity, materialCostPerKg, qualityMultiplier
     });
 
-
-    // Save Quote to the Database using Prisma
+    // Save Quote to the Database
     const savedQuote = await prisma.quote.create({
       data: {
         fileName: file.name,
@@ -137,6 +175,8 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    console.log(`Quote saved successfully with ID: ${savedQuote.id}`);
+
     try {
       if ((config as any)?.notifyOnQuote && process.env.RESEND_API_KEY) {
         const adminEmail = process.env.ADMIN_EMAIL || 'onboarding@resend.dev';
@@ -146,19 +186,19 @@ export async function POST(req: NextRequest) {
       console.error('Non-fatal error notifying admin:', metricErr);
     }
 
-    // Return the saved quote payload with DB ID
     return NextResponse.json({
       dbQuoteId: savedQuote.id,
       quoteData: quoteBreakdown
     });
 
   } catch (error: any) {
-    console.error('Error processing quote:', error);
+    console.error('CRITICAL ERROR in quote API:', error);
     return NextResponse.json({ error: error.message || 'Failed to process 3D model.' }, { status: 500 });
   } finally {
     if (tempDir) {
       try {
         await fs.rm(tempDir, { recursive: true, force: true });
+        console.log('Temp cleanup complete.');
       } catch (cleanupError) {}
     }
   }

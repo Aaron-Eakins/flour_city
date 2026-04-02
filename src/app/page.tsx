@@ -101,6 +101,7 @@ export default function Home() {
     if (!fileToUpload) return;
     setIsAnalyzing(true);
     setErrorMsg(null);
+    setQuote(null); // Clear previous quote if any
     
     try {
       const formData = new FormData();
@@ -111,23 +112,36 @@ export default function Home() {
       formData.append('color', color);
       formData.append('quantity', quantity);
 
+      console.log('Sending analyze request to /api/quote...');
       const response = await fetch('/api/quote', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || `Server error ${response.status}: Failed to slice the model.`);
+        let errorMessage = `Server error ${response.status}`;
+        try {
+          const errData = await response.json();
+          errorMessage = errData.error || errorMessage;
+        } catch (parseErr) {
+          console.error('Failed to parse error JSON:', parseErr);
+          if (response.status === 504) errorMessage = 'Server timeout. The model might be too complex to slice in the cloud.';
+          if (response.status === 413) errorMessage = 'File is too large for the server to process.';
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
+      if (!data.quoteData || !data.dbQuoteId) {
+        throw new Error('Invalid response format from server.');
+      }
+
       setQuote(data.quoteData);
       setDbQuoteId(data.dbQuoteId);
-      console.log('Quote saved to database with ID:', data.dbQuoteId);
+      console.log('Quote analysis successful.');
     } catch (err) {
-      console.error(err);
-      setErrorMsg((err as Error).message || 'An unknown error occurred during slicing.');
+      console.error('Analysis Error:', err);
+      setErrorMsg((err as Error).message || 'An unexpected error occurred. Please try a smaller file or refresh.');
     } finally {
       setIsAnalyzing(false);
     }
