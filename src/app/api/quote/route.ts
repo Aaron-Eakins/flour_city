@@ -55,10 +55,25 @@ export async function POST(req: NextRequest) {
 
     const tempFilePath = path.join(tempDir, `model${ext}`);
 
-    const blobResponse = await fetch(blobUrl);
+    console.log(`Downloading model from: ${blobUrl}`);
+    
+    let blobResponse = await fetch(blobUrl);
+    
+    // Retry once after a short delay if we get a 404 or transient error.
+    // Sometimes Vercel Blob URLs take a few hundred ms to become globally available.
+    if (!blobResponse.ok && (blobResponse.status === 404 || blobResponse.status >= 500)) {
+      console.warn(`Initial fetch failed with ${blobResponse.status}. Retrying in 1s...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      blobResponse = await fetch(blobUrl);
+    }
+
     if (!blobResponse.ok) {
+      console.error(`Failed to fetch blob after retry. Status: ${blobResponse.status} ${blobResponse.statusText}`);
+      const errorText = await blobResponse.text().catch(() => 'No response body');
+      console.error(`Blob error detail: ${errorText.slice(0, 200)}`);
       throw new Error(`Failed to fetch model from blob storage: ${blobResponse.status}`);
     }
+
     const arrayBuffer = await blobResponse.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     await fs.writeFile(tempFilePath, buffer);
