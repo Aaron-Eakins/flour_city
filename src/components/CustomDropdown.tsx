@@ -14,6 +14,7 @@ interface DropdownProps {
   displayField?: string;
   valueField?: string;
   placeholder?: string;
+  style?: React.CSSProperties;
 }
 
 export default function CustomDropdown({ 
@@ -23,7 +24,8 @@ export default function CustomDropdown({
   onChange, 
   displayField = 'name', 
   valueField = 'name',
-  placeholder 
+  placeholder,
+  style
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -42,7 +44,7 @@ export default function CustomDropdown({
   const displayText = selectedOption ? selectedOption[displayField] : placeholder || 'Select...';
 
   return (
-    <div ref={dropdownRef} style={{ position: 'relative', width: '100%', marginBottom: '1.5rem' }}>
+    <div ref={dropdownRef} style={{ position: 'relative', width: '100%', marginBottom: '1.5rem', ...style }}>
       {label && (
         <label style={{ 
           display: 'block', 

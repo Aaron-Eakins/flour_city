@@ -2,6 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import CustomDropdown from '@/components/CustomDropdown';
+
+const STATUS_OPTIONS = [
+  { name: 'QUOTED' },
+  { name: 'PAID' },
+  { name: 'PRINTING' },
+  { name: 'SHIPPED' },
+];
 
 type Quote = {
   id: string;
@@ -111,17 +119,12 @@ export default function QuoteTable({ initialQuotes }: { initialQuotes: Quote[] }
                 </span>
               </td>
               <td style={{ padding: '1rem' }}>
-                <select 
-                  value={quote.status} 
-                  onChange={(e) => handleStatusChange(quote.id, e.target.value)}
-                  disabled={updating === quote.id}
-                  style={{ cursor: updating === quote.id ? 'wait' : 'pointer' }}
-                >
-                  <option value="QUOTED">QUOTED</option>
-                  <option value="PAID">PAID</option>
-                  <option value="PRINTING">PRINTING</option>
-                  <option value="SHIPPED">SHIPPED</option>
-                </select>
+                <CustomDropdown 
+                  options={STATUS_OPTIONS}
+                  value={quote.status}
+                  onChange={(val) => handleStatusChange(quote.id, val)}
+                  style={{ marginBottom: 0, width: '130px' }}
+                />
               </td>
             </tr>
           ))}

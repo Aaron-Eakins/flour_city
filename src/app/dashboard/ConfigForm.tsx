@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import CustomNumberInput from '@/components/CustomNumberInput';
 
 interface ConfigFormProps {
   initialConfig: any;
@@ -127,38 +128,54 @@ export default function ConfigForm({
       <form className="glass" style={{ padding: '2rem', borderRadius: '12px' }} onSubmit={handleConfigSubmit}>
         <h3 style={{ margin: '0 0 1.5rem 0', color: 'rgba(255,255,255,0.9)' }}>Base Pricing & Machine Specs</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Electricity Cost/Kwh ($)</label>
-            <input type="number" step="0.01" name="electricityCostPerKwh" defaultValue={defaultConf.electricityCostPerKwh} style={{ width: '100%', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '6px' }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Printer Power (Kw)</label>
-            <input type="number" step="0.01" name="printerKwhUsage" defaultValue={defaultConf.printerKwhUsage} style={{ width: '100%', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '6px' }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Machine Cost ($)</label>
-            <input type="number" step="1" name="machineCost" defaultValue={defaultConf.machineCost} style={{ width: '100%', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '6px' }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Machine Life (Hours)</label>
-            <input type="number" step="1" name="machineLifeHours" defaultValue={defaultConf.machineLifeHours} style={{ width: '100%', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '6px' }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Fixed Labor Fee ($)</label>
-            <input type="number" step="0.01" name="fixedLaborFee" defaultValue={defaultConf.fixedLaborFee} style={{ width: '100%', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '6px' }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Failure Buffer (%)</label>
-            <input type="number" step="0.01" name="failureBufferPercent" defaultValue={defaultConf.failureBufferPercent} style={{ width: '100%', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '6px' }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Profit Margin (%)</label>
-            <input type="number" step="0.01" name="profitMarginPercent" defaultValue={defaultConf.profitMarginPercent} style={{ width: '100%', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '6px' }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Minimum Price ($)</label>
-            <input type="number" step="0.01" name="minimumPrice" defaultValue={defaultConf.minimumPrice} style={{ width: '100%', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '6px' }} />
-          </div>
+          <CustomNumberInput 
+            label="Electricity Cost/Kwh ($)"
+            name="electricityCostPerKwh" 
+            step="0.01" 
+            defaultValue={defaultConf.electricityCostPerKwh} 
+          />
+          <CustomNumberInput 
+            label="Printer Power (Kw)"
+            name="printerKwhUsage" 
+            step="0.01" 
+            defaultValue={defaultConf.printerKwhUsage} 
+          />
+          <CustomNumberInput 
+            label="Machine Cost ($)"
+            name="machineCost" 
+            step="1" 
+            defaultValue={defaultConf.machineCost} 
+          />
+          <CustomNumberInput 
+            label="Machine Life (Hours)"
+            name="machineLifeHours" 
+            step="1" 
+            defaultValue={defaultConf.machineLifeHours} 
+          />
+          <CustomNumberInput 
+            label="Fixed Labor Fee ($)"
+            name="fixedLaborFee" 
+            step="0.01" 
+            defaultValue={defaultConf.fixedLaborFee} 
+          />
+          <CustomNumberInput 
+            label="Failure Buffer (%)"
+            name="failureBufferPercent" 
+            step="0.01" 
+            defaultValue={defaultConf.failureBufferPercent} 
+          />
+          <CustomNumberInput 
+            label="Profit Margin (%)"
+            name="profitMarginPercent" 
+            step="0.01" 
+            defaultValue={defaultConf.profitMarginPercent} 
+          />
+          <CustomNumberInput 
+            label="Minimum Price ($)"
+            name="minimumPrice" 
+            step="0.01" 
+            defaultValue={defaultConf.minimumPrice} 
+          />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <button type="submit" disabled={loading} className="btn-primary" style={{ padding: '0.5rem 1rem', background: 'var(--primary)', color: 'black', border: 'none', borderRadius: '6px', fontWeight: 'bold' }}>
@@ -181,12 +198,11 @@ export default function ConfigForm({
               onChange={e => setNewMaterial({...newMaterial, name: e.target.value})}
               style={{ flex: 1, padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} 
             />
-            <input 
+            <CustomNumberInput 
               placeholder="$/kg" 
-              type="number"
               value={newMaterial.costPerKg} 
-              onChange={e => setNewMaterial({...newMaterial, costPerKg: e.target.value})}
-              style={{ width: '60px', padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} 
+              onChange={val => setNewMaterial({...newMaterial, costPerKg: val.toString()})}
+              style={{ width: '80px' }} 
             />
             <button 
               onClick={() => handleAddOption('material', newMaterial)} 
@@ -206,12 +222,11 @@ export default function ConfigForm({
                   />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span>{m.name}</span>
-                    <input 
-                      type="number" 
+                    <CustomNumberInput 
                       step="0.01"
                       defaultValue={m.costPerKg} 
                       onBlur={(e) => handleUpdateOption('material', m.id, m.enabled, parseFloat(e.target.value))}
-                      style={{ width: '80px', fontSize: '0.75rem', background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', borderRadius: '3px', padding: '0 4px' }}
+                      style={{ width: '110px' }}
                     />
                   </div>
                 </div>
@@ -232,13 +247,12 @@ export default function ConfigForm({
               style={{ width: '100%', padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} 
             />
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <input 
+              <CustomNumberInput 
                 placeholder="Time Multiplier (e.g. 1.0)" 
-                type="number"
                 step="0.1"
                 defaultValue="1.0"
                 id="newQualityMultiplier"
-                style={{ flex: 1, padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} 
+                style={{ flex: 1 }} 
               />
               <button 
                 onClick={() => {
@@ -262,12 +276,11 @@ export default function ConfigForm({
                   />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span>{q.name}</span>
-                    <input 
-                      type="number" 
+                    <CustomNumberInput 
                       step="0.1"
                       defaultValue={q.timeMultiplier} 
                       onBlur={(e) => handleUpdateOption('quality', q.id, q.enabled, parseFloat(e.target.value))}
-                      style={{ width: '60px', fontSize: '0.75rem', background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', borderRadius: '3px', padding: '0 4px' }}
+                      style={{ width: '100px' }}
                     />
                   </div>
                 </div>
@@ -281,12 +294,11 @@ export default function ConfigForm({
         <div className="glass" style={{ padding: '1.5rem', borderRadius: '12px' }}>
           <h4 style={{ margin: '0 0 1rem 0' }}>Infill %</h4>
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-            <input 
+            <CustomNumberInput 
               placeholder="e.g. 15" 
-              type="number"
               value={newInfill} 
-              onChange={e => setNewInfill(e.target.value)}
-              style={{ flex: 1, padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} 
+              onChange={val => setNewInfill(val.toString())}
+              style={{ flex: 1 }} 
             />
             <button 
               onClick={() => handleAddOption('infill', { value: newInfill })} 

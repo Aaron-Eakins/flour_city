@@ -6,6 +6,7 @@ import UploadDropzone from '../components/UploadDropzone';
 import ModelViewer from '../components/ModelViewer';
 import { QuoteResult } from '../lib/quoteEngine';
 import CustomDropdown from '../components/CustomDropdown';
+import CustomNumberInput from '../components/CustomNumberInput';
 
 export default function Home() {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
@@ -244,10 +245,14 @@ export default function Home() {
                     />
                   </div>
 
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.3rem' }}>Quantity</label>
-                    <input type="number" min="1" max="100" value={quantity} onChange={e => setQuantity(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }} />
-                  </div>
+                  <CustomNumberInput 
+                    label="Quantity" 
+                    min="1" 
+                    max="100" 
+                    value={quantity} 
+                    onChange={val => setQuantity(val.toString())} 
+                    style={{ marginBottom: '1.5rem' }}
+                  />
                   
                   {errorMsg && (
                     <div style={{ color: 'var(--error)', background: 'rgba(239, 68, 68, 0.1)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
