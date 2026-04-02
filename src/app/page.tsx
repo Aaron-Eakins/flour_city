@@ -189,11 +189,11 @@ export default function Home() {
         </div>
 
         {/* Social Proof Bar */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '1.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', opacity: 0.8 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '1.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.5px' }}>
           <span>500+ prints completed</span>
-          <span>•</span>
+          <span style={{ opacity: 0.3 }}>•</span>
           <span>Rochester, NY based</span>
-          <span>•</span>
+          <span style={{ opacity: 0.3 }}>•</span>
           <span>Bambu P1S fleet</span>
         </div>
       </div>
