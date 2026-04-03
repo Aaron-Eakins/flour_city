@@ -10,12 +10,14 @@ export default async function DashboardPage() {
   });
 
   const config = await prisma.pricingConfig.findFirst();
-  const [materials, qualities, infillOptions, colors] = await Promise.all([
+  const [materials, qualities, infillOptions, nozzleDiameters] = await Promise.all([
     prisma.material.findMany({ orderBy: { name: 'asc' } }),
     prisma.quality.findMany({ orderBy: { name: 'asc' } }),
     prisma.infillOption.findMany({ orderBy: { value: 'asc' } }),
-    prisma.color.findMany({ orderBy: { name: 'asc' } }),
+    prisma.nozzleDiameter.findMany({ orderBy: { diameter: 'asc' } }),
   ]);
+
+
 
   const serializedQuotes = quotes.map(q => ({
     id: q.id,
@@ -50,8 +52,10 @@ export default async function DashboardPage() {
           initialMaterials={materials}
           initialQualities={qualities}
           initialInfills={infillOptions}
-          initialColors={colors}
+          initialNozzles={nozzleDiameters}
         />
+
+
 
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>

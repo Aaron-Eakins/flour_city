@@ -3,12 +3,12 @@ import prisma from '@/lib/db';
 
 export async function GET() {
   try {
-    const [pricingConfig, materials, qualities, infillOptions, colors] = await Promise.all([
+    const [pricingConfig, materials, qualities, infillOptions, nozzleDiameters] = await Promise.all([
       prisma.pricingConfig.findUnique({ where: { id: 1 } }),
       prisma.material.findMany({ orderBy: { name: 'asc' } }),
       prisma.quality.findMany({ orderBy: { name: 'asc' } }),
       prisma.infillOption.findMany({ orderBy: { value: 'asc' } }),
-      prisma.color.findMany({ orderBy: { name: 'asc' } }),
+      prisma.nozzleDiameter.findMany({ orderBy: { diameter: 'asc' } }),
     ]);
 
     return NextResponse.json({
@@ -21,8 +21,10 @@ export async function GET() {
       materials,
       qualities,
       infillOptions,
-      colors,
+      nozzleDiameters,
     });
+
+
   } catch (error) {
     console.error('Failed to fetch admin config:', error);
     return NextResponse.json({ error: 'Failed to fetch admin config' }, { status: 500 });

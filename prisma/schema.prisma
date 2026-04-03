@@ -13,8 +13,18 @@ model Quote {
   material        String    @default("PLA")
   quality         String    @default("Standard")
   infill          Int       @default(15)
-  color           String    @default("Black")
-  nozzleDiameter  String    @default("0.4mm")
+  
+  // AMS / Multi-color fields
+  isMultiColor      Boolean  @default(false)
+  selectedSlots     Int[]    // AMS slot numbers used, e.g., [1, 3]
+  colorTransitions  Int      @default(0)
+  purgeWasteCost    Float    @default(0.0)
+  primeTowerCost    Float    @default(0.0)
+  
+  // Legacy color field (to be removed in Phase 2.3)
+  color             String?
+  layerCount        Int?      @default(0)
+  
   quantity        Int       @default(1)
   customerNotes   String?
   materialCost    Float
@@ -26,11 +36,17 @@ model Quote {
   printTimeHours  Float
   weightGrams     Float
   status          String    @default("QUOTED")
+  
+  // Relations
+  nozzleDiameterId String?
+  nozzleDiameter   NozzleDiameter? @relation(fields: [nozzleDiameterId], references: [id])
+  
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   expiresAt       DateTime?
   customerEmail   String?
 }
+
 
 model PricingConfig {
   id                    Int      @id @default(autoincrement())
@@ -52,10 +68,13 @@ model PricingConfig {
   purgeWasteCostMultiplier     Float  @default(1.0)
   primeTowerVolumePercent      Float  @default(0.05)
   multiColorFailureBufferExtra Float  @default(0.05)
+  amsSwapFee                   Float  @default(0.50)
+  amsSwapTimeSeconds           Int    @default(60)
   quoteExpiryHours             Int    @default(72)
   
   updatedAt             DateTime @updatedAt
 }
+
 
 model AdminSession {
   id        String   @id @default(cuid())
@@ -91,7 +110,10 @@ model NozzleDiameter {
   isDefault Boolean  @default(false)
   swapFee   Float    @default(0.0)
   enabled   Boolean  @default(true)
+  
+  quotes    Quote[]
 }
+
 
 model Quality {
   id             String   @id @default(cuid())
@@ -110,12 +132,7 @@ model InfillOption {
   updatedAt DateTime @updatedAt
 }
 
-model Color {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  enabled   Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+
+
 
 

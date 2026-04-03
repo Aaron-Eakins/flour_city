@@ -42,8 +42,16 @@ export async function POST(req: NextRequest) {
     const material = (body.material as string) || 'PLA';
     const quality = (body.quality as string) || 'Standard';
     const infill = parseInt((body.infill as string) || '15', 10);
-    const color = (body.color as string) || 'Black';
     const quantity = parseInt((body.quantity as string) || '1', 10);
+    const nozzleId = (body.nozzleId as string) || null;
+    const isMultiColor = body.isMultiColor === true;
+    const selectedSlots = ((body.selectedSlots as any[]) || []).map(s => parseInt(s.toString(), 10));
+    const colorTransitions = parseInt((body.colorTransitions as string) || '0', 10);
+    const layerCount = body.layerCount ? parseInt(body.layerCount as string, 10) : 0;
+
+
+
+
 
     console.log(`Processing file: ${fileName} from blob: ${blobUrl}`);
 
@@ -170,18 +178,32 @@ export async function POST(req: NextRequest) {
       }).catch(() => null);
     }
 
-    const [qualityData, infillData, colorData] = await Promise.all([
+    const [qualityData, infillData] = await Promise.all([
       prisma.quality.findUnique({ where: { name: quality, enabled: true } }).catch(() => null),
       prisma.infillOption.findUnique({ where: { value: infill, enabled: true } }).catch(() => null),
-      prisma.color.findUnique({ where: { name: color, enabled: true } }).catch(() => null),
     ]);
 
-    if (!materialData || !qualityData || !infillData || !colorData) {
+    let amsMaterials: any[] = [];
+    if (isMultiColor && selectedSlots.length > 0) {
+      amsMaterials = await prisma.material.findMany({
+        where: { amsSlot: { in: selectedSlots }, enabled: true }
+      });
+    }
+
+
+    let nozzleData = nozzleId ? await prisma.nozzleDiameter.findFirst({ where: { id: nozzleId, enabled: true } }).catch(() => null) : null;
+    if (!nozzleData) {
+      nozzleData = await prisma.nozzleDiameter.findFirst({ where: { label: { contains: '0.4' }, enabled: true } }).catch(() => null);
+      if (!nozzleData) nozzleData = await prisma.nozzleDiameter.findFirst({ where: { enabled: true } }).catch(() => null);
+    }
+
+
+
+    if (!materialData || !qualityData || !infillData) {
       const missing = [];
       if (!materialData) missing.push(`Material '${material}'`);
       if (!qualityData) missing.push(`Quality '${quality}'`);
       if (!infillData) missing.push(`Infill '${infill}%'`);
-      if (!colorData) missing.push(`Color '${color}'`);
       
       console.warn(`Configuration mismatch -- missing: ${missing.join(', ')}`);
       return NextResponse.json({
@@ -189,12 +211,26 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
+
     const materialCostPerKg = materialData.costPerKg;
     const qualityMultiplier = (qualityData as any).timeMultiplier || 1.0;
 
     const quoteBreakdown = calculateQuote(weightGrams, printTimeHours, config, {
-      material, quality, infill, quantity, materialCostPerKg, qualityMultiplier,
+      material, 
+      quality, 
+      infill, 
+      quantity, 
+      materialCostPerKg, 
+      qualityMultiplier,
+      nozzleSwapFee: nozzleData?.swapFee || 0,
+      isMultiColor,
+      selectedSlots,
+      colorTransitions,
+      amsMaterials,
+      layerCount
     });
+
+
 
     // Save quote to DB
     const savedQuote = await prisma.quote.create({
@@ -203,7 +239,6 @@ export async function POST(req: NextRequest) {
         material,
         quality,
         infill,
-        color,
         quantity,
         materialCost: quoteBreakdown.breakdown.materialCost,
         electricityCost: quoteBreakdown.breakdown.electricityCost,
@@ -213,7 +248,16 @@ export async function POST(req: NextRequest) {
         printTimeHours: quoteBreakdown.metrics.printTimeHours,
         weightGrams: quoteBreakdown.metrics.weightGrams,
         status: 'QUOTED',
+        nozzleDiameterId: nozzleData?.id,
+        nozzleSwapFee: nozzleData?.swapFee || 0,
+        isMultiColor,
+        selectedSlots,
+        colorTransitions,
+        purgeWasteCost: quoteBreakdown.breakdown.amsPurgeCost || 0,
+        primeTowerCost: 0, // Simplified for now
+        layerCount,
       },
+
     });
 
     console.log(`Quote saved with ID: ${savedQuote.id}`);

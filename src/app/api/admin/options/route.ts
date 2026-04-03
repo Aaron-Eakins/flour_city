@@ -8,7 +8,19 @@ export async function POST(req: NextRequest) {
     let result;
     switch (type) {
       case 'material':
-        result = await prisma.material.create({ data: { name: data.name, costPerKg: parseFloat(data.costPerKg) } });
+        result = await prisma.material.create({ 
+          data: { 
+            name: data.name, 
+            costPerKg: parseFloat(data.costPerKg),
+            brand: data.brand || null,
+            modelNumber: data.modelNumber || null,
+            colorName: data.colorName || null,
+            colorHex: data.colorHex || null,
+            sku: data.sku || null,
+            materialType: data.materialType || 'PLA',
+            amsSlot: data.amsSlot ? parseInt(data.amsSlot) : null
+          } 
+        });
         break;
       case 'quality':
         result = await prisma.quality.create({ 
@@ -21,8 +33,16 @@ export async function POST(req: NextRequest) {
       case 'infill':
         result = await prisma.infillOption.create({ data: { value: parseInt(data.value) } });
         break;
-      case 'color':
-        result = await prisma.color.create({ data: { name: data.name } });
+
+      case 'nozzle':
+        result = await prisma.nozzleDiameter.create({ 
+          data: { 
+            diameter: parseFloat(data.diameter),
+            label: data.label || `${data.diameter}mm`,
+            isDefault: data.isDefault || false,
+            swapFee: data.swapFee ? parseFloat(data.swapFee) : 0.0
+          } 
+        });
         break;
       default:
         return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
@@ -31,7 +51,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('Failed to add option:', error);
-    return NextResponse.json({ error: 'Failed to add option. Check for duplicates.' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to add option.' }, { status: 500 });
   }
 }
 
@@ -54,8 +74,9 @@ export async function DELETE(req: NextRequest) {
       case 'infill':
         result = await prisma.infillOption.delete({ where: { id } });
         break;
-      case 'color':
-        result = await prisma.color.delete({ where: { id } });
+
+      case 'nozzle':
+        result = await prisma.nozzleDiameter.delete({ where: { id } });
         break;
       default:
         return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
@@ -81,7 +102,15 @@ export async function PATCH(req: NextRequest) {
           where: { id }, 
           data: { 
             enabled: updateData.enabled,
-            costPerKg: updateData.costPerKg ? parseFloat(updateData.costPerKg) : undefined
+            name: updateData.name,
+            costPerKg: updateData.costPerKg !== undefined ? parseFloat(updateData.costPerKg) : undefined,
+            brand: updateData.brand,
+            modelNumber: updateData.modelNumber,
+            colorName: updateData.colorName,
+            colorHex: updateData.colorHex,
+            sku: updateData.sku,
+            materialType: updateData.materialType,
+            amsSlot: updateData.amsSlot !== undefined ? (updateData.amsSlot ? parseInt(updateData.amsSlot) : null) : undefined
           } 
         });
         break;
@@ -90,20 +119,28 @@ export async function PATCH(req: NextRequest) {
           where: { id }, 
           data: { 
             enabled: updateData.enabled,
-            timeMultiplier: updateData.timeMultiplier ? parseFloat(updateData.timeMultiplier) : undefined
+            name: updateData.name,
+            timeMultiplier: updateData.timeMultiplier !== undefined ? parseFloat(updateData.timeMultiplier) : undefined
           } 
         });
         break;
       case 'infill':
         result = await prisma.infillOption.update({ 
           where: { id }, 
-          data: { enabled: updateData.enabled } 
+          data: { enabled: updateData.enabled, value: updateData.value !== undefined ? parseInt(updateData.value) : undefined } 
         });
         break;
-      case 'color':
-        result = await prisma.color.update({ 
+
+      case 'nozzle':
+        result = await prisma.nozzleDiameter.update({ 
           where: { id }, 
-          data: { enabled: updateData.enabled } 
+          data: { 
+            enabled: updateData.enabled, 
+            diameter: updateData.diameter !== undefined ? parseFloat(updateData.diameter) : undefined,
+            label: updateData.label,
+            isDefault: updateData.isDefault,
+            swapFee: updateData.swapFee !== undefined ? parseFloat(updateData.swapFee) : undefined
+          } 
         });
         break;
       default:
@@ -116,3 +153,4 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to update option.' }, { status: 500 });
   }
 }
+

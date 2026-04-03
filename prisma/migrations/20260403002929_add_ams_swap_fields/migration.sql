@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "PricingConfig" ADD COLUMN     "amsSwapFee" DOUBLE PRECISION NOT NULL DEFAULT 0.50,
+ADD COLUMN     "amsSwapTimeSeconds" INTEGER NOT NULL DEFAULT 60;

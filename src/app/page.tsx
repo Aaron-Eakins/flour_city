@@ -24,13 +24,16 @@ export default function Home() {
     materials: any[],
     qualities: any[],
     infillOptions: any[],
-    colors: any[]
+    colors: any[],
+    nozzleDiameters: any[]
   }>({
     materials: [],
     qualities: [],
     infillOptions: [],
-    colors: []
+    colors: [],
+    nozzleDiameters: []
   });
+
 
   // Print Options Selection State
   const [material, setMaterial] = useState('');
@@ -38,6 +41,10 @@ export default function Home() {
   const [infill, setInfill] = useState('');
   const [color, setColor] = useState('');
   const [quantity, setQuantity] = useState('1');
+  const [nozzleId, setNozzleId] = useState('');
+  const [isMultiColor, setIsMultiColor] = useState(false);
+  const [selectedSlots, setSelectedSlots] = useState<number[]>([]);
+  const [colorTransitions, setColorTransitions] = useState('0');
 
   useEffect(() => {
     async function fetchOptions() {
@@ -62,13 +69,14 @@ export default function Home() {
         if (data.qualities?.length) setQuality(data.qualities[0].name);
         if (formattedInfills.length) setInfill(formattedInfills[0].stringValue);
         if (data.colors?.length) setColor(data.colors[0].name);
+        if (data.nozzleDiameters?.length) setNozzleId(data.nozzleDiameters[0].id);
+
       } catch (err) {
         console.error('Failed to fetch options:', err);
       }
     }
     fetchOptions();
   }, []);
-
 
   const handleFileAccepted = (file: File) => {
     setFileToUpload(file);
@@ -99,26 +107,35 @@ export default function Home() {
     }
   };
 
+  const amsFilaments = options.materials.filter(m => m.amsSlot !== null);
+  const hasAms = amsFilaments.length >= 2;
+
+  const handleSlotToggle = (slot: number) => {
+    if (selectedSlots.includes(slot)) {
+      const next = selectedSlots.filter(s => s !== slot);
+      setSelectedSlots(next);
+      setColorTransitions(Math.max(0, next.length - 1).toString());
+    } else if (selectedSlots.length < 4) {
+      const next = [...selectedSlots, slot];
+      setSelectedSlots(next);
+      setColorTransitions(Math.max(0, next.length - 1).toString());
+    }
+  };
+
   const handleAnalyze = async () => {
     if (!fileToUpload) return;
     setErrorMsg(null);
     setQuote(null);
 
     try {
-      // Phase 1: Upload file directly from browser to Vercel Blob.
-      // This bypasses the 4.5MB Vercel serverless function body limit.
       setIsUploading(true);
-      console.log('Uploading file to blob storage...');
       const blob = await upload(fileToUpload.name, fileToUpload, {
         access: 'public',
         handleUploadUrl: '/api/upload',
       });
-      console.log('Blob upload complete:', blob.url);
       setIsUploading(false);
 
-      // Phase 2: Send a tiny JSON payload to /api/quote with the blob URL.
       setIsAnalyzing(true);
-      console.log('Requesting quote from /api/quote...');
       const response = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -128,8 +145,12 @@ export default function Home() {
           material,
           quality,
           infill,
-          color,
+          color: material,
           quantity,
+          nozzleId,
+          isMultiColor,
+          selectedSlots,
+          colorTransitions: parseInt(colorTransitions) || 0
         }),
       });
 
@@ -151,7 +172,6 @@ export default function Home() {
 
       setQuote(data.quoteData);
       setDbQuoteId(data.dbQuoteId);
-      console.log('Quote analysis successful.');
     } catch (err) {
       console.error('Analysis Error:', err);
       setErrorMsg((err as Error).message || 'An unexpected error occurred. Please try again.');
@@ -170,7 +190,6 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      {/* Navigation Header */}
       <nav style={{ 
         position: 'absolute', 
         top: 0, 
@@ -204,26 +223,6 @@ export default function Home() {
           High-performance 3D printing. Upload your models for
           instant, slice-accurate quoting on our Bambu P1S fleet.
         </p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', fontSize: '0.85rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.4)' }}>
-            <span style={{ color: 'var(--success)' }}>●</span> Instant Analysis
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.4)' }}>
-            <span style={{ color: 'var(--success)' }}>●</span> Local Production
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.4)' }}>
-            <span style={{ color: 'var(--success)' }}>●</span> Fast Shipping
-          </div>
-        </div>
-
-        {/* Social Proof Bar */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '1.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.5px' }}>
-          <span>500+ prints completed</span>
-          <span style={{ opacity: 0.3 }}>•</span>
-          <span>Rochester, NY based</span>
-          <span style={{ opacity: 0.3 }}>•</span>
-          <span>Bambu P1S fleet</span>
-        </div>
       </div>
 
       <div className={styles.uploadContainer} style={fileToUpload ? { maxWidth: '1000px', width: '100%' } : {}}>
@@ -238,37 +237,66 @@ export default function Home() {
 
         {fileToUpload && (
           <div className={styles.quoteGrid + ' glass animate-fade-in card-hover'} style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 1fr)', gap: '2rem', padding: '2rem' }}>
-            
-            {/* Left Column: 3D Preview */}
             <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '12px', overflow: 'hidden', minHeight: '400px', position: 'relative' }}>
               <ModelViewer file={fileToUpload} />
             </div>
 
-            {/* Right Column: Quoting Logic */}
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              
               {!quote ? (
                 <div style={{ textAlign: 'left' }}>
-                  <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Configure Print</h2>
+                  <h2 style={{ marginBottom: '1.5rem', textAlign: 'center', fontSize: '1.5rem' }}>Configure Print</h2>
                   
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.5rem' }}>
+                  <div style={{ marginBottom: '1rem' }}>
+                    {!isMultiColor ? (
+                      <CustomDropdown 
+                        label="Filament / Color"
+                        options={options.materials}
+                        value={material}
+                        onChange={setMaterial}
+                        displayField="name"
+                        valueField="name"
+                        placeholder="Select Filament"
+                      />
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                        <label style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Select AMS Filaments (2-4)</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+                          {amsFilaments.map(m => (
+                            <div 
+                              key={m.id}
+                              onClick={() => handleSlotToggle(m.amsSlot)}
+                              style={{ 
+                                padding: '0.6rem', 
+                                background: selectedSlots.includes(m.amsSlot) ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.03)', 
+                                border: `1px solid ${selectedSlots.includes(m.amsSlot) ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`,
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.6rem'
+                              }}
+                            >
+                              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: m.colorHex || '#666', border: '1px solid rgba(255,255,255,0.2)' }} />
+                              <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                                <span style={{ fontSize: '0.8rem', fontWeight: 'bold', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{m.colorName || m.name}</span>
+                                <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>Slot {m.amsSlot} • {m.brand}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                     <CustomDropdown 
-                      label="Material"
-                      options={options.materials}
-                      value={material}
-                      onChange={setMaterial}
-                      placeholder="Select Material"
-                    />
-                    <CustomDropdown 
-                      label="Quality"
+                      label="Print Quality"
                       options={options.qualities}
                       value={quality}
                       onChange={setQuality}
                       placeholder="Select Quality"
                     />
-                  </div>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.5rem' }}>
                     <CustomDropdown 
                       label="Infill Density"
                       options={options.infillOptions}
@@ -278,46 +306,69 @@ export default function Home() {
                       valueField="stringValue"
                       placeholder="Select Infill"
                     />
+                  </div>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                     <CustomDropdown 
-                      label="Color"
-                      options={options.colors}
-                      value={color}
-                      onChange={setColor}
-                      placeholder="Select Color"
+                      label="Nozzle Size"
+                      options={options.nozzleDiameters}
+                      value={nozzleId}
+                      onChange={setNozzleId}
+                      displayField="label"
+                      valueField="id"
+                      placeholder="Select Nozzle"
                     />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <label style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Multi-color Print?</label>
+                      <div 
+                        onClick={() => hasAms && setIsMultiColor(!isMultiColor)}
+                        style={{ 
+                          height: '42px', 
+                          background: isMultiColor ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.05)', 
+                          border: `1px solid ${isMultiColor ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`,
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: !hasAms ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.2s',
+                          fontSize: '0.85rem',
+                          color: !hasAms ? 'rgba(255,255,255,0.2)' : (isMultiColor ? 'var(--primary)' : 'rgba(255,255,255,0.5)'),
+                          fontWeight: isMultiColor ? 'bold' : 'normal'
+                        }}
+                      >
+                        {!hasAms ? 'AMS Not Ready' : (isMultiColor ? '✓ Multi-color Active' : 'Single Color')}
+                      </div>
+                    </div>
                   </div>
 
-                  <CustomNumberInput 
-                    label="Quantity" 
-                    min="1" 
-                    max="100" 
-                    value={quantity} 
-                    onChange={val => setQuantity(val.toString())} 
-                    style={{ marginBottom: '1.5rem' }}
-                  />
-                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <CustomNumberInput 
+                      label="Quantity" 
+                      min="1" 
+                      max="100" 
+                      value={quantity} 
+                      onChange={val => setQuantity(val.toString())} 
+                    />
+                    {isMultiColor && (
+                      <CustomNumberInput 
+                        label="Est. Transitions" 
+                        min="1" 
+                        max="20000" 
+                        value={colorTransitions} 
+                        onChange={val => setColorTransitions(val.toString())} 
+                      />
+                    )}
+                  </div>
+
                   {errorMsg && (
                     <div style={{ color: 'var(--error)', background: 'rgba(239, 68, 68, 0.1)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
                       {errorMsg}
                     </div>
                   )}
 
-                  <button 
-                    className="btn-primary" 
-                    onClick={handleAnalyze}
-                    disabled={isUploading || isAnalyzing}
-                    style={{ width: '100%' }}
-                  >
-                    {(isUploading || isAnalyzing) ? (
-                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'spin 1s linear infinite' }}>
-                          <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        {isUploading ? 'Uploading...' : 'Calculating Price...'}
-                      </span>
-                    ) : (
-                      'Generate Quote'
-                    )}
+                  <button className="btn-primary" onClick={handleAnalyze} disabled={isUploading || isAnalyzing} style={{ width: '100%' }}>
+                    {(isUploading || isAnalyzing) ? 'Processing...' : 'Generate Quote'}
                   </button>
                   <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                     <button className="btn-secondary" onClick={resetFlow} style={{ border: 'none', width: '100%' }}>
@@ -330,15 +381,6 @@ export default function Home() {
                   <div style={{ textAlign: 'center' }}>
                     <p style={{ color: 'var(--success)', fontSize: '0.9rem', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '2px' }}>Analysis Complete</p>
                     <h2 style={{ fontSize: '3rem', margin: '0' }} className="text-gradient">${quote.totalCost.toFixed(2)}</h2>
-                  </div>
-
-                  {/* Config Summary Chips */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    {[material, quality, `${infill}%`, color, `x${quantity}`].map((text, idx) => (
-                      <span key={idx} style={{ background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '100px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
-                        {text}
-                      </span>
-                    ))}
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -358,38 +400,17 @@ export default function Home() {
                       <span style={{ color: 'rgba(255,255,255,0.6)' }}>Material:</span>
                       <span>${quote.breakdown.materialCost.toFixed(2)}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>Electricity:</span>
-                      <span>${quote.breakdown.electricityCost.toFixed(2)}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>Labor & Setup:</span>
-                      <span>${quote.breakdown.labor.toFixed(2)}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ color: 'rgba(255,255,255,0.6)' }}>Machine Overhead:</span>
-                      <span>${quote.breakdown.machineDepreciation.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  {/* What Happens Next Box */}
-                  <div style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.15)', borderRadius: '8px', padding: '0.875rem 1rem', fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-                    <strong style={{ display: 'block', color: 'white', marginBottom: '0.4rem' }}>📦 What to expect</strong>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: '0.5rem 0 0 0' }}>
-                      <li>• We'll start printing within 1 business day</li>
-                      <li>• Most orders ship or are ready for local pickup within 3–5 days</li>
-                      <li>• You'll get email updates at each stage</li>
-                    </ul>
+                    {quote.breakdown.amsPurgeCost > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.6)' }}>Multi-color Prep:</span>
+                        <span>${quote.breakdown.amsPurgeCost.toFixed(2)}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button 
-                      className="btn-primary" 
-                      style={{ flex: 1 }} 
-                      onClick={handleCheckout} 
-                      disabled={isCheckingOut}
-                    >
-                      {isCheckingOut ? 'Redirecting to Stripe...' : 'Proceed to Checkout'}
+                    <button className="btn-primary" style={{ flex: 1 }} onClick={handleCheckout} disabled={isCheckingOut}>
+                      {isCheckingOut ? 'Redirecting...' : 'Checkout'}
                     </button>
                     <button className="btn-secondary" onClick={resetFlow}>Start Over</button>
                   </div>
@@ -409,10 +430,6 @@ export default function Home() {
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
-        }
-        @media (max-width: 600px) {
-          .fcp-nav-links { gap: 1rem !important; font-size: 0.8rem !important; }
-          .fcp-hero-title { font-size: 2.8rem !important; }
         }
       `}} />
     </main>
