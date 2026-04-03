@@ -7,7 +7,7 @@ interface UploadDropzoneProps {
   onFileAccepted: (file: File) => void;
 }
 
-const MAX_FILE_SIZE_MB = 50;
+const MAX_FILE_SIZE_MB = 100;
 const MAX_FILE_SIZE_BYTES = Math.floor(MAX_FILE_SIZE_MB * 1024 * 1024);
 const ALLOWED_EXTENSIONS = ['.stl', '.3mf'];
 
@@ -80,7 +80,7 @@ export default function UploadDropzone({ onFileAccepted }: UploadDropzoneProps) 
 
   return (
     <div 
-      className={`${styles.dropzone} ${isDragging ? styles.active : ''} glass`}
+      className={`${styles.dropzone} ${isDragging ? styles.active : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -96,16 +96,17 @@ export default function UploadDropzone({ onFileAccepted }: UploadDropzoneProps) 
       
       <div className={styles.content}>
         <div className={styles.icon}>
-          {/* Simple SVG Icon for upload */}
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 4V16M12 4L8 8M12 4L16 8M4 17V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 16L12 11L17 16" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 11V21" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M20.39 18.39C21.3553 17.8681 22.1154 17.0263 22.5401 16.0094C22.9648 14.9925 23.0298 13.861 22.724 12.8091C22.4182 11.7572 21.76 10.8491 20.8644 10.2396C19.9688 9.63004 18.8906 9.35624 17.81 9.46001H16.74C16.4357 8.2709 15.8285 7.18524 14.9751 6.30419C14.1217 5.42314 13.0537 4.77884 11.8706 4.43169C10.6875 4.08453 9.43265 4.04758 8.22306 4.32431C7.01347 4.60105 5.89504 5.18128 4.97191 6.01103C4.04877 6.84079 3.35515 7.89025 2.9556 9.06173C2.55606 10.2332 2.4654 11.4813 2.69206 12.6896C2.91873 13.8979 3.4542 15.0218 4.24869 15.9566C5.04318 16.8914 6.06646 17.6027 7.22 18.02" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
         <div className={styles.text}>
-          Drag and drop your 3D model here
+          Upload 3D Model <span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 'normal' }}>– Get Price</span>
         </div>
         <div className={styles.subtext}>
-          Supports .STL and .3MF files up to {MAX_FILE_SIZE_MB}MB
+          Drag STL or 3MF here (up to {MAX_FILE_SIZE_MB}MB)
         </div>
         {error && (
           <div className={styles.error}>
@@ -113,6 +114,9 @@ export default function UploadDropzone({ onFileAccepted }: UploadDropzoneProps) 
           </div>
         )}
       </div>
+      
+      {/* Background decoration */}
+      <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '100px', height: '100px', background: 'var(--primary)', borderRadius: '50%', filter: 'blur(50px)', opacity: 0.15 }}></div>
     </div>
   );
 }

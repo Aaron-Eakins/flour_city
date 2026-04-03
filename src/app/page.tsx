@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { upload } from '@vercel/blob/client';
 import styles from './page.module.css';
+import Navbar from '../components/Navbar';
 import UploadDropzone from '../components/UploadDropzone';
 import ModelViewer from '../components/ModelViewer';
 import { QuoteResult } from '../lib/quoteEngine';
@@ -18,6 +19,7 @@ export default function Home() {
   const [dbQuoteId, setDbQuoteId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [dimensions, setDimensions] = useState<{ x: number, y: number, z: number } | null>(null);
 
   // Dynamic Options State
   const [options, setOptions] = useState<{
@@ -45,6 +47,10 @@ export default function Home() {
   const [isMultiColor, setIsMultiColor] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState<number[]>([]);
   const [colorTransitions, setColorTransitions] = useState('0');
+  
+  // New logistics state
+  const [deliveryMethod, setDeliveryMethod] = useState<'PICKUP' | 'SHIPPING'>('SHIPPING');
+  const [turnaroundTier, setTurnaroundTier] = useState<'STANDARD' | 'EXPRESS'>('STANDARD');
 
   useEffect(() => {
     async function fetchOptions() {
@@ -150,7 +156,9 @@ export default function Home() {
           nozzleId,
           isMultiColor,
           selectedSlots,
-          colorTransitions: parseInt(colorTransitions) || 0
+          colorTransitions: parseInt(colorTransitions) || 0,
+          deliveryMethod,
+          turnaroundTier
         }),
       });
 
@@ -172,6 +180,7 @@ export default function Home() {
 
       setQuote(data.quoteData);
       setDbQuoteId(data.dbQuoteId);
+      setDimensions(data.dimensions || null);
     } catch (err) {
       console.error('Analysis Error:', err);
       setErrorMsg((err as Error).message || 'An unexpected error occurred. Please try again.');
@@ -186,30 +195,12 @@ export default function Home() {
     setQuote(null);
     setDbQuoteId(null);
     setErrorMsg(null);
+    setDimensions(null);
   };
 
   return (
     <main className={styles.main}>
-      <nav style={{ 
-        position: 'absolute', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        padding: '1.5rem 2rem', 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        zIndex: 100
-      }}>
-        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{ width: '24px', height: '24px', background: 'var(--primary)', borderRadius: '4px' }}></div>
-          Flour City Prints
-        </div>
-        <div className="fcp-nav-links" style={{ display: 'flex', gap: '2rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
-          <Link href="/" style={{ color: 'white', fontWeight: 600 }}>Home</Link>
-          <Link href="/status" style={{ textDecoration: 'none', color: 'inherit' }}>Order Status</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className={`${styles.hero} animate-fade-in`} style={{ marginBottom: fileToUpload ? '2rem' : '4rem', marginTop: '6rem' }}>
         <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--primary)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
@@ -246,18 +237,26 @@ export default function Home() {
                 <div style={{ textAlign: 'left' }}>
                   <h2 style={{ marginBottom: '1.5rem', textAlign: 'center', fontSize: '1.5rem' }}>Configure Print</h2>
                   
-                  <div style={{ marginBottom: '1rem' }}>
-                    {!isMultiColor ? (
-                      <CustomDropdown 
-                        label="Filament / Color"
-                        options={options.materials}
-                        value={material}
-                        onChange={setMaterial}
-                        displayField="name"
-                        valueField="name"
-                        placeholder="Select Filament"
-                      />
-                    ) : (
+                    <div style={{ marginBottom: '1rem' }}>
+                      {!isMultiColor ? (
+                        <>
+                          <CustomDropdown 
+                            label="Filament / Color"
+                            options={options.materials}
+                            value={material}
+                            onChange={setMaterial}
+                            displayField="name"
+                            valueField="name"
+                            placeholder="Select Filament"
+                          />
+                          <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.4rem' }}>
+                            {material.includes('PLA') ? '🌱 Best for models, toys, and display pieces.' : 
+                             material.includes('PETG') ? '🔩 Best for functional parts and outdoor use.' :
+                             material.includes('ABS') ? '🔥 Best for high-heat automotive applications.' :
+                             'Reliable, high-quality industrial filaments.'}
+                          </p>
+                        </>
+                      ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                         <label style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Select AMS Filaments (2-4)</label>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
@@ -361,6 +360,50 @@ export default function Home() {
                     )}
                   </div>
 
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <label style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', display: 'block', marginBottom: '0.5rem' }}>Delivery & Turnaround</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                      <div 
+                        onClick={() => setDeliveryMethod(deliveryMethod === 'SHIPPING' ? 'PICKUP' : 'SHIPPING')}
+                        style={{ 
+                          padding: '0.6rem', 
+                          background: 'rgba(255,255,255,0.03)', 
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '0.2rem'
+                        }}
+                      >
+                        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Logistics</span>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: deliveryMethod === 'PICKUP' ? 'var(--primary)' : 'white' }}>
+                          {deliveryMethod === 'PICKUP' ? '📍 Local Pickup' : '🚚 Shipping'}
+                        </span>
+                      </div>
+                      <div 
+                        onClick={() => setTurnaroundTier(turnaroundTier === 'STANDARD' ? 'EXPRESS' : 'STANDARD')}
+                        style={{ 
+                          padding: '0.6rem', 
+                          background: 'rgba(255,255,255,0.03)', 
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '0.2rem'
+                        }}
+                      >
+                        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Priority</span>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: turnaroundTier === 'EXPRESS' ? '#fbbf24' : 'white' }}>
+                          {turnaroundTier === 'EXPRESS' ? '⚡ Express' : '📅 Standard'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
                   {errorMsg && (
                     <div style={{ color: 'var(--error)', background: 'rgba(239, 68, 68, 0.1)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
                       {errorMsg}
@@ -394,6 +437,25 @@ export default function Home() {
                     </div>
                   </div>
 
+                  {dimensions && (
+                    <div style={{ 
+                      background: 'rgba(255,255,255,0.03)', 
+                      padding: '1rem', 
+                      borderRadius: '8px',
+                      border: (dimensions.x > 256 || dimensions.y > 256 || dimensions.z > 256) ? '1px solid var(--error)' : '1px solid rgba(255,255,255,0.05)'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                         <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginBottom: '0.2rem' }}>Dimensions (X, Y, Z)</p>
+                         <span style={{ fontSize: '0.7rem', color: (dimensions.x > 256 || dimensions.y > 256 || dimensions.z > 256) ? 'var(--error)' : 'var(--success)', fontWeight: 'bold' }}>
+                            {(dimensions.x > 256 || dimensions.y > 256 || dimensions.z > 256) ? '⚠️ EXCEEDS PLATE' : '✓ FITS 256mm PLATE'}
+                         </span>
+                      </div>
+                      <p style={{ fontSize: '1rem', fontWeight: 'bold', fontFamily: 'monospace' }}>
+                        {dimensions.x.toFixed(1)} x {dimensions.y.toFixed(1)} x {dimensions.z.toFixed(1)} mm
+                      </p>
+                    </div>
+                  )}
+
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px', fontSize: '0.9rem' }}>
                     <h4 style={{ marginBottom: '1rem', fontSize: '1rem', color: 'rgba(255,255,255,0.8)' }}>Cost Breakdown</h4>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
@@ -404,6 +466,18 @@ export default function Home() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                         <span style={{ color: 'rgba(255,255,255,0.6)' }}>Multi-color Prep:</span>
                         <span>${quote.breakdown.amsPurgeCost.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {turnaroundTier === 'EXPRESS' && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span style={{ color: '#fbbf24' }}>Express Premium:</span>
+                        <span style={{ color: '#fbbf24' }}>+50%</span>
+                      </div>
+                    )}
+                    {deliveryMethod === 'SHIPPING' && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.6)' }}>Shipping:</span>
+                        <span>$5.00</span>
                       </div>
                     )}
                   </div>
@@ -425,6 +499,44 @@ export default function Home() {
         <div>© {new Date().getFullYear()} Flour City Prints · Rochester, NY</div>
         <a href="mailto:roc@flourcityprints.com" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>roc@flourcityprints.com</a>
       </footer>
+
+      {/* Pricing Summary Section (Differentiator: Visible Pricing Before Upload)
+      {!fileToUpload && (
+        <section id="ballpark-pricing" style={{ 
+          marginTop: '6rem', 
+          width: '100%', 
+          maxWidth: '1000px', 
+          textAlign: 'center',
+          animation: 'fade-in 1.5s'
+        }}>
+          <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem' }}>Transparent <span className="text-gradient-primary">Rates</span></h2>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+            gap: '1.5rem' 
+          }}>
+            {[
+              { type: 'PLA', icon: '🌱', start: '$10', use: 'Standard prototyping' },
+              { type: 'PETG', icon: '🔩', start: '$12', use: 'Functional & Outdoor' },
+              { type: 'ABS', icon: '🔥', start: '$15', use: 'Heat resistant' },
+              { type: 'TPU', icon: '👟', start: '$18', use: 'Flexible & Gaskets' }
+            ].map(m => (
+              <div key={m.type} className="glass" style={{ padding: '2rem', borderRadius: '16px' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{m.icon}</div>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{m.type}</h3>
+                <p style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+                  Starting at {m.start}
+                </p>
+                <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>{m.use}</p>
+              </div>
+            ))}
+          </div>
+          <p style={{ marginTop: '2rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)' }}>
+             Average part ships in <span style={{ color: 'white' }}>24-48 hours</span>. Express same-day turnaround available.
+          </p>
+        </section>
+      )}
+      */}
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes spin {
