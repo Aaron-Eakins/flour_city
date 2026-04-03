@@ -10,13 +10,13 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   if (!sessionToken) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const { status } = await req.json();
-    const updated = await prisma.quote.update({
+    const data = await req.json();
+    const updated = await prisma.material.update({
       where: { id: params.id },
-      data: { status },
+      data,
     });
     return NextResponse.json(updated);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update material' }, { status: 500 });
   }
 }

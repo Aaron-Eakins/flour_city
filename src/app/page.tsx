@@ -10,6 +10,8 @@ import ModelViewer from '../components/ModelViewer';
 import { QuoteResult } from '../lib/quoteEngine';
 import CustomDropdown from '../components/CustomDropdown';
 import CustomNumberInput from '../components/CustomNumberInput';
+import ContactForm from '../components/ContactForm';
+import { Mail, MapPin } from 'lucide-react';
 
 export default function Home() {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
@@ -495,9 +497,49 @@ export default function Home() {
         )}
       </div>
 
-      <footer style={{ width: '100%', padding: '2rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <section id="contact" style={{ marginTop: '8rem', width: '100%', maxWidth: '900px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Get in <span className="text-gradient">Touch</span></h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '3rem' }}>
+          Have a bulk order or a custom project? We're here to help Rochester grow.
+        </p>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '3rem' }}>
+          <ContactForm />
+          
+          <div style={{ textAlign: 'left', padding: '1rem' }}>
+            <h4 style={{ fontSize: '1.25rem', marginBottom: '1.5rem' }}>Business Info</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <div style={{ padding: '10px', background: 'rgba(99,102,241,0.1)', borderRadius: '8px', color: 'var(--primary)' }}>
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <p style={{ fontWeight: 'bold', marginBottom: '0.2rem' }}>Location</p>
+                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>Rochester, New York<br />Pickup instructions sent after payment.</p>
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <div style={{ padding: '10px', background: 'rgba(99,102,241,0.1)', borderRadius: '8px', color: 'var(--primary)' }}>
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <p style={{ fontWeight: 'bold', marginBottom: '0.2rem' }}>Email</p>
+                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>roc@flourcityprints.com</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer style={{ width: '100%', padding: '4rem 2rem 2rem 2rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: '8rem' }}>
         <div>© {new Date().getFullYear()} Flour City Prints · Rochester, NY</div>
-        <a href="mailto:roc@flourcityprints.com" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>roc@flourcityprints.com</a>
+        <div style={{ display: 'flex', gap: '2rem' }}>
+          <Link href="/about" style={{ color: 'inherit', textDecoration: 'none' }}>About</Link>
+          <Link href="/pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Pricing</Link>
+          <Link href="/dashboard" style={{ color: 'inherit', textDecoration: 'none' }}>Admin</Link>
+        </div>
       </footer>
 
       {/* Pricing Summary Section (Differentiator: Visible Pricing Before Upload)

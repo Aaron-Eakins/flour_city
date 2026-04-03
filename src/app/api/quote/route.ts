@@ -280,6 +280,7 @@ export async function POST(req: NextRequest) {
         purgeWasteCost: quoteBreakdown.breakdown.amsPurgeCost || 0,
         primeTowerCost: 0, // Simplified for now
         layerCount,
+        blobUrl, // Save for dashboard access
       },
     });
 
