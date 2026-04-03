@@ -291,16 +291,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Delete the blob now that we've processed the file (requires BLOB_READ_WRITE_TOKEN)
-    if (blobUrl && process.env.BLOB_READ_WRITE_TOKEN) {
-      try {
-        await del(blobUrl);
-        console.log('Blob deleted:', blobUrl);
-      } catch (blobDeleteErr) {
-        console.warn('Blob delete failed (non-fatal):', blobDeleteErr);
-      }
-    } else if (blobUrl && !process.env.BLOB_READ_WRITE_TOKEN) {
-      console.warn('BLOB_READ_WRITE_TOKEN is missing. Skipping blob deletion.');
-    }
+    // We no longer delete the blob here to prevent race conditions where 
+    // overlapping requests delete each other's files.
   }
 }
