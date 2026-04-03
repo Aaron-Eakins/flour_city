@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import prisma from '@/lib/db';
 import QuoteTable from './QuoteTable';
 import ConfigForm from './ConfigForm';
@@ -5,6 +7,27 @@ import ConfigForm from './ConfigForm';
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
+  // 1. Session Validation (Edge-safe alternative to Middleware DB check)
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get('admin_session')?.value;
+
+  if (!sessionToken) {
+    redirect('/dashboard/login');
+  }
+
+  const session = await prisma.adminSession.findUnique({
+    where: { 
+      token: sessionToken,
+      expiresAt: { gt: new Date() }
+    },
+  });
+
+  if (!session) {
+    // If token exists but is invalid/expired, redirect to login
+    redirect('/dashboard/login');
+  }
+
+  // 2. Fetch Dashboard Content
   const quotes = await prisma.quote.findMany({
     orderBy: { createdAt: 'desc' }
   });
