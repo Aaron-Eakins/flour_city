@@ -8,6 +8,7 @@ import { del } from '@vercel/blob';
 import prisma from '@/lib/db';
 import { calculateQuote } from '@/lib/quoteEngine';
 import { sendQuoteGeneratedEmail } from '@/lib/email';
+import { calculateSTLMetrics } from '@/lib/stlUtils';
 
 const execFileAsync = promisify(execFile);
 
@@ -48,6 +49,10 @@ export async function POST(req: NextRequest) {
     const selectedSlots = ((body.selectedSlots as any[]) || []).map(s => parseInt(s.toString(), 10));
     const colorTransitions = parseInt((body.colorTransitions as string) || '0', 10);
     const layerCount = body.layerCount ? parseInt(body.layerCount as string, 10) : 0;
+
+    // Logistics fields from request
+    const deliveryMethod = (body.deliveryMethod as 'PICKUP' | 'SHIPPING') || 'SHIPPING';
+    const turnaroundTier = (body.turnaroundTier as 'STANDARD' | 'EXPRESS') || 'STANDARD';
 
 
 
@@ -95,6 +100,21 @@ export async function POST(req: NextRequest) {
     const slicerPath = process.env.SLICER_PATH || 'orca-slicer';
     let weightGrams = 0;
     let printTimeHours = 0;
+    let dimensions = { x: 0, y: 0, z: 0 };
+
+    // New Accuracy logic: Calculate volume from STL mesh
+    if (ext === '.stl') {
+      try {
+        const metrics = calculateSTLMetrics(buffer);
+        weightGrams = metrics.weightGrams;
+        dimensions = metrics.dimensions;
+        // Print time heuristic: 1 hour per 50g of material
+        printTimeHours = Math.max(0.2, weightGrams / 50); 
+        console.log(`Mesh metrics: ${weightGrams.toFixed(1)}g, dim: ${dimensions.x.toFixed(1)}x${dimensions.y.toFixed(1)}mm`);
+      } catch (err) {
+        console.error('Failed to parse STL mesh metrics:', err);
+      }
+    }
 
     // Try the slicer if a custom path is configured
     let slicerFound = false;
@@ -141,12 +161,12 @@ export async function POST(req: NextRequest) {
       console.log('Slicer binary not available (expected on Vercel). Using size-based estimate.');
     }
 
-    // Fallback: derive weight/time estimates from file size
+    // Fallback: derive weight/time from file size if mesh parse failed
     if (weightGrams === 0 || printTimeHours === 0) {
       const sizeMb = buffer.length / (1024 * 1024);
       weightGrams = Math.max(10, sizeMb * 15);
       printTimeHours = Math.max(0.5, sizeMb * 0.4);
-      console.log(`Fallback estimate: ${weightGrams.toFixed(1)}g, ${printTimeHours.toFixed(2)}h (file: ${sizeMb.toFixed(2)}MB)`);
+      console.log(`Fallback estimate: ${weightGrams.toFixed(1)}g, ${printTimeHours.toFixed(2)}h`);
     }
 
     console.log(`Final metrics: ${weightGrams}g, ${printTimeHours}h`);
@@ -227,7 +247,9 @@ export async function POST(req: NextRequest) {
       selectedSlots,
       colorTransitions,
       amsMaterials,
-      layerCount
+      layerCount,
+      deliveryMethod,
+      turnaroundTier
     });
 
 
@@ -253,11 +275,12 @@ export async function POST(req: NextRequest) {
         isMultiColor,
         selectedSlots,
         colorTransitions,
+        deliveryMethod,
+        turnaroundTier,
         purgeWasteCost: quoteBreakdown.breakdown.amsPurgeCost || 0,
         primeTowerCost: 0, // Simplified for now
         layerCount,
       },
-
     });
 
     console.log(`Quote saved with ID: ${savedQuote.id}`);
@@ -275,6 +298,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       dbQuoteId: savedQuote.id,
       quoteData: quoteBreakdown,
+      dimensions
     });
 
   } catch (error: any) {

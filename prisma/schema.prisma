@@ -7,12 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum DeliveryMethod {
+  PICKUP
+  SHIPPING
+}
+
+enum TurnaroundTier {
+  STANDARD
+  EXPRESS
+}
+
 model Quote {
   id              String    @id @default(cuid())
   fileName        String
   material        String    @default("PLA")
   quality         String    @default("Standard")
   infill          Int       @default(15)
+  
+  // Logistics
+  deliveryMethod  DeliveryMethod @default(SHIPPING)
+  turnaroundTier  TurnaroundTier @default(STANDARD)
   
   // AMS / Multi-color fields
   isMultiColor      Boolean  @default(false)
@@ -88,6 +102,10 @@ model Material {
   name           String   @unique // Still used for internal matching/lookup
   costPerKg      Float
   enabled        Boolean  @default(true)
+  
+  // Retail Pricing
+  basePrice      Float    @default(10.0) // Flat setup fee for this material
+  pricePerGram   Float?                  // Retail markup price per gram
   
   // Phase 1.2: Filament Schema Extension
   brand          String?

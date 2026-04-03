@@ -34,7 +34,9 @@ export function calculateQuote(
     isMultiColor?: boolean,
     selectedSlots?: number[],
     colorTransitions?: number,
-    amsMaterials?: any[]
+    amsMaterials?: any[],
+    deliveryMethod?: 'PICKUP' | 'SHIPPING',
+    turnaroundTier?: 'STANDARD' | 'EXPRESS'
   }
 
 ): QuoteResult {
@@ -123,6 +125,17 @@ export function calculateQuote(
   const margin = costWithBuffer * (config.profitMarginPercent || 0.5);
 
   let totalCost = costWithBuffer + margin;
+
+  // 9. Turnaround Tier
+  if (options.turnaroundTier === 'EXPRESS') {
+    totalCost *= 1.5; // 50% premium for express
+  }
+
+  // 10. Delivery Method
+  if (options.deliveryMethod === 'SHIPPING') {
+    // Basic flat rate shipping for now
+    totalCost += 5.0; 
+  }
 
   if (totalCost < (config.minimumPrice || 5.0)) {
     totalCost = config.minimumPrice || 5.0;
