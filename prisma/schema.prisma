@@ -14,11 +14,13 @@ model Quote {
   quality         String    @default("Standard")
   infill          Int       @default(15)
   color           String    @default("Black")
+  nozzleDiameter  String    @default("0.4mm")
   quantity        Int       @default(1)
   customerNotes   String?
   materialCost    Float
   electricityCost Float
   laborCost       Float
+  nozzleSwapFee   Float     @default(0.0)
   depreciation    Float
   totalCost       Float
   printTimeHours  Float
@@ -41,16 +43,54 @@ model PricingConfig {
   profitMarginPercent   Float    @default(0.5)
   minimumPrice          Float    @default(5.0)
   notifyOnQuote         Boolean  @default(false)
+  
+  // Phase 1.1: Auth
+  passwordHash          String?
+  
+  // Phase 1.4: Pricing Expansion
+  purgeVolumePerTransitionCm3  Float  @default(1.5)
+  purgeWasteCostMultiplier     Float  @default(1.0)
+  primeTowerVolumePercent      Float  @default(0.05)
+  multiColorFailureBufferExtra Float  @default(0.05)
+  quoteExpiryHours             Int    @default(72)
+  
   updatedAt             DateTime @updatedAt
 }
 
-model Material {
+model AdminSession {
   id        String   @id @default(cuid())
-  name      String   @unique
-  costPerKg Float
-  enabled   Boolean  @default(true)
+  token     String   @unique
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+}
+
+model Material {
+  id             String   @id @default(cuid())
+  name           String   @unique // Still used for internal matching/lookup
+  costPerKg      Float
+  enabled        Boolean  @default(true)
+  
+  // Phase 1.2: Filament Schema Extension
+  brand          String?
+  modelNumber    String?
+  colorName      String?
+  colorHex       String?
+  sku            String?
+  manufacturerId String?
+  materialType   String   @default("PLA")
+  amsSlot        Int?     // 1-4
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model NozzleDiameter {
+  id        String   @id @default(cuid())
+  diameter  Float    // 0.2, 0.4, 0.6, 0.8
+  label     String   // "0.2mm", "0.4mm", etc.
+  isDefault Boolean  @default(false)
+  swapFee   Float    @default(0.0)
+  enabled   Boolean  @default(true)
 }
 
 model Quality {
@@ -77,4 +117,5 @@ model Color {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 

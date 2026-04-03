@@ -1,32 +1,52 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import prisma from '@/lib/db';
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // These paths are always public (login page + login API)
-  if (pathname === '/dashboard/login' || pathname === '/api/admin/login') {
-    return NextResponse.next();
-  }
+  // Protect dashboard and admin API routes (excluding the login page and login API)
+  if (
+    (pathname.startsWith('/dashboard') || pathname.startsWith('/api/admin')) &&
+    pathname !== '/dashboard/login' &&
+    pathname !== '/api/admin/login'
+  ) {
+    const sessionToken = req.cookies.get('admin_session')?.value;
 
-  // Protect dashboard and admin API routes
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/admin')) {
-    const session = req.cookies.get('admin_session')?.value;
-    const expectedPassword = process.env.ADMIN_PASSWORD || 'password123';
+    if (!sessionToken) {
+      return unauthorized(req, pathname);
+    }
 
-    if (session !== expectedPassword) {
-      // Redirect to login for page requests, 401 for API calls
-      if (pathname.startsWith('/api/')) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    try {
+      // Validate session token in DB
+      const session = await prisma.adminSession.findUnique({
+        where: { 
+          token: sessionToken,
+          expiresAt: { gt: new Date() }
+        },
+      });
+
+      if (!session) {
+        return unauthorized(req, pathname);
       }
-      const loginUrl = new URL('/dashboard/login', req.url);
-      return NextResponse.redirect(loginUrl);
+    } catch (error) {
+      console.error('Session validation error:', error);
+      return unauthorized(req, pathname);
     }
   }
 
   return NextResponse.next();
 }
 
+function unauthorized(req: NextRequest, pathname: string) {
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const loginUrl = new URL('/dashboard/login', req.url);
+  return NextResponse.redirect(loginUrl);
+}
+
 export const config = {
   matcher: ['/dashboard/:path*', '/api/admin/:path*'],
 };
+
