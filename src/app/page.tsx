@@ -529,6 +529,12 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            
+            <div style={{ marginTop: '3rem', padding: '1.5rem', background: 'rgba(255,193,7,0.05)', border: '1px solid rgba(255,193,7,0.1)', borderRadius: '12px' }}>
+              <p style={{ fontSize: '0.85rem', color: '#fbbf24', lineHeight: '1.6' }}>
+                <strong>Note:</strong> We currently operate one high-speed Bambu P1S. Lead times are typically 24-48 hours.
+              </p>
+            </div>
           </div>
         </div>
       </section>

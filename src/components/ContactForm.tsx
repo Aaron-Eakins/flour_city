@@ -5,7 +5,7 @@ import { useState } from 'react';
 export default function ContactForm() {
   const [status, setStatus] = useState<'IDLE' | 'SENDING' | 'SUCCESS' | 'ERROR'>('IDLE');
   const [formData, setFormData] = useState({
-    name: 'Aaron Eakins',
+    name: '',
     companyName: '',
     email: '',
     subject: '',
@@ -23,7 +23,7 @@ export default function ContactForm() {
       });
       if (!res.ok) throw new Error('Failed to send');
       setStatus('SUCCESS');
-      setFormData({ name: 'Aaron Eakins', companyName: '', email: '', subject: '', message: '' });
+      setFormData({ name: '', companyName: '', email: '', subject: '', message: '' });
     } catch (err) {
       console.error(err);
       setStatus('ERROR');
@@ -52,13 +52,13 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit} className="glass" style={{ padding: '2rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '1.2rem', textAlign: 'left' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-          <label style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Name</label>
+          <label style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Full Name</label>
           <input 
             required
             type="text" 
             value={formData.name}
             onChange={(e) => setFormData({...formData, name: e.target.value})}
-            placeholder="Aaron Eakins"
+            placeholder="Recipient Name / Business Contact"
             style={{ padding: '0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', outline: 'none' }}
           />
         </div>
@@ -68,7 +68,7 @@ export default function ContactForm() {
             type="text" 
             value={formData.companyName}
             onChange={(e) => setFormData({...formData, companyName: e.target.value})}
-            placeholder="Flour City Prints"
+            placeholder="Organization Name"
             style={{ padding: '0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', outline: 'none' }}
           />
         </div>
