@@ -140,8 +140,7 @@ export default function Home() {
       const blob = await upload(fileToUpload.name, fileToUpload, {
         access: 'public',
         handleUploadUrl: '/api/upload',
-        addRandomSuffix: true,
-      } as any);
+      });
       setIsUploading(false);
 
       setIsAnalyzing(true);

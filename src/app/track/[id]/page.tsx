@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
-export default function TrackPage({ params }: { params: { id: string } }) {
+export default function TrackPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
   const [quote, setQuote] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -29,6 +29,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           ],
           // 50MB upper bound -- Vercel Blob handles large files; our function never sees them
           maximumSizeInBytes: 50 * 1024 * 1024,
+          addRandomSuffix: true,
         };
       },
       onUploadCompleted: async ({ blob }) => {
