@@ -5,8 +5,8 @@ import DimensionedHeader from '../components/common/DimensionedHeader';
 const MaterialsView = () => (
     <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700">
         <div className="max-w-7xl mx-auto px-6 text-[#1A1B1E] text-left">
-            <header className="mb-20 space-y-4">
-                <span className="text-[#D4A017] font-mono tracking-[0.4em] uppercase text-xs font-black">Stocked for Quality</span>
+            <header className="mb-20 space-y-8">
+                <div className="inline-block px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black uppercase tracking-[0.4em]">Stocked for Quality</div>
                 <DimensionedHeader line1="MATERIAL" line2="LIBRARY." layerHt="0.12mm" partWd="142.8mm" variant="light" />
                 <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg">Curated high-performance polymers, optimized for our specialized hotends.</p>
             </header>

@@ -15,8 +15,8 @@ const GalleryView = () => {
     return (
         <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700 text-[#1A1B1E]">
             <div className="max-w-7xl mx-auto px-6 text-left">
-                <header className="mb-20 space-y-4 text-left">
-                    <span className="text-[#D4A017] font-mono tracking-[0.4em] uppercase text-xs font-black">Visual Validation</span>
+                <header className="mb-20 space-y-8 text-left">
+                    <div className="inline-block px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black uppercase tracking-[0.4em]">Visual Validation</div>
                     <DimensionedHeader line1="LAB" line2="OUTPUTS." layerHt="0.08mm" partWd="114.2mm" variant="light" />
                     <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left text-[#1A1B1E]">A visual archive of technical fidelity across our material library and nozzle architectures.</p>
                 </header>
