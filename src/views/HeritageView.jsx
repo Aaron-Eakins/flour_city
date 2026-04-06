@@ -7,8 +7,8 @@ import LogoIcon from '../components/common/LogoIcon';
 const HeritageView = () => (
     <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-1000 text-[#1A1B1E]">
         <div className="max-w-7xl mx-auto px-6 text-left">
-            <header className="mb-32 space-y-8 text-left">
-                <div className="inline-block px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black uppercase tracking-[0.4em]">The Archive</div>
+            <header className="mb-32 space-y-12 text-left">
+                <div className="w-fit px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black uppercase tracking-[0.4em]">The Archive</div>
                 <DimensionedHeader line1="BUILT TO" line2="LAST." layerHt="0.12mm" partWd="114.2mm" variant="light" />
                 <p className="text-gray-500 max-w-xl font-medium leading-relaxed text-xl italic text-left">"Continuing a two-hundred-year-old conversation about how things are made in the Flour City."</p>
             </header>

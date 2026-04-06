@@ -3,6 +3,8 @@ import React from 'react';
 /**
  * DimensionedHeader
  * Uses Solid text to ensure 100% stability across all screen types.
+ * pt-12 ensures that the vertical leader line and italic text variants 
+ * have enough clearance from preceding elements.
  */
 const DimensionedHeader = ({
     line1,
@@ -15,9 +17,9 @@ const DimensionedHeader = ({
     const textColor = isDark ? "text-[#F2F1EF]" : "text-[#1A1B1E]";
 
     return (
-        <div className="relative inline-block mt-8 mb-12 max-w-full">
+        <div className="relative inline-block pt-12 max-w-full">
             {/* HT Leader Line (Vertical) */}
-            <div className="absolute -left-10 md:-left-16 top-0 bottom-0 flex flex-col items-center">
+            <div className="absolute -left-10 md:-left-16 top-12 bottom-10 flex flex-col items-center">
                 <div className="w-px h-full bg-[#D4A017] opacity-40"></div>
                 <div className="absolute top-1/2 -translate-y-1/2 -left-6 md:-left-8">
                     <div className="rotate-[-90deg] whitespace-nowrap text-[8px] md:text-[10px] font-mono font-black tracking-[0.4em] text-[#D4A017] uppercase">
@@ -54,3 +56,4 @@ const DimensionedHeader = ({
 };
 
 export default DimensionedHeader;
+
