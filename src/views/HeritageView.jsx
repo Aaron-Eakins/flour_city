@@ -2,6 +2,7 @@ import React from 'react';
 import { Waves, Anchor, Compass } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import OpticsIcon from '../components/common/OpticsIcon';
+import LogoIcon from '../components/common/LogoIcon';
 
 const HeritageView = () => (
     <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-1000 text-[#1A1B1E]">
@@ -44,9 +45,24 @@ const HeritageView = () => (
                         <p className="text-gray-600 font-medium text-lg leading-relaxed text-left text-[#1A1B1E]">Rochester became the world's center for precision engineering, shifting from river power to the physics of light.</p>
                     </div>
                 </div>
+                {/* 2026 Digital Mill Section */}
+                <div className="grid md:grid-cols-2 gap-12 items-center text-left">
+                    <div className="space-y-6 text-right order-2 md:order-1">
+                        <span className="text-4xl font-black text-[#D4A017] italic">2026</span>
+                        <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Digital Mill</h3>
+                        <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-right">Flour City Labs replaces the milling stone with high-resolution nozzles, building complex realities layer by layer.</p>
+                    </div>
+                    <div className="flex justify-center order-1 md:order-2">
+                        <div className="relative group">
+                            <div className="absolute -inset-4 border border-[#D4A017]/30 translate-x-4 translate-y-4 transition-transform"></div>
+                            <div className="relative w-64 h-64 bg-[#EAE8E4] border border-gray-300 flex items-center justify-center shadow-xl text-[#1A1B1E]"><LogoIcon className="w-32 h-32" /></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 );
 
 export default HeritageView;
+

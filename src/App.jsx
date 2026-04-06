@@ -7,6 +7,7 @@ import GalleryView from './views/GalleryView';
 import ProcessView from './views/ProcessView';
 import HeritageView from './views/HeritageView';
 import TOSView from './views/TOSView';
+import PrivacyView from './views/PrivacyView';
 import ContactView from './views/ContactView';
 
 const App = () => {
@@ -28,6 +29,10 @@ const App = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [view]);
+
     return (
         <div className="min-h-screen bg-[#F2F1EF] font-sans selection:bg-[#D4A017] selection:text-[#1A1B1E] overflow-x-hidden text-[#1A1B1E]">
             <Navigation view={view} setView={setView} isScrolled={isScrolled} isHome={view === 'home'} />
@@ -47,6 +52,7 @@ const App = () => {
                 {view === 'process' && <ProcessView />}
                 {view === 'heritage' && <HeritageView />}
                 {view === 'tos' && <TOSView />}
+                {view === 'privacy' && <PrivacyView />}
                 {view === 'contact' && <ContactView />}
             </main>
 
@@ -64,3 +70,4 @@ const App = () => {
 };
 
 export default App;
+

@@ -7,26 +7,37 @@ const ProcessView = () => (
         <div className="max-w-7xl mx-auto px-6 text-left">
             <header className="mb-16 space-y-4">
                 <span className="text-[#D4A017] font-mono tracking-[0.4em] uppercase text-xs font-black">Industrial Lifecycle</span>
-                <DimensionedHeader line1="HOW IT" line2="WORKS." layerHt="0.20mm" partWd="142.8mm" variant="light" />
+                <DimensionedHeader line1="HOW THE" line2="LAB WORKS." layerHt="0.20mm" partWd="142.8mm" variant="light" />
+                <p className="text-gray-500 max-w-xl font-medium leading-relaxed text-lg text-left">A human-in-the-loop workflow designed to eliminate digital guesswork.</p>
             </header>
 
             <div className="grid md:grid-cols-2 gap-8 mb-20 text-left">
-                <div className="p-8 bg-[#1A1B1E] text-white rounded-sm space-y-4 shadow-xl">
-                    <div className="flex items-center space-x-3 text-[#D4A017]"><Shield size={20} /><h4 className="text-sm font-black uppercase tracking-widest italic text-white">The Technician's Shield</h4></div>
-                    <p className="text-xs text-slate-400 leading-relaxed font-medium">CAD structural integrity is the client's responsibility. Fails due to geometry constraints are subject to a **$25.00 Lab Reset Fee**.</p>
+                <div className="p-8 bg-[#1A1B1E] text-white rounded-sm space-y-4">
+                    <div className="flex items-center space-x-3 text-[#D4A017]">
+                        <Shield size={20} />
+                        <h4 className="text-sm font-black uppercase tracking-widest italic">The Technician's Shield</h4>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                        CAD structural integrity is the client's responsibility. Designs failing due to geometry constraints (non-manifold edges/thin walls) are subject to a **$25.00 Lab Reset Fee** to cover material and setup recovery.
+                    </p>
                 </div>
-                <div className="p-8 bg-[#EAE8E4] border border-gray-300 rounded-sm space-y-4 shadow-xl">
-                    <div className="flex items-center space-x-3 text-[#2C3E50]"><Layers size={20} /><h4 className="text-sm font-black uppercase tracking-widest italic text-[#1A1B1E]">Support Policy</h4></div>
-                    <p className="text-xs text-gray-500 leading-relaxed font-medium">All parts ship as **Raw Lab Output** with supports intact. This protects delicate features during transit.</p>
+                <div className="p-8 bg-[#EAE8E4] border border-gray-300 rounded-sm space-y-4">
+                    <div className="flex items-center space-x-3 text-[#2C3E50]">
+                        <Layers size={20} />
+                        <h4 className="text-sm font-black uppercase tracking-widest italic text-[#1A1B1E]">Support Policy</h4>
+                    </div>
+                    <p className="text-xs text-gray-500 leading-relaxed font-medium">
+                        All parts ship as **Raw Lab Output** with supports intact. This protects delicate features during transit. Premium finishing services for support removal are available on a project-by-project basis.
+                    </p>
                 </div>
             </div>
 
             <div className="space-y-12 relative text-[#1A1B1E]">
                 {[
-                    { id: "01", title: "Configuration", icon: <FileCode className="w-8 h-8" />, desc: "Define your requirements using QuoteLab. Opt for Visual Validation if you require macro photos.", items: ["Secure Upload", "Validation Check"] },
-                    { id: "02", title: "Lab Review", icon: <Eye className="w-8 h-8" />, desc: "Every project receives a dedicated review within 24 hours to validate buildability.", items: ["DFM Audit", "Pricing Quote"] },
-                    { id: "03", title: "Production", icon: <Cpu className="w-8 h-8" />, desc: "Your project enters our professional queue, utilizing AMS technology for multi-material fidelity.", items: ["Atmospheric Control", "Layer QC"] },
-                    { id: "04", title: "Fulfilment", icon: <Truck className="w-8 h-8" />, desc: "Final parts are secured and shipped nationwide from our Rochester hub.", items: ["Secure Shipping", "Regional Express"] }
+                    { id: "01", title: "Configuration", icon: <FileCode className="w-8 h-8" />, desc: "Define your requirements using QuoteLab. Opt for Visual Validation if you require macro photos before shipping.", items: ["Secure Upload", "Validation Check"] },
+                    { id: "02", title: "Lab Review", icon: <Eye className="w-8 h-8" />, desc: "Every project at Flour City Labs receives a dedicated review by a technician within 24 hours to validate buildability.", items: ["DFM Audit", "Pricing Quote"] },
+                    { id: "03", title: "Production", icon: <Cpu className="w-8 h-8" />, desc: "Your project enters our professional queue, utilizing AMS technology for multi-material fidelity.", items: ["Queue tracking", "QC checks"] },
+                    { id: "04", title: "Fulfilment", icon: <Truck className="w-8 h-8" />, desc: "Final inspection precedes protective packaging. We ship nationwide with zero-lead-time handoffs to courier networks.", items: ["Secure Shipping", "Regional Express"] }
                 ].map((step, idx) => (
                     <div key={idx} className="bg-[#EAE8E4]/50 border border-gray-300 p-10 rounded-sm grid md:grid-cols-12 gap-8 items-start group hover:shadow-2xl transition-all relative z-10 text-[#1A1B1E]">
                         <span className="md:col-span-1 text-5xl font-black text-[#D4A017]/20 font-mono group-hover:text-[#D4A017] transition-colors">{step.id}</span>
@@ -47,3 +58,4 @@ const ProcessView = () => (
 );
 
 export default ProcessView;
+
