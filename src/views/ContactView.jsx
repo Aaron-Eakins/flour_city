@@ -7,8 +7,8 @@ const ContactView = () => (
     <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700 text-[#1A1B1E]">
         <div className="max-w-7xl mx-auto px-6">
             <header className="mb-20 space-y-12 text-left text-[#1A1B1E]">
-                <div className="w-fit px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black uppercase tracking-[0.4em]">Region First</div>
-                <DimensionedHeader line1="THE" line2="PIPELINE." layerHt="0.10mm" partWd="192.5mm" variant="light" />
+                <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Region First</span>
+                <DimensionedHeader line1="THE" line2="PIPELINE." layerHt="0.20mm" partWd="192mm" variant="light" />
                 <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Operating out of FCL Lab 1 in Rochester's Monroe Ave District. Serving the nationwide additive community with regional dedication.</p>
             </header>
 

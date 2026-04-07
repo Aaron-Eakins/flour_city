@@ -19,8 +19,8 @@ const HomeView = (props) => (
                         <DimensionedHeader
                             line1="LOCAL SCALE."
                             line2="MODERN CRAFT."
-                            layerHt="0.08mm"
-                            partWd="114.2mm"
+                            layerHt="0.10mm"
+                            partWd="256mm"
                             variant="dark"
                         />
                     </div>

@@ -6,8 +6,8 @@ const MaterialsView = () => (
     <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700">
         <div className="max-w-7xl mx-auto px-6 text-[#1A1B1E] text-left">
             <header className="mb-20 space-y-12 text-left">
-                <div className="w-fit px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black uppercase tracking-[0.4em]">Stocked for Quality</div>
-                <DimensionedHeader line1="MATERIAL" line2="LIBRARY." layerHt="0.12mm" partWd="142.8mm" variant="light" />
+                <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Stocked for Quality</span>
+                <DimensionedHeader line1="MATERIAL" line2="LIBRARY." layerHt="0.12mm" partWd="164mm" variant="light" />
                 <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg">Curated high-performance polymers, optimized for our specialized hotends.</p>
             </header>
             <div className="grid md:grid-cols-2 gap-12 text-left">
@@ -26,7 +26,9 @@ const MaterialsView = () => (
                 <div className="p-10 bg-[#EAE8E4] border border-gray-300 rounded-sm shadow-2xl relative overflow-hidden group text-[#1A1B1E]">
                     <Wrench className="absolute -top-4 -right-4 w-40 h-40 text-[#1A1B1E]/5 opacity-20" />
                     <div className="relative z-10 space-y-8 text-left text-[#1A1B1E]">
-                        <div className="w-fit px-3 py-1 bg-[#2C3E50] text-white text-[10px] font-black uppercase tracking-widest">Functional Focus</div>
+                        <div className="w-full border-l-2 border-[#2C3E50] pl-3">
+                            <span className="text-[#F2F1EF] text-[10px] font-black uppercase tracking-widest">Functional Focus</span>
+                        </div>
                         <h3 className="text-4xl font-black uppercase italic tracking-tighter">PETG Functional</h3>
                         <p className="text-gray-500 font-medium leading-relaxed">Industrial toughness for parts subject to stress. Best for outdoor fixtures or heat-exposed prototypes.</p>
                         <div className="grid grid-cols-2 gap-6 border-t border-gray-300 pt-8 font-bold text-xs uppercase tracking-widest text-[#1A1B1E]">
