@@ -20,7 +20,7 @@ const HomeView = (props) => (
                             line1="LOCAL SCALE."
                             line2="MODERN CRAFT."
                             layerHt="0.10mm"
-                            partWd="256mm"
+                            partWd="250mm"
                             variant="dark"
                         />
                     </div>

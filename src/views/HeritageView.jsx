@@ -9,7 +9,7 @@ const HeritageView = () => (
         <div className="max-w-7xl mx-auto px-6 text-left">
             <header className="mb-32 space-y-12 text-left">
                 <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">The Archive</span>
-                <DimensionedHeader line1="BUILT TO" line2="LAST." layerHt="0.16mm" partWd="148mm" variant="light" />
+                <DimensionedHeader line1="BUILT TO" line2="LAST." layerHt="0.16mm" partWd="180mm" variant="light" />
                 <p className="text-gray-500 max-w-xl font-medium leading-relaxed text-xl italic text-left">"Continuing a two-hundred-year-old conversation about how things are made in the Flour City."</p>
             </header>
             <div className="space-y-40 relative text-left">

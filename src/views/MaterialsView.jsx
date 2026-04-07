@@ -7,7 +7,7 @@ const MaterialsView = () => (
         <div className="max-w-7xl mx-auto px-6 text-[#1A1B1E] text-left">
             <header className="mb-20 space-y-12 text-left">
                 <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Stocked for Quality</span>
-                <DimensionedHeader line1="MATERIAL" line2="LIBRARY." layerHt="0.12mm" partWd="164mm" variant="light" />
+                <DimensionedHeader line1="MATERIAL" line2="LIBRARY." layerHt="0.12mm" partWd="256mm" variant="light" />
                 <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg">Curated high-performance polymers, optimized for our specialized hotends.</p>
             </header>
             <div className="grid md:grid-cols-2 gap-12 text-left">

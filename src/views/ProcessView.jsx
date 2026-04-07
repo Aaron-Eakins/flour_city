@@ -7,7 +7,7 @@ const ProcessView = () => (
         <div className="max-w-7xl mx-auto px-6 text-left">
             <header className="mb-16 space-y-12 text-left">
                 <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Industrial Lifecycle</span>
-                <DimensionedHeader line1="HOW THE" line2="LAB WORKS." layerHt="0.24mm" partWd="218mm" variant="light" />
+                <DimensionedHeader line1="HOW THE" line2="LAB WORKS." layerHt="0.24mm" partWd="350mm" variant="light" />
                 <p className="text-gray-500 max-w-xl font-medium leading-relaxed text-lg text-left">A human-in-the-loop workflow designed to eliminate digital guesswork.</p>
             </header>
 
