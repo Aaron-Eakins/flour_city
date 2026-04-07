@@ -1,5 +1,5 @@
 import React from 'react';
-import { Waves, Anchor, Compass } from 'lucide-react';
+import { Waves, Anchor, Compass, Cpu } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import OpticsIcon from '../components/common/OpticsIcon';
 import LogoIcon from '../components/common/LogoIcon';
@@ -31,7 +31,7 @@ const HeritageView = () => (
                 </div>
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div className="flex justify-center">
-                        <div className="w-72 h-72 bg-[#1A1B1E] flex items-center justify-center rounded-sm shadow-2xl relative overflow-hidden text-[#1A1B1E]">
+                        <div className="w-72 h-72 bg-[#1A1B1E] flex items-center justify-center rounded-sm shadow-2xl relative text-[#1A1B1E]">
                             <OpticsIcon className="w-40 h-40 text-white/20" />
                             <div className="absolute -top-4 -left-4 w-24 h-24 bg-[#F2F1EF] border border-[#D4A017]/30 flex flex-col items-center justify-center shadow-lg">
                                 <Compass size={20} className="text-[#D4A017]" />
@@ -53,9 +53,11 @@ const HeritageView = () => (
                         <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-right">Flour City Labs replaces the milling stone with high-resolution nozzles, building complex realities layer by layer.</p>
                     </div>
                     <div className="flex justify-center order-1 md:order-2">
-                        <div className="relative group">
-                            <div className="absolute -inset-4 border border-[#D4A017]/30 translate-x-4 translate-y-4 transition-transform"></div>
-                            <div className="relative w-64 h-64 bg-[#EAE8E4] border border-gray-300 flex items-center justify-center shadow-xl text-[#1A1B1E]"><LogoIcon className="w-32 h-32" /></div>
+                        <div className="w-64 h-64 bg-[#1A1B1E] flex items-center justify-center rounded-sm shadow-2xl relative">
+                            <LogoIcon className="w-32 h-32 opacity-20" />
+                            <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-[#F2F1EF] border border-[#D4A017]/30 flex items-center justify-center shadow-lg">
+                                <Cpu size={24} className="text-[#D4A017]" />
+                            </div>
                         </div>
                     </div>
                 </div>
