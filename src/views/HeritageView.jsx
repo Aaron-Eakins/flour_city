@@ -48,7 +48,7 @@ const HeritageView = () => (
                 {/* 2026 Digital Mill Section */}
                 <div className="grid md:grid-cols-2 gap-12 items-center text-left">
                     <div className="space-y-6 text-right order-2 md:order-1">
-                        <span className="text-4xl font-black text-[#D4A017] italic">2026</span>
+                        <span className="text-4xl font-black text-[#D4A017] italic">{new Date().getFullYear()}</span>
                         <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Digital Mill</h3>
                         <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-right">Flour City Labs replaces the milling stone with high-resolution nozzles, building complex realities layer by layer.</p>
                     </div>
