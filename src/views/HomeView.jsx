@@ -13,7 +13,7 @@ const HomeView = (props) => (
                 ))}
             </div>
             <div className="relative z-20 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center text-left">
-                <div className="space-y-8">
+                <div className="relative z-10 space-y-8">
                     <div className="space-y-2">
                         <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Rochester Built. Layered with Purpose.</span>
                         <DimensionedHeader
