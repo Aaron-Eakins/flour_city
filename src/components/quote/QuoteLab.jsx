@@ -1,24 +1,85 @@
 import React from 'react';
-import { Upload, Settings, ChevronDown, ChevronUp, Palette, Minus, Plus, ArrowRight, Globe, CheckCircle, FileText, Camera, Shield } from 'lucide-react';
+import { Upload, Settings, ChevronDown, ChevronUp, Palette, Minus, Plus, ArrowRight, Globe, CheckCircle, FileText, Camera, Shield, Lock, AlertCircle } from 'lucide-react';
 import { colorDatabase } from '../../constants/materials';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabaseClient';
 
 const QuoteLab = ({
     quoteStep, setQuoteStep,
     isUploading, setIsUploading,
     showAdvanced, setShowAdvanced,
-    formData, setFormData
+    formData, setFormData,
+    openAuth
 }) => {
-    const handleFileChange = (e) => {
+    const { user } = useAuth();
+
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // 1. Validation
+        const allowedExts = ['.stl', '.3mf', '.obj'];
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        
+        if (!allowedExts.includes(ext)) {
+            alert('Invalid file format. Please use STL, 3MF, or OBJ.');
+            return;
+        }
+
+        if (file.size > 50 * 1024 * 1024) {
+            alert('File exceeds 50MB limit. Contact solutions@flourcitylabs.com for larger volumes.');
+            return;
+        }
+
+        // 2. Upload to Supabase Storage
         setIsUploading(true);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setFormData({ ...formData, fileName: file.name, fileContent: reader.result.split(',')[1] });
+        try {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).slice(2, 9)}_${Date.now()}.${fileExt}`;
+            const filePath = `${user.id}/${fileName}`;
+
+            const { data, error } = await supabase.storage
+                .from('quotes')
+                .upload(filePath, file);
+
+            if (error) throw error;
+
+            setFormData({ 
+                ...formData, 
+                fileName: file.name, 
+                storagePath: data.path 
+            });
             setIsUploading(false);
             setQuoteStep(2);
-        };
-        reader.readAsDataURL(file);
+        } catch (error) {
+            console.error('Upload error:', error.message);
+            alert('Encryption failed during upload. Check your connection to the Lab.');
+            setIsUploading(false);
+        }
+    };
+
+    const handleTransmit = async () => {
+        try {
+            const { error } = await supabase
+                .from('quotes')
+                .insert({
+                    user_id: user.id,
+                    name: formData.name,
+                    email: formData.email,
+                    material: formData.selectedMaterial,
+                    colors: formData.selectedColors.filter(c => c !== ''),
+                    intent: formData.intent,
+                    visual_validation: formData.visualValidation,
+                    file_path: formData.storagePath,
+                    status: 'pending_review'
+                });
+
+            if (error) throw error;
+            setQuoteStep(4);
+        } catch (error) {
+            console.error('Submission error:', error.message);
+            alert('Transmission failed. The pipeline is currently congested.');
+        }
     };
 
     const handleColorChange = (index, value) => {
@@ -39,25 +100,51 @@ const QuoteLab = ({
                             <h3 className="text-4xl font-black uppercase italic tracking-tighter">1. Project Entry</h3>
                             <p className="text-gray-500 font-medium text-sm italic tracking-tight text-center">STL, 3MF, or OBJ formats accepted. (Max 50MB)</p>
                         </div>
-                        <label className="group border-2 border-dashed border-gray-300 rounded-sm p-20 flex flex-col items-center justify-center text-center space-y-6 hover:border-[#D4A017] hover:bg-[#2C3E50]/10 transition-all cursor-pointer bg-[#2C3E50]/5 relative">
-                            <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} />
-                            {isUploading ? (
-                                <div className="flex flex-col items-center space-y-4">
-                                    <div className="w-12 h-12 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin"></div>
-                                    <p className="font-mono text-[10px] uppercase tracking-[0.3em] font-black text-[#D4A017]">Securing Pipeline...</p>
+                        
+                        {!user ? (
+                            <div className="border-2 border-dashed border-gray-300 rounded-sm p-16 flex flex-col items-center justify-center text-center space-y-8 bg-[#2C3E50]/5">
+                                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                    <Lock className="w-10 h-10" />
                                 </div>
-                            ) : (
-                                <>
-                                    <div className="w-20 h-20 rounded-full bg-[#1A1B1E] flex items-center justify-center group-hover:bg-[#D4A017] transition-all shadow-lg">
-                                        <Upload className="w-8 h-8 text-white group-hover:text-[#1A1B1E]" />
+                                <div className="space-y-2 max-w-sm">
+                                    <p className="text-xl font-black uppercase tracking-tighter">Identity Verification Required</p>
+                                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] opacity-60 leading-relaxed italic text-center">
+                                        Secure technical review requires a registered lab account. Authenticate to initiate the pipeline.
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={openAuth}
+                                    className="px-10 py-5 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center space-x-3 shadow-xl"
+                                >
+                                    <span>Sign In / Register</span>
+                                    <ArrowRight size={14} />
+                                </button>
+                            </div>
+                        ) : (
+                            <label className="group border-2 border-dashed border-gray-300 rounded-sm p-20 flex flex-col items-center justify-center text-center space-y-6 hover:border-[#D4A017] hover:bg-[#2C3E50]/10 transition-all cursor-pointer bg-[#2C3E50]/5 relative overflow-hidden">
+                                <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} accept=".stl,.3mf,.obj" />
+                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                                    <Shield size={64} className="text-[#D4A017]" />
+                                </div>
+                                
+                                {isUploading ? (
+                                    <div className="flex flex-col items-center space-y-4">
+                                        <div className="w-12 h-12 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin"></div>
+                                        <p className="font-mono text-[10px] uppercase tracking-[0.3em] font-black text-[#D4A017]">Securing Pipeline...</p>
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="text-xl font-black uppercase tracking-tighter">Select CAD Geometry</p>
-                                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] opacity-60 italic text-center">Manual Technical Review Active</p>
-                                    </div>
-                                </>
-                            )}
-                        </label>
+                                ) : (
+                                    <>
+                                        <div className="w-20 h-20 rounded-full bg-[#1A1B1E] flex items-center justify-center group-hover:bg-[#D4A017] transition-all shadow-lg relative z-10">
+                                            <Upload className="w-8 h-8 text-white group-hover:text-[#1A1B1E]" />
+                                        </div>
+                                        <div className="space-y-1 relative z-10">
+                                            <p className="text-xl font-black uppercase tracking-tighter">Select CAD Geometry</p>
+                                            <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] opacity-60 italic text-center underline decoration-[#D4A017]/30 decoration-2 underline-offset-4">Authenticated Access Active</p>
+                                        </div>
+                                    </>
+                                )}
+                            </label>
+                        )}
                     </div>
                 )}
 
@@ -185,8 +272,22 @@ const QuoteLab = ({
                             <p className="text-gray-500 font-medium text-sm italic text-center">Secure submission for professional 24-hour review.</p>
                         </div>
                         <div className="max-w-md mx-auto space-y-4">
-                            <input type="text" placeholder="FULL NAME" required className="w-full p-5 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]" onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-                            <input type="email" placeholder="EMAIL ADDRESS" required className="w-full p-5 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]" onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                            <input 
+                                type="text" 
+                                placeholder="FULL NAME" 
+                                required 
+                                className="w-full p-5 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]" 
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+                            />
+                            <input 
+                                type="email" 
+                                placeholder="EMAIL ADDRESS" 
+                                required 
+                                className="w-full p-5 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]" 
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                            />
                             <div className="p-5 bg-[#1A1B1E] text-white rounded-sm space-y-3 shadow-lg">
                                 <div className="flex items-center space-x-3 text-[#D4A017]">
                                     <Globe size={18} />
@@ -194,7 +295,10 @@ const QuoteLab = ({
                                 </div>
                                 <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Secure nationwide shipping from FCL Lab 1. One-day regional transit for Rochester-based orders.</p>
                             </div>
-                            <button onClick={() => setQuoteStep(4)} className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4">
+                            <button 
+                                onClick={handleTransmit} 
+                                className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4"
+                            >
                                 TRANSMIT TO LAB
                             </button>
                         </div>
@@ -207,7 +311,7 @@ const QuoteLab = ({
                         <div className="space-y-4 text-[#1A1B1E]">
                             <h3 className="text-5xl font-black uppercase tracking-tighter text-center">IN THE LAB.</h3>
                             <div className="w-16 h-1 bg-[#D4A017] mx-auto"></div>
-                            <p className="text-gray-600 max-w-sm mx-auto font-medium leading-relaxed italic opacity-90 text-center text-center">
+                            <p className="text-gray-600 max-w-sm mx-auto font-medium leading-relaxed italic opacity-90 text-center">
                                 Project secured. A lab technician will personally review your design and email a professional quote within 24 hours.
                             </p>
                         </div>

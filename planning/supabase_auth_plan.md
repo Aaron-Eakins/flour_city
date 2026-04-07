@@ -125,15 +125,15 @@ Create `src/lib/supabaseClient.js`:
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseKey);
 ```
 
-Add to `.env` (never commit this file):
-```
+Add to `.env` (locally) and **Vercel Settings**:
+```env
 VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 ```
 
 ---
@@ -365,11 +365,12 @@ In `Navigation.jsx`:
 
 ```
 Phase 1 — Auth Foundation
-  1. Install @supabase/supabase-js
-  2. Create supabaseClient.js + .env
-  3. Create AuthContext.jsx + wrap App
-  4. Build AuthModal.jsx (sign up + sign in)
-  5. Add Sign In button to Navigation
+  1. [x] Install `@supabase/supabase-js`
+  2. [x] Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` to local `.env` and Vercel
+  3. [ ] Create `supabaseClient.js`
+  4. [ ] Create `AuthContext.jsx` + wrap `App`
+  5. [ ] Build `AuthModal.jsx` (sign up + sign in)
+  6. [ ] Add Sign In button to `Navigation`
 
 Phase 2 — Gate the Upload
   6. Modify QuoteLab step 1 to check auth

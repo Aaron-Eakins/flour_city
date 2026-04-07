@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
 import LogoIcon from '../common/LogoIcon';
+import { useAuth } from '../../context/AuthContext';
 
-const Navigation = ({ view, setView, isScrolled, isHome }) => {
+const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user, signOut } = useAuth();
+    
     const navBg = (isHome && !isScrolled && !isMenuOpen) ? 'bg-transparent' : 'bg-[#1A1B1E]';
     const navItems = ['home', 'materials', 'gallery', 'process', 'heritage', 'contact'];
 
@@ -28,6 +31,27 @@ const Navigation = ({ view, setView, isScrolled, isHome }) => {
                     {navItems.map((item) => (
                         <button key={item} onClick={() => handleLinkClick(item)} className={`hover:text-[#D4A017] transition-colors ${view === item ? 'text-[#D4A017]' : ''}`}>{item}</button>
                     ))}
+                    
+                    <div className="h-4 w-px bg-white/10 mx-2"></div>
+
+                    {user ? (
+                        <div className="flex items-center space-x-6">
+                            <div className="flex items-center space-x-2 text-[#D4A017]">
+                                <User size={14} />
+                                <span className="truncate max-w-[100px] text-[9px]">{user.email.split('@')[0]}</span>
+                            </div>
+                            <button onClick={signOut} className="hover:text-[#D4A017] transition-colors flex items-center space-x-2">
+                                <LogOut size={14} />
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    ) : (
+                        <button onClick={openAuth} className="hover:text-[#D4A017] transition-colors flex items-center space-x-2">
+                            <User size={14} />
+                            <span>Sign In</span>
+                        </button>
+                    )}
+
                     <button
                         onClick={() => { handleLinkClick('home'); setTimeout(() => document.getElementById('quote-section')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
                         className="px-6 py-2 border border-[#D4A017] text-[#D4A017] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all rounded-sm font-black"
@@ -49,6 +73,25 @@ const Navigation = ({ view, setView, isScrolled, isHome }) => {
                         {navItems.map((item) => (
                             <button key={item} onClick={() => handleLinkClick(item)} className={`text-left py-3 border-b border-white/5 ${view === item ? 'text-[#D4A017]' : 'text-gray-400'}`}>{item}</button>
                         ))}
+                        
+                        {user ? (
+                            <>
+                                <div className="py-3 text-[#D4A017] flex items-center space-x-2">
+                                    <User size={16} />
+                                    <span>{user.email}</span>
+                                </div>
+                                <button onClick={signOut} className="text-left py-3 text-red-400 flex items-center space-x-2">
+                                    <LogOut size={16} />
+                                    <span>Logout Account</span>
+                                </button>
+                            </>
+                        ) : (
+                            <button onClick={() => { setIsMenuOpen(false); openAuth(); }} className="text-left py-3 text-[#D4A017] flex items-center space-x-2">
+                                <User size={16} />
+                                <span>Sign In / Register</span>
+                            </button>
+                        )}
+
                         <button onClick={() => { handleLinkClick('home'); setTimeout(() => document.getElementById('quote-section')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-left py-4 text-[#D4A017] font-black uppercase">Access QuoteLab</button>
                     </div>
                 </div>

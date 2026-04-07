@@ -9,6 +9,7 @@ import HeritageView from './views/HeritageView';
 import TOSView from './views/TOSView';
 import PrivacyView from './views/PrivacyView';
 import ContactView from './views/ContactView';
+import AuthModal from './components/auth/AuthModal';
 
 const App = () => {
     const [view, setView] = useState('home');
@@ -16,6 +17,7 @@ const App = () => {
     const [quoteStep, setQuoteStep] = useState(1);
     const [isUploading, setIsUploading] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '', email: '', selectedMaterial: 'PLA - Matte', intent: '',
@@ -35,7 +37,13 @@ const App = () => {
 
     return (
         <div className="min-h-screen bg-[#F2F1EF] font-sans selection:bg-[#D4A017] selection:text-[#1A1B1E] overflow-x-hidden text-[#1A1B1E]">
-            <Navigation view={view} setView={setView} isScrolled={isScrolled} isHome={view === 'home'} />
+            <Navigation 
+                view={view} 
+                setView={setView} 
+                isScrolled={isScrolled} 
+                isHome={view === 'home'} 
+                openAuth={() => setShowAuthModal(true)}
+            />
             
             <main>
                 {view === 'home' && (
@@ -45,6 +53,7 @@ const App = () => {
                         showAdvanced={showAdvanced} setShowAdvanced={setShowAdvanced}
                         formData={formData} setFormData={setFormData}
                         setView={setView}
+                        openAuth={() => setShowAuthModal(true)}
                     />
                 )}
                 {view === 'materials' && <MaterialsView />}
@@ -57,6 +66,11 @@ const App = () => {
             </main>
 
             <Footer setView={setView} />
+
+            <AuthModal 
+                isOpen={showAuthModal} 
+                onClose={() => setShowAuthModal(false)} 
+            />
             
             <style>{`
                 @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
