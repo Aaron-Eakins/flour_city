@@ -13,7 +13,7 @@ const Footer = ({ setView }) => (
                 </p>
             </div>
             <div className="flex flex-col md:items-end justify-center space-y-4 text-xs font-black uppercase tracking-widest text-gray-400">
-                <p>© 2026 FLOUR CITY LABS. BUILT IN ROCHESTER.</p>
+                <p>© {new Date().getFullYear()} FLOUR CITY LABS. BUILT IN ROCHESTER.</p>
                 <p className="text-white opacity-60 lowercase font-bold tracking-tighter">solutions@flourcitylabs.com</p>
             </div>
         </div>
