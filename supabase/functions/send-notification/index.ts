@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
-const FCL_EMAIL = "flourcitylabs@gmail.com"
+const FCL_EMAIL = Deno.env.get('FCL_EMAIL') || "lab@flourcitylabs.com"
 
 serve(async (req) => {
   try {
@@ -38,7 +38,7 @@ serve(async (req) => {
           </p>
         </div>
       `
-      
+
       // Also send confirmation to user
       await sendEmail({
         to: record.email,
@@ -87,7 +87,7 @@ async function sendEmail({ to, subject, html }) {
       'Authorization': `Bearer ${RESEND_API_KEY}`
     },
     body: JSON.stringify({
-      from: 'FCL Labs <onboarding@resend.dev>', // Replace with your verified domain later
+      from: `FCL Labs <${FCL_EMAIL}>`,
       to: [to],
       subject,
       html

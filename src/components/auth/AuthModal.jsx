@@ -3,7 +3,7 @@ import { X, Mail, Lock, User, ArrowRight, ShieldCheck, AlertCircle } from 'lucid
 import { useAuth } from '../../context/AuthContext';
 import LogoIcon from '../common/LogoIcon';
 
-const AuthModal = ({ isOpen, onClose }) => {
+const AuthModal = ({ isOpen, onClose, setView }) => {
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -149,6 +149,24 @@ const AuthModal = ({ isOpen, onClose }) => {
                         <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest leading-relaxed">
                             Securing the Rochester pipeline with <br /> encrypted identity verification.
                         </p>
+                        {isSignUp && (
+                            <p className="mt-6 text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center italic">
+                                By signing up, you agree to our 
+                                <button 
+                                    onClick={() => { setView('tos'); onClose(); }}
+                                    className="mx-1 text-[#D4A017] underline decoration-[#D4A017]/30 underline-offset-2 hover:decoration-[#D4A017]"
+                                >
+                                    Terms
+                                </button> 
+                                and 
+                                <button 
+                                    onClick={() => { setView('privacy'); onClose(); }}
+                                    className="mx-1 text-[#D4A017] underline decoration-[#D4A017]/30 underline-offset-2 hover:decoration-[#D4A017]"
+                                >
+                                    Privacy Policy
+                                </button>.
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>

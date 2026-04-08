@@ -1,29 +1,57 @@
 import React from 'react';
-import { Lock } from 'lucide-react';
+import { User, Lock, ShieldCheck, Eye, Database, Trash2 } from 'lucide-react';
+import { SITE_CONFIG } from '../constants/site';
 
 const PrivacyView = () => (
     <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700 text-[#1A1B1E]">
-        <div className="max-w-4xl mx-auto px-6 text-left text-[#1A1B1E]">
+        <div className="max-w-4xl mx-auto px-6 text-left">
             <header className="mb-16 space-y-4">
-                <Lock className="text-[#D4A017] w-12 h-12 mb-4" />
+                <div className="w-16 h-1 w-12 bg-[#D4A017] mb-6"></div>
                 <h2 className="text-5xl font-black uppercase tracking-tighter italic text-[#1A1B1E]">Privacy Policy</h2>
-                <p className="text-gray-500 font-medium">Data Integrity & Intellectual Property Protocol</p>
+                <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Last Updated: April 2026</p>
             </header>
 
-            <div className="space-y-12 pb-20 text-[#1A1B1E] text-left">
-                <section className="space-y-4">
-                    <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017]">1. CAD Data Integrity</h3>
-                    <p className="text-gray-600 leading-relaxed font-medium">We treat your CAD data as proprietary intellectual property. 3D models uploaded are used exclusively for quoting and production. We do not share, sell, or utilize your designs for any purposes other than fulfillment. Files are purged from active servers 30 days post-production.</p>
-                </section>
+            <div className="space-y-12 pb-20">
+                <p className="text-lg font-medium leading-relaxed italic opacity-80 border-l-4 border-gray-200 pl-6">
+                    We take your privacy seriously. Here is how your data is handled within the {SITE_CONFIG.name} pipeline:
+                </p>
 
-                <section className="space-y-4">
-                    <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017]">2. Personal Information</h3>
-                    <p className="text-gray-600 leading-relaxed font-medium">We collect basic contact information to facilitate the quoting pipeline. This data is stored securely and never sold to third-party marketing entities. By using the QuoteLab, you consent to receive technical communications regarding your project.</p>
-                </section>
+                <div className="grid md:grid-cols-2 gap-12 mt-16">
+                    <section className="space-y-4 p-8 bg-white border border-gray-200 rounded-sm shadow-sm relative overflow-hidden">
+                        <User className="absolute -top-4 -right-4 w-24 h-24 text-gray-100 opacity-50" />
+                        <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
+                            <Database size={18} /> What we collect
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed font-medium relative z-10">When you create an account, we collect your name and email address. This is the minimum required to manage your lab identity.</p>
+                    </section>
 
-                <section className="space-y-4">
-                    <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017]">3. Local Privacy</h3>
-                    <p className="text-gray-600 leading-relaxed font-medium text-[#1A1B1E]">FCL Lab 1 is a private workstation. For the security of our technicians and client projects, our exact physical coordinates are disclosed only during active logistics handoffs.</p>
+                    <section className="space-y-4 p-8 bg-white border border-gray-200 rounded-sm shadow-sm">
+                        <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
+                            <Eye size={18} /> How it's used
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed font-medium">Your information is used to manage your account, track your 3D printing orders, and send you technical status updates.</p>
+                    </section>
+
+                    <section className="space-y-4 p-8 bg-white border border-gray-200 rounded-sm shadow-sm">
+                        <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
+                            <ShieldCheck size={18} /> Third-party sharing
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed font-medium">We do not sell, rent, or share your personal data or CAD files with third parties. Your designs stay in the lab.</p>
+                    </section>
+
+                    <section className="space-y-4 p-8 bg-white border border-gray-200 rounded-sm shadow-sm">
+                        <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
+                            <Lock size={18} /> Security
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed font-medium">Account credentials are managed by Supabase, an industry-standard provider. We do not store or have access to your password.</p>
+                    </section>
+                </div>
+
+                <section className="p-10 bg-[#1A1B1E] text-white rounded-sm space-y-4 shadow-xl">
+                    <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
+                        <Trash2 size={18} /> Data Deletion
+                    </h3>
+                    <p className="text-gray-400 leading-relaxed font-medium">To have your account and data removed, contact us at <strong>{SITE_CONFIG.email}</strong> and we will process your request promptly.</p>
                 </section>
             </div>
         </div>

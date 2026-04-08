@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, MapPin, Truck, CheckCircle, MessageSquare, AlertCircle, Send } from 'lucide-react';
+import { SITE_CONFIG } from '../constants/site';
+
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import LogoIcon from '../components/common/LogoIcon';
 import { supabase } from '../lib/supabaseClient';
@@ -55,7 +57,7 @@ const ContactView = () => {
                 <header className="mb-20 space-y-12 text-left text-[#1A1B1E]">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Region First</span>
                     <DimensionedHeader line1="THE" line2="PIPELINE." layerHt="0.20mm" partWd="210mm" variant="light" />
-                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Operating out of FCL Lab 1 in Rochester's Monroe Ave District. Serving the nationwide additive community with regional dedication.</p>
+                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Operating out of {SITE_CONFIG.operationalProtocols.replace('_', ' ')} in {SITE_CONFIG.region}'s {SITE_CONFIG.district}. Serving the nationwide additive community with regional dedication.</p>
                 </header>
 
                 <div className="grid lg:grid-cols-3 gap-12">
@@ -63,8 +65,8 @@ const ContactView = () => {
                         <section className="space-y-6 text-left">
                             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4A017]">Direct Connection</h4>
                             <div className="space-y-4 font-bold text-sm uppercase tracking-widest text-[#1A1B1E] text-left">
-                                <div className="flex items-center space-x-3 text-[#1A1B1E]"><Mail size={16} className="text-[#D4A017]" /><span>solutions@flourcitylabs.com</span></div>
-                                <div className="flex items-center space-x-3 text-[#1A1B1E]"><MapPin size={16} className="text-[#D4A017]" /><span>Monroe Ave District, Rochester NY</span></div>
+                                <div className="flex items-center space-x-3 text-[#1A1B1E]"><Mail size={16} className="text-[#D4A017]" /><span>{SITE_CONFIG.email}</span></div>
+                                <div className="flex items-center space-x-3 text-[#1A1B1E]"><MapPin size={16} className="text-[#D4A017]" /><span>{SITE_CONFIG.district}, {SITE_CONFIG.region}</span></div>
                             </div>
                         </section>
 

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import LogoIcon from '../common/LogoIcon';
+import { SITE_CONFIG } from '../../constants/site';
+
 import { useAuth } from '../../context/AuthContext';
 
 const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
@@ -22,8 +24,10 @@ const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
                 <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => handleLinkClick('home')}>
                     <LogoIcon className="w-8 h-8" />
                     <div>
-                        <h1 className="text-lg font-black tracking-tighter uppercase leading-none text-[#F2F1EF]">FLOUR CITY <span className="text-[#D4A017]">LABS</span></h1>
-                        <p className="text-[9px] tracking-[0.2em] text-slate-500 uppercase font-bold leading-none mt-1">Rochester, NY</p>
+                        <h1 className="text-lg font-black tracking-tighter uppercase leading-none text-[#F2F1EF]">
+                            {SITE_CONFIG.name.split(' ').slice(0, -1).join(' ')} <span className="text-[#D4A017]">{SITE_CONFIG.name.split(' ').slice(-1)}</span>
+                        </h1>
+                        <p className="text-[9px] tracking-[0.2em] text-slate-500 uppercase font-bold leading-none mt-1">{SITE_CONFIG.region}</p>
                     </div>
                 </div>
 

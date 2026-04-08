@@ -70,6 +70,7 @@ const App = () => {
             <AuthModal 
                 isOpen={showAuthModal} 
                 onClose={() => setShowAuthModal(false)} 
+                setView={setView}
             />
             
             <style>{`
