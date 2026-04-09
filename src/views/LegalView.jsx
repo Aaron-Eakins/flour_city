@@ -47,7 +47,7 @@ const LegalView = ({ type }) => {
                                 </div>
                                 <div className="space-y-2">
                                     <h4 className="font-black uppercase tracking-tighter text-xl">5. Data Deletion</h4>
-                                    <p className="text-gray-600 leading-relaxed">To have your account and associated project history removed from our pipeline, contact <strong>{SITE_CONFIG.email}</strong> and we will process your request promptly.</p>
+                                    <p className="text-gray-600 leading-relaxed">To have your account and associated project history removed from our pipeline, contact <strong><a href={`mailto:${SITE_CONFIG.email}`} className="text-[#D4A017] hover:underline">{SITE_CONFIG.email}</a></strong> and we will process your request promptly.</p>
                                 </div>
                             </div>
                         </section>

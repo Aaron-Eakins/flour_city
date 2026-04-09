@@ -51,7 +51,7 @@ const PrivacyView = () => (
                     <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
                         <Trash2 size={18} /> Data Deletion
                     </h3>
-                    <p className="text-gray-400 leading-relaxed font-medium">To have your account and data removed, contact us at <strong>{SITE_CONFIG.email}</strong> and we will process your request promptly.</p>
+                    <p className="text-gray-400 leading-relaxed font-medium">To have your account and data removed, contact us at <strong><a href={`mailto:${SITE_CONFIG.email}`} className="text-[#D4A017] hover:underline">{SITE_CONFIG.email}</a></strong> and we will process your request promptly.</p>
                 </section>
             </div>
         </div>
