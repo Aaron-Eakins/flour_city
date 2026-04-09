@@ -135,6 +135,7 @@ const ContactView = () => {
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         />
+                                    </div>
                                     <textarea 
                                         placeholder="WHAT CAN I HELP YOU WITH?" 
                                         required
