@@ -8,8 +8,7 @@ const QuoteLab = ({
     quoteStep, setQuoteStep,
     isUploading, setIsUploading,
     showAdvanced, setShowAdvanced,
-    formData, setFormData,
-    openAuth
+    formData, setFormData
 }) => {
     const { user } = useAuth();
 
@@ -36,7 +35,8 @@ const QuoteLab = ({
         try {
             const fileExt = file.name.split('.').pop();
             const fileName = `${Math.random().toString(36).slice(2, 9)}_${Date.now()}.${fileExt}`;
-            const filePath = `${user.id}/${fileName}`;
+            const folderId = user ? user.id : `guest_${Math.random().toString(36).slice(2, 11)}`;
+            const filePath = `${folderId}/${fileName}`;
 
             const { data, error } = await supabase.storage
                 .from('quotes')
@@ -63,7 +63,7 @@ const QuoteLab = ({
             const { error } = await supabase
                 .from('quotes')
                 .insert({
-                    user_id: user.id,
+                    user_id: user?.id || null,
                     name: formData.name,
                     email: formData.email,
                     material: formData.selectedMaterial,
@@ -101,50 +101,31 @@ const QuoteLab = ({
                             <p className="text-gray-500 font-medium text-sm italic tracking-tight text-center">STL, 3MF, or OBJ formats accepted. (Max 50MB)</p>
                         </div>
                         
-                        {!user ? (
-                            <div className="border-2 border-dashed border-gray-300 rounded-sm p-16 flex flex-col items-center justify-center text-center space-y-8 bg-[#2C3E50]/5">
-                                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
-                                    <Lock className="w-10 h-10" />
-                                </div>
-                                <div className="space-y-2 max-w-sm">
-                                    <p className="text-xl font-black uppercase tracking-tighter">Identity Verification Required</p>
-                                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] opacity-60 leading-relaxed italic text-center">
-                                        Secure technical review requires a registered lab account. Authenticate to initiate the pipeline.
-                                    </p>
-                                </div>
-                                <button 
-                                    onClick={openAuth}
-                                    className="px-10 py-5 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center space-x-3 shadow-xl"
-                                >
-                                    <span>Sign In / Register</span>
-                                    <ArrowRight size={14} />
-                                </button>
+                        <label className="group border-2 border-dashed border-gray-300 rounded-sm p-20 flex flex-col items-center justify-center text-center space-y-6 hover:border-[#D4A017] hover:bg-[#2C3E50]/10 transition-all cursor-pointer bg-[#2C3E50]/5 relative overflow-hidden">
+                            <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} accept=".stl,.3mf,.obj" />
+                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                                <Shield size={64} className="text-[#D4A017]" />
                             </div>
-                        ) : (
-                            <label className="group border-2 border-dashed border-gray-300 rounded-sm p-20 flex flex-col items-center justify-center text-center space-y-6 hover:border-[#D4A017] hover:bg-[#2C3E50]/10 transition-all cursor-pointer bg-[#2C3E50]/5 relative overflow-hidden">
-                                <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} accept=".stl,.3mf,.obj" />
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
-                                    <Shield size={64} className="text-[#D4A017]" />
+                            
+                            {isUploading ? (
+                                <div className="flex flex-col items-center space-y-4">
+                                    <div className="w-12 h-12 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin"></div>
+                                    <p className="font-mono text-[10px] uppercase tracking-[0.3em] font-black text-[#D4A017]">Securing Pipeline...</p>
                                 </div>
-                                
-                                {isUploading ? (
-                                    <div className="flex flex-col items-center space-y-4">
-                                        <div className="w-12 h-12 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin"></div>
-                                        <p className="font-mono text-[10px] uppercase tracking-[0.3em] font-black text-[#D4A017]">Securing Pipeline...</p>
+                            ) : (
+                                <>
+                                    <div className="w-20 h-20 rounded-full bg-[#1A1B1E] flex items-center justify-center group-hover:bg-[#D4A017] transition-all shadow-lg relative z-10">
+                                        <Upload className="w-8 h-8 text-white group-hover:text-[#1A1B1E]" />
                                     </div>
-                                ) : (
-                                    <>
-                                        <div className="w-20 h-20 rounded-full bg-[#1A1B1E] flex items-center justify-center group-hover:bg-[#D4A017] transition-all shadow-lg relative z-10">
-                                            <Upload className="w-8 h-8 text-white group-hover:text-[#1A1B1E]" />
-                                        </div>
-                                        <div className="space-y-1 relative z-10">
-                                            <p className="text-xl font-black uppercase tracking-tighter">Select CAD Geometry</p>
-                                            <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] opacity-60 italic text-center underline decoration-[#D4A017]/30 decoration-2 underline-offset-4">Authenticated Access Active</p>
-                                        </div>
-                                    </>
-                                )}
-                            </label>
-                        )}
+                                    <div className="space-y-1 relative z-10">
+                                        <p className="text-xl font-black uppercase tracking-tighter">Select CAD Geometry</p>
+                                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] opacity-60 italic text-center underline decoration-[#D4A017]/30 decoration-2 underline-offset-4">
+                                            {user ? 'Authenticated Access Active' : 'Guest Technical Review'}
+                                        </p>
+                                    </div>
+                                </>
+                            )}
+                        </label>
                     </div>
                 )}
 

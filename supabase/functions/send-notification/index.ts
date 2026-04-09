@@ -57,13 +57,12 @@ serve(async (req) => {
       })
 
     } else if (table === 'contacts') {
-      emailContent.subject = `💬 LAB INQUIRY: ${record.subject}`
+      emailContent.subject = `💬 LAB INQUIRY: New Message`
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
           <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">Direct Inquiry Received</h1>
           <div style="background: white; padding: 30px; border: 1px solid #ccc; margin-top: 20px;">
             <p><strong>From:</strong> ${record.name} (${record.email})</p>
-            <p><strong>Subject:</strong> ${record.subject}</p>
             <p><strong>Message:</strong></p>
             <p style="font-style: italic;">${record.message}</p>
           </div>
