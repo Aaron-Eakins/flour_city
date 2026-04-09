@@ -10,7 +10,6 @@ const ContactView = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        subject: 'General Engineering Question',
         message: '',
         _honeypot: '' // Spam prevention
     });
@@ -36,17 +35,16 @@ const ContactView = () => {
                 .insert({
                     name: formData.name,
                     email: formData.email,
-                    subject: formData.subject,
                     message: formData.message
                 });
 
             if (error) throw error;
             
             setStatus('success');
-            setFormData({ name: '', email: '', subject: 'General Engineering Question', message: '', _honeypot: '' });
+            setFormData({ name: '', email: '', message: '', _honeypot: '' });
         } catch (err) {
             console.error('Contact error:', err.message);
-            setErrorMessage('Transmission failed. The lab connection is unstable.');
+            setErrorMessage(`Something went wrong. Please try again or email me directly at ${SITE_CONFIG.email}.`);
             setStatus('error');
         }
     };
@@ -57,7 +55,7 @@ const ContactView = () => {
                 <header className="mb-20 space-y-12 text-left text-[#1A1B1E]">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Region First</span>
                     <DimensionedHeader line1="THE" line2="PIPELINE." layerHt="0.20mm" partWd="210mm" variant="light" />
-                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Operating out of {SITE_CONFIG.operationalProtocols.replace('_', ' ')} in {SITE_CONFIG.region}'s {SITE_CONFIG.district}. Serving the nationwide additive community with regional dedication.</p>
+                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Based in Rochester, NY. Taking orders nationwide.</p>
                 </header>
 
                 <div className="grid lg:grid-cols-3 gap-12">
@@ -72,9 +70,9 @@ const ContactView = () => {
 
                         <section className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-6 text-left">
                             <div className="flex items-center space-x-2 text-[#D4A017]"><Truck size={20} /> <h4 className="text-sm font-black uppercase tracking-widest italic text-white">Secure Logistics</h4></div>
-                            <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Every part is secured for cross-country transit. We utilize professional courier networks to ensure Rochester-built precision arrives intact at your door.</p>
+                            <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Every order is carefully packaged for transit. We ship nationwide through standard courier networks.</p>
                             <div className="p-3 bg-white/5 border border-white/10 rounded-sm flex items-center justify-between">
-                                <span className="text-[9px] font-black uppercase tracking-widest text-[#D4A017]">Active Pipeline</span>
+                                <span className="text-[9px] font-black uppercase tracking-widest text-[#D4A017]">Orders Open</span>
                                 <CheckCircle size={12} className="text-[#D4A017]" />
                             </div>
                         </section>
@@ -88,7 +86,7 @@ const ContactView = () => {
                         <div className="space-y-8 relative z-10 text-left">
                             <div className="space-y-2">
                                 <h4 className="text-3xl font-black uppercase italic tracking-tighter">Lab Inquiry</h4>
-                                <p className="text-gray-500 text-sm font-medium">Have questions about technical tolerances or custom Autodesk Fusion support? Ask a technician.</p>
+                                <p className="text-gray-500 text-sm font-medium">Questions about an order, a material, or a custom project? Send me a message.</p>
                             </div>
 
                             {status === 'success' ? (
@@ -98,7 +96,7 @@ const ContactView = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <p className="text-xl font-black uppercase tracking-tighter">Inquiry Secured</p>
-                                        <p className="text-sm text-gray-500 italic">Transmitting to Lab 1. A technician will respond shortly.</p>
+                                        <p className="text-sm text-gray-500 italic">I'll get back to you within 24 hours.</p>
                                     </div>
                                     <button 
                                         onClick={() => setStatus('idle')}
@@ -137,19 +135,8 @@ const ContactView = () => {
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         />
-                                    </div>
-                                    <select 
-                                        className="w-full p-4 bg-white border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]"
-                                        value={formData.subject}
-                                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                                    >
-                                        <option>General Engineering Question</option>
-                                        <option>Specialized Prototyping Query</option>
-                                        <option>Business/B2B Partnership</option>
-                                        <option>Custom Engineering Validation</option>
-                                    </select>
                                     <textarea 
-                                        placeholder="HOW CAN THE LAB ASSIST?" 
+                                        placeholder="WHAT CAN I HELP YOU WITH?" 
                                         required
                                         className="w-full p-4 bg-white border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017] h-40"
                                         value={formData.message}
@@ -167,7 +154,7 @@ const ContactView = () => {
                                         disabled={status === 'loading'}
                                         className="w-full py-5 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center justify-center space-x-3 disabled:opacity-50"
                                     >
-                                        <span>{status === 'loading' ? 'Transmitting...' : 'Send Message'}</span>
+                                        <span>{status === 'loading' ? 'Sending...' : 'Send Message'}</span>
                                         {status !== 'loading' && <Send size={14} />}
                                     </button>
                                 </form>
