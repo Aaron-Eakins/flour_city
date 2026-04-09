@@ -15,11 +15,13 @@ serve(async (req) => {
     let emailContent = {
       to: FCL_EMAIL,
       subject: "",
-      html: ""
+      html: "",
+      replyTo: ""
     }
 
     if (table === 'quotes') {
       emailContent.subject = `🚨 PROJECT SUBMITTED: ${record.name}`
+      emailContent.replyTo = record.email
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
           <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">Project Secured in Pipeline</h1>
@@ -58,6 +60,7 @@ serve(async (req) => {
 
     } else if (table === 'contacts') {
       emailContent.subject = `💬 LAB INQUIRY: New Message`
+      emailContent.replyTo = record.email
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
           <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">Direct Inquiry Received</h1>
@@ -78,7 +81,7 @@ serve(async (req) => {
   }
 })
 
-async function sendEmail({ to, subject, html }) {
+async function sendEmail({ to, subject, html, replyTo }) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -88,6 +91,7 @@ async function sendEmail({ to, subject, html }) {
     body: JSON.stringify({
       from: `FCL Labs <${FCL_EMAIL}>`,
       to: [to],
+      reply_to: replyTo || undefined,
       subject,
       html
     })
