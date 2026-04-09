@@ -24,9 +24,9 @@ const HomeView = (props) => (
                             variant="dark"
                         />
                     </div>
-                    <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Boutique additive manufacturing for engineers and designers. We bridge digital intent and physical reality with expert human oversight.</p>
+                    <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Quality 3D printing for prototypes, custom parts, and one-off projects. Every order gets a personal review before it prints.</p>
                     <button onClick={() => document.getElementById('quote-section')?.scrollIntoView({ behavior: 'smooth' })} className="px-10 py-5 bg-[#D4A017] text-[#1A1B1E] font-black rounded-sm flex items-center space-x-3 hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl">
-                        <span>Enter QuoteLab</span><ChevronRight className="w-5 h-5" />
+                        <span>Have a File? Get a Quote</span><ChevronRight className="w-5 h-5" />
                     </button>
                 </div>
                 <div className="relative hidden md:block">
@@ -79,7 +79,7 @@ const HomeView = (props) => (
                 <div className="space-y-8 text-left">
                     <div className="inline-block px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black tracking-[0.4em] uppercase">Our Mission</div>
                     <h3 className="text-5xl font-black tracking-tighter leading-none uppercase text-white text-left">MAKING IS IN <br /><span className="text-[#D4A017]">OUR BLOOD.</span></h3>
-                    <p className="text-gray-300 text-lg font-medium italic leading-relaxed text-left">"Continuing a two-hundred-year-old conversation about how things are made in the Flour City."</p>
+                    <p className="text-gray-300 text-lg font-medium italic leading-relaxed text-left">"Continuing Rochester's 200-year tradition of making things that work."</p>
                     <button onClick={() => props.setView('heritage')} className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A017] hover:text-white transition-colors">
                         <span>Read the Archive</span><ChevronRight size={14} className="ml-1" />
                     </button>

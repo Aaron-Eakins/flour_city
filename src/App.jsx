@@ -56,7 +56,7 @@ const App = () => {
                         openAuth={() => setShowAuthModal(true)}
                     />
                 )}
-                {view === 'materials' && <MaterialsView />}
+                {view === 'materials' && <MaterialsView setView={setView} />}
                 {view === 'gallery' && <GalleryView />}
                 {view === 'process' && <ProcessView />}
                 {view === 'heritage' && <HeritageView />}
