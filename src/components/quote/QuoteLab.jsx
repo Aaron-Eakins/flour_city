@@ -58,7 +58,14 @@ const QuoteLab = ({
         }
     };
 
-    const handleTransmit = async () => {
+    const handleTransmit = async (e) => {
+        if (e) e.preventDefault();
+        
+        if (!formData.name || !formData.email) {
+            alert('Name and Email are required to initiate the Lab connection.');
+            return;
+        }
+
         try {
             const { error } = await supabase
                 .from('quotes')
@@ -252,7 +259,7 @@ const QuoteLab = ({
                             <h3 className="text-4xl font-black uppercase italic tracking-tighter">3. Lab Connect</h3>
                             <p className="text-gray-500 font-medium text-sm italic text-center">Secure submission for professional 24-hour review.</p>
                         </div>
-                        <div className="max-w-md mx-auto space-y-4">
+                        <form onSubmit={handleTransmit} className="max-w-md mx-auto space-y-4">
                             <input 
                                 type="text" 
                                 placeholder="FULL NAME" 
@@ -277,12 +284,12 @@ const QuoteLab = ({
                                 <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Secure nationwide shipping from FCL Lab 1. One-day regional transit for Rochester-based orders.</p>
                             </div>
                             <button 
-                                onClick={handleTransmit} 
+                                type="submit" 
                                 className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4"
                             >
                                 TRANSMIT TO LAB
                             </button>
-                        </div>
+                        </form>
                     </div>
                 )}
 
