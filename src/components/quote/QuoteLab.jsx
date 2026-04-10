@@ -137,7 +137,7 @@ const QuoteLab = ({
                     infill: formData.infill || "15% (Recommended)",
                     walls: formData.walls || "2 Loops (Recommended)",
                     speed: formData.speed || "Balanced (Recommended)",
-                    layer_height: formData.layer_height || "0.20mm (Recommended)",
+                    resolution: formData.layer_height || "0.20mm (Recommended)",
                     supports: formData.supports || "Auto (Recommended)",
                     status: 'pending_review'
                 });
