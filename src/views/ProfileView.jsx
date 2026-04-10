@@ -14,6 +14,7 @@ const ProfileView = ({ setView }) => {
     
     // Account Settings state
     const [fullName, setFullName] = useState(user?.user_metadata?.full_name || '');
+    const [email, setEmail] = useState(user?.email || '');
     const [updateStatus, setUpdateStatus] = useState('idle'); // idle, loading, success, error
 
     const fetchQuotes = useCallback(async () => {
@@ -45,10 +46,13 @@ const ProfileView = ({ setView }) => {
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         setUpdateStatus('loading');
+        const updateData = { data: { full_name: fullName } };
+        if (email !== user.email) {
+            updateData.email = email;
+        }
+
         try {
-            const { error } = await supabase.auth.updateUser({
-                data: { full_name: fullName }
-            });
+            const { error } = await supabase.auth.updateUser(updateData);
             if (error) throw error;
             setUpdateStatus('success');
             setTimeout(() => setUpdateStatus('idle'), 3000);
@@ -88,9 +92,9 @@ const ProfileView = ({ setView }) => {
                                     <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Authorized Email</label>
                                     <input 
                                         type="email"
-                                        value={user?.email}
-                                        disabled
-                                        className="w-full bg-[#1A1B1E]/5 border border-gray-200 p-3 rounded-sm font-medium text-sm text-gray-400 cursor-not-allowed"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full bg-[#F2F1EF] border border-gray-200 p-3 rounded-sm font-medium text-sm outline-none focus:border-[#D4A017] transition-all"
                                     />
                                 </div>
 

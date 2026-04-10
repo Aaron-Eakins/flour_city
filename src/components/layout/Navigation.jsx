@@ -42,7 +42,7 @@ const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
                         <div className="flex items-center space-x-6">
                             <button 
                                 onClick={() => handleLinkClick('profile')}
-                                className={`flex items-center space-x-2 transition-colors hover:text-[#D4A017] ${view === 'profile' ? 'text-[#D4A017]' : 'text-[#D4A017]'}`}
+                                className={`flex items-center space-x-2 transition-colors hover:text-[#D4A017] cursor-pointer ${view === 'profile' ? 'text-[#D4A017]' : 'text-[#D4A017]'}`}
                             >
                                 <User size={14} />
                                 <span className="truncate max-w-[120px] text-[9px] font-black uppercase tracking-widest leading-none">
