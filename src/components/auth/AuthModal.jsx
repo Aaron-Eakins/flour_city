@@ -32,7 +32,8 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
             } else {
                 const { error: signInError } = await signIn(email, password);
                 if (signInError) throw signInError;
-                onClose();
+                // Tiny delay to let password managers catch the form submission before unmounting
+                setTimeout(onClose, 100);
             }
         } catch (err) {
             setError(err.message);
@@ -98,7 +99,7 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} method="POST" action="#" name="auth-form" className="space-y-4">
                         {isSignUp && (
                             <div className="relative">
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
