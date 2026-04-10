@@ -124,6 +124,12 @@ const QuoteLab = ({
                     intent: formData.intent,
                     visual_validation: formData.visualValidation,
                     file_path: formData.storagePath,
+                    nozzle: formData.nozzle,
+                    infill: formData.infill,
+                    walls: formData.walls,
+                    speed: formData.speed,
+                    resolution: formData.resolution,
+                    supports: formData.supports,
                     status: 'pending_review'
                 });
 

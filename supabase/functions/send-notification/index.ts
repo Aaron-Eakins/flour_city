@@ -38,6 +38,18 @@ Deno.serve(async (req: Request) => {
             <p><strong>Visual Validation:</strong> ${record.visual_validation ? 'YES' : 'NO'}</p>
             <p><strong>Storage Path:</strong> ${record.file_path}</p>
           </div>
+
+          <div style="background: white; padding: 20px; border: 1px solid #ccc; margin-top: 10px; font-size: 12px;">
+            <p style="font-weight: bold; text-transform: uppercase; margin-bottom: 15px; color: #D4A017; border-bottom: 1px solid #eee; padding-bottom: 5px;">Advanced Technical Specs</p>
+            <table style="width: 100%; text-align: left; font-size: 11px;">
+              <tr><td style="color: #666;">Nozzle:</td><td>${record.nozzle || 'Standard'}</td></tr>
+              <tr><td style="color: #666;">Core Infill:</td><td>${record.infill || 'Standard'}</td></tr>
+              <tr><td style="color: #666;">Walls:</td><td>${record.walls || 'Standard'}</td></tr>
+              <tr><td style="color: #666;">Speed:</td><td>${record.speed || 'Standard'}</td></tr>
+              <tr><td style="color: #666;">Resolution:</td><td>${record.resolution || 'Standard'}</td></tr>
+              <tr><td style="color: #666;">Scaffolding:</td><td>${record.supports || 'Standard'}</td></tr>
+            </table>
+          </div>
           
           <p style="font-size: 10px; color: #666; font-weight: bold; text-transform: uppercase; letter-spacing: 0.2em; margin-top: 30px;">
             Professional technical review required within 24 hours.
