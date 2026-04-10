@@ -40,11 +40,16 @@ const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
 
                     {user ? (
                         <div className="flex items-center space-x-6">
-                            <div className="flex items-center space-x-2 text-[#D4A017]">
+                            <button 
+                                onClick={() => handleLinkClick('profile')}
+                                className={`flex items-center space-x-2 transition-colors hover:text-[#D4A017] ${view === 'profile' ? 'text-[#D4A017]' : 'text-[#D4A017]'}`}
+                            >
                                 <User size={14} />
-                                <span className="truncate max-w-[100px] text-[9px]">{user.email.split('@')[0]}</span>
-                            </div>
-                            <button onClick={signOut} className="hover:text-[#D4A017] transition-colors flex items-center space-x-2">
+                                <span className="truncate max-w-[120px] text-[9px] font-black uppercase tracking-widest leading-none">
+                                    {user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0]}
+                                </span>
+                            </button>
+                            <button onClick={signOut} className="hover:text-red-400 transition-colors flex items-center space-x-2">
                                 <LogOut size={14} />
                                 <span>Logout</span>
                             </button>
@@ -80,10 +85,15 @@ const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
                         
                         {user ? (
                             <>
-                                <div className="py-3 text-[#D4A017] flex items-center space-x-2">
+                                <button 
+                                    onClick={() => handleLinkClick('profile')}
+                                    className={`py-3 flex items-center space-x-2 text-left ${view === 'profile' ? 'text-[#D4A017]' : 'text-[#D4A017]'}`}
+                                >
                                     <User size={16} />
-                                    <span>{user.email}</span>
-                                </div>
+                                    <span className="font-black">
+                                        {user.user_metadata?.full_name || user.email}
+                                    </span>
+                                </button>
                                 <button onClick={signOut} className="text-left py-3 text-red-400 flex items-center space-x-2">
                                     <LogOut size={16} />
                                     <span>Logout Account</span>

@@ -1,11 +1,16 @@
-// Supabase Edge Functions use Deno. We use '@ts-ignore' for the Deno global 
-// if your local environment is not yet configured with the Deno extension.
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
 // @ts-ignore: Deno is built-in to the Supabase runtime
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 // @ts-ignore: Deno is built-in to the Supabase runtime
 const FCL_EMAIL = Deno.env.get('FCL_EMAIL') || "lab@flourcitylabs.com"
+// @ts-ignore: Deno is built-in to the Supabase runtime
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
+// @ts-ignore: Deno is built-in to the Supabase runtime
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-// Deno.serve is the modern way to handle HTTP in Edge Functions
+const supabaseAdmin = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY || '')
+
 // @ts-ignore: Deno is built-in to the Supabase runtime
 Deno.serve(async (req: Request) => {
   try {
@@ -20,7 +25,8 @@ Deno.serve(async (req: Request) => {
       to: FCL_EMAIL,
       subject: "",
       html: "",
-      replyTo: ""
+      replyTo: "",
+      headers: {} as Record<string, string>
     }
 
     if (table === 'quotes') {
@@ -57,6 +63,17 @@ Deno.serve(async (req: Request) => {
         </div>
       `
 
+      // Send to Admin
+      const res = await sendEmail(emailContent)
+      
+      // Persist the message ID for threading
+      if (res?.id) {
+        await supabaseAdmin
+          .from('quotes')
+          .update({ last_resend_message_id: res.id })
+          .eq('id', record.id)
+      }
+
       // Also send confirmation to user
       await sendEmail({
         to: record.email,
@@ -74,6 +91,8 @@ Deno.serve(async (req: Request) => {
         `
       })
 
+      return new Response(JSON.stringify({ success: true }), { status: 200 })
+
     } else if (table === 'contacts') {
       emailContent.subject = `Lab Inquiry: ${record.name}`
       emailContent.replyTo = record.email
@@ -87,10 +106,43 @@ Deno.serve(async (req: Request) => {
           </div>
         </div>
       `
+      const res = await sendEmail(emailContent)
+      return new Response(JSON.stringify(res), { status: 200 })
+
+    } else if (table === 'project_notes') {
+      // 1. Fetch parent quote details
+      const { data: quote, error: quoteError } = await supabaseAdmin
+        .from('quotes')
+        .select('name, email, last_resend_message_id')
+        .eq('id', record.quote_id)
+        .single()
+
+      if (quoteError) throw quoteError
+
+      emailContent.subject = `Quote Request: ${quote.name}`
+      emailContent.to = FCL_EMAIL
+      emailContent.html = `
+        <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
+          <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">New Project Note</h1>
+          <div style="background: white; padding: 30px; border: 1px solid #ccc; margin-top: 20px;">
+            <p><strong>Update from Partner:</strong> ${quote.name}</p>
+            <p style="font-style: italic;">${record.content}</p>
+          </div>
+        </div>
+      `
+      
+      if (quote.last_resend_message_id) {
+        emailContent.headers = {
+          'In-Reply-To': quote.last_resend_message_id,
+          'References': quote.last_resend_message_id
+        }
+      }
+
+      const res = await sendEmail(emailContent)
+      return new Response(JSON.stringify(res), { status: 200 })
     }
 
-    const res = await sendEmail(emailContent)
-    return new Response(JSON.stringify(res), { status: 200 })
+    return new Response(JSON.stringify({ message: 'Unhandled Table' }), { status: 200 })
 
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
@@ -98,7 +150,7 @@ Deno.serve(async (req: Request) => {
   }
 })
 
-async function sendEmail({ to, subject, html, replyTo }: { to: any, subject: any, html: any, replyTo?: any }) {
+async function sendEmail({ to, subject, html, replyTo, headers }: { to: any, subject: any, html: any, replyTo?: any, headers?: Record<string, string> }) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -110,7 +162,8 @@ async function sendEmail({ to, subject, html, replyTo }: { to: any, subject: any
       to: [to],
       reply_to: replyTo || undefined,
       subject,
-      html
+      html,
+      headers: headers || undefined
     })
   })
   return res.json()
