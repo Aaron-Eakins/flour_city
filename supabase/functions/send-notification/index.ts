@@ -24,7 +24,7 @@ Deno.serve(async (req: Request) => {
     }
 
     if (table === 'quotes') {
-      emailContent.subject = `🚨 PROJECT SUBMITTED: ${record.name}`
+      emailContent.subject = `Quote Request: ${record.name}`
       emailContent.replyTo = record.email
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
@@ -63,7 +63,7 @@ Deno.serve(async (req: Request) => {
       })
 
     } else if (table === 'contacts') {
-      emailContent.subject = `💬 LAB INQUIRY: New Message`
+      emailContent.subject = `Lab Inquiry: New Message`
       emailContent.replyTo = record.email
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
