@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Upload, Settings, ChevronDown, ChevronUp, Palette, Minus, Plus, ArrowRight, Globe, CheckCircle, FileText, Camera, Shield, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
+import { SITE_CONFIG } from '../../constants/site';
 
 const QuoteLab = ({
     quoteStep, setQuoteStep,
@@ -72,7 +73,7 @@ const QuoteLab = ({
         }
 
         if (file.size > 50 * 1024 * 1024) {
-            alert('File exceeds 50MB limit. Contact solutions@flourcitylabs.com for larger volumes.');
+            alert('File exceeds 50MB limit. Contact lab@flourcitylabs.com for larger volumes.');
             return;
         }
 
@@ -99,7 +100,7 @@ const QuoteLab = ({
             setQuoteStep(2);
         } catch (error) {
             console.error('Upload error:', error.message);
-            alert('Encryption failed during upload. Check your connection to the Lab.');
+            alert('Upload failed. Check your connection and try again.');
             setIsUploading(false);
         }
     };
@@ -137,7 +138,7 @@ const QuoteLab = ({
             setQuoteStep(4);
         } catch (error) {
             console.error('Submission error:', error.message);
-            alert('Transmission failed. The pipeline is currently congested.');
+            alert(`Something went wrong. Please try again or email us at ${SITE_CONFIG.email}.`);
         }
     };
 
@@ -152,12 +153,35 @@ const QuoteLab = ({
             <div className="flex h-1 bg-gray-300/30">
                 <div className={`transition-all duration-700 bg-[#D4A017] ${quoteStep === 1 ? 'w-1/4' : quoteStep === 2 ? 'w-1/2' : quoteStep === 3 ? 'w-3/4' : 'w-full'}`}></div>
             </div>
+            {user ? (
+                <div className="px-8 pt-4 flex justify-end">
+                    <div className="flex items-center space-x-2 text-[9px] font-black uppercase tracking-[0.2em] text-[#D4A017] bg-[#D4A017]/5 px-3 py-1 rounded-full border border-[#D4A017]/10">
+                        <div className="w-1.5 h-1.5 bg-[#D4A017] rounded-full animate-pulse"></div>
+                        <span>Signed in as {user.email}</span>
+                    </div>
+                </div>
+            ) : (
+                <div className="px-8 pt-6">
+                    <div className="p-6 bg-[#1A1B1E] text-white rounded-sm border-l-4 border-[#D4A017] flex justify-between items-center shadow-lg animate-in fade-in slide-in-from-top-2">
+                        <div className="space-y-1">
+                            <h4 className="text-sm font-black uppercase italic tracking-wider">Sign In to Get Started</h4>
+                            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">You'll need a free account to upload your file and submit for review.</p>
+                        </div>
+                        <button 
+                            onClick={() => document.querySelector('[onClick*="openAuth"]')?.click()} 
+                            className="px-6 py-2 bg-[#D4A017] text-[#1A1B1E] font-black text-[10px] uppercase tracking-widest hover:bg-white transition-colors"
+                        >
+                            Sign In
+                        </button>
+                    </div>
+                </div>
+            )}
             <div className="p-8 md:p-14 text-left">
                 {quoteStep === 1 && (
                     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
                         <div className="text-center space-y-2">
                             <h3 className="text-4xl font-black uppercase italic tracking-tighter">1. Project Entry</h3>
-                            <p className="text-gray-500 font-medium text-sm italic tracking-tight text-center">STL, 3MF, or OBJ formats accepted. (Max 50MB)</p>
+                            <p className="text-gray-500 font-medium text-sm italic tracking-tight text-center">Select an STL, 3MF, or OBJ file to start.</p>
                         </div>
                         
                         <label className="group border-2 border-dashed border-gray-300 rounded-sm p-20 flex flex-col items-center justify-center text-center space-y-6 hover:border-[#D4A017] hover:bg-[#2C3E50]/10 transition-all cursor-pointer bg-[#2C3E50]/5 relative overflow-hidden">
@@ -169,7 +193,7 @@ const QuoteLab = ({
                             {isUploading ? (
                                 <div className="flex flex-col items-center space-y-4">
                                     <div className="w-12 h-12 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin"></div>
-                                    <p className="font-mono text-[10px] uppercase tracking-[0.3em] font-black text-[#D4A017]">Securing Pipeline...</p>
+                                    <p className="font-mono text-[10px] uppercase tracking-[0.3em] font-black text-[#D4A017]">Uploading...</p>
                                 </div>
                             ) : (
                                 <>
@@ -188,7 +212,7 @@ const QuoteLab = ({
                 {quoteStep === 2 && (
                     <div className="space-y-10 animate-in fade-in slide-in-from-right-4">
                         <div className="text-center space-y-2 text-center text-[#1A1B1E]">
-                            <h3 className="text-4xl font-black uppercase italic tracking-tighter">2. Logic Configuration</h3>
+                            <h3 className="text-4xl font-black uppercase italic tracking-tighter">2. Print Settings</h3>
                             <p className="text-gray-500 font-medium text-sm italic tracking-tight text-center">Active Project: {formData.fileName}</p>
                         </div>
                         <div className="grid md:grid-cols-2 gap-10 text-[#1A1B1E]">
@@ -273,7 +297,7 @@ const QuoteLab = ({
                                             <Camera size={12} className="text-[#D4A017]" />
                                             <span>Request Visual Validation</span>
                                         </p>
-                                        <p className="text-[9px] text-gray-500 leading-tight italic text-left">Receive high-res macro photos of finished parts via email before they enter the shipping pipeline.</p>
+                                        <p className="text-[9px] text-gray-500 leading-tight italic text-left">Receive photos of your finished part via email before it ships.</p>
                                     </div>
                                 </label>
                             </div>
@@ -281,22 +305,22 @@ const QuoteLab = ({
 
                         <div className="pt-4 flex flex-col md:flex-row justify-between items-center gap-6">
                             <button onClick={() => setShowAdvanced(!showAdvanced)} className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#2C3E50] hover:text-[#D4A017] transition-colors">
-                                <Settings size={14} /><span>Advanced Engineering Params</span>{showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                <Settings size={14} /><span>Advanced Print Settings</span>{showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                             </button>
                             <button onClick={() => setQuoteStep(3)} className="w-full md:w-auto px-10 py-4 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] flex items-center justify-center space-x-4 hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all shadow-xl">
-                                <span>Lock Parameters</span><ArrowRight size={14} />
+                                <span>Continue</span><ArrowRight size={14} />
                             </button>
                         </div>
 
                         {showAdvanced && (
                             <div className="p-10 bg-[#2C3E50]/5 border border-gray-300 rounded-sm grid md:grid-cols-3 gap-10 animate-in fade-in slide-in-from-top-4">
                                 {[
-                                    { id: 'nozzle', label: "Nozzle Architecture", options: ["0.4mm (Std)", "0.2mm (Detail)", "0.6mm (Ind)", "0.8mm (Rapid)"] },
-                                    { id: 'infill', label: "Core Density", options: ["15% (Std)", "5% (Light)", "40% (Structural)", "100% (Solid)"] },
+                                    { id: 'nozzle', label: "Nozzle Size", options: ["0.4mm (Std)", "0.2mm (Detail)", "0.6mm (Ind)", "0.8mm (Rapid)"] },
+                                    { id: 'infill', label: "Infill Density", options: ["15% (Std)", "5% (Light)", "40% (Structural)", "100% (Solid)"] },
                                     { id: 'walls', label: "Wall Count", options: ["2 Loops (Std)", "3 Loops (Heavy)", "6+ Loops (Ind)"] },
-                                    { id: 'speed', label: "Speed Calibration", options: ["Balanced", "High-Resolution (Slow)", "Draft (Fast)"] },
+                                    { id: 'speed', label: "Print Speed", options: ["Balanced", "High-Resolution (Slow)", "Draft (Fast)"] },
                                     { id: 'resolution', label: "Layer Resolution", options: ["0.20mm (Std)", "0.08mm (Fine)", "0.28mm (Draft)"] },
-                                    { id: 'supports', label: "Scaffolding Type", options: ["Auto (Tech Choice)", "No Supports", "Tree Supports"] }
+                                    { id: 'supports', label: "Support Type", options: ["Auto (Tech Choice)", "No Supports", "Tree Supports"] }
                                 ].map((cfg) => (
                                     <div key={cfg.id} className="space-y-3">
                                         <label className="text-[9px] font-black uppercase tracking-widest text-gray-400">{cfg.label}</label>
@@ -317,8 +341,8 @@ const QuoteLab = ({
                 {quoteStep === 3 && (
                     <div className="space-y-10 animate-in fade-in zoom-in-95 text-[#1A1B1E]">
                         <div className="text-center space-y-2">
-                            <h3 className="text-4xl font-black uppercase italic tracking-tighter">3. Lab Connect</h3>
-                            <p className="text-gray-500 font-medium text-sm italic text-center">Secure submission for professional 24-hour review.</p>
+                            <h3 className="text-4xl font-black uppercase italic tracking-tighter">3. Almost Done</h3>
+                            <p className="text-gray-500 font-medium text-sm italic text-center">Review your details and submit for a quote.</p>
                         </div>
                         <form onSubmit={handleTransmit} className="max-w-md mx-auto space-y-4">
                             <input 
@@ -340,15 +364,15 @@ const QuoteLab = ({
                             <div className="p-5 bg-[#1A1B1E] text-white rounded-sm space-y-3 shadow-lg">
                                 <div className="flex items-center space-x-3 text-[#D4A017]">
                                     <Globe size={18} />
-                                    <p className="text-[10px] font-black uppercase tracking-[0.15em]">Lab-to-Door Fulfillment</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.15em]">Shipping</p>
                                 </div>
-                                <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Secure nationwide shipping from FCL Lab 1. One-day regional transit for Rochester-based orders.</p>
+                                <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Ships nationwide. Rochester orders typically arrive next day.</p>
                             </div>
                             <button 
                                 type="submit" 
                                 className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4"
                             >
-                                TRANSMIT TO LAB
+                                SUBMIT FOR REVIEW
                             </button>
                         </form>
                     </div>
@@ -361,11 +385,11 @@ const QuoteLab = ({
                             <h3 className="text-5xl font-black uppercase tracking-tighter text-center">IN THE LAB.</h3>
                             <div className="w-16 h-1 bg-[#D4A017] mx-auto"></div>
                             <p className="text-gray-600 max-w-sm mx-auto font-medium leading-relaxed italic opacity-90 text-center">
-                                Project secured. A lab technician will personally review your design and email a professional quote within 24 hours.
+                                Your file is in. I'll review it and follow up with a quote and timeline within 24 hours.
                             </p>
                         </div>
                         <button onClick={() => setQuoteStep(1)} className="text-[11px] font-black uppercase tracking-[0.4em] text-gray-500 hover:text-[#D4A017] transition-colors flex items-center justify-center space-x-2 mx-auto uppercase">
-                            <FileText size={14} /><span>Initiate New Project</span>
+                            <FileText size={14} /><span>Start a New Quote</span>
                         </button>
                     </div>
                 )}
