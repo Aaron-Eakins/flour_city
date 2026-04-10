@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, Settings, ChevronDown, ChevronUp, Palette, Minus, Plus, ArrowRight, Globe, CheckCircle, FileText, Camera, Shield, Lock, AlertCircle } from 'lucide-react';
-import { colorDatabase } from '../../constants/materials';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -11,6 +10,53 @@ const QuoteLab = ({
     formData, setFormData
 }) => {
     const { user } = useAuth();
+    const [materials, setMaterials] = useState({});
+    const [isLoadingMaterials, setIsLoadingMaterials] = useState(true);
+
+    useEffect(() => {
+        const fetchMaterials = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('materials')
+                    .select('*')
+                    .eq('is_hidden', false)
+                    .gt('stock', 0)
+                    .order('list_order', { ascending: true });
+
+                if (error) throw error;
+
+                // Transform flat DB structure into family -> [colors] map
+                const materialMap = data.reduce((acc, item) => {
+                    if (!acc[item.material_family]) acc[item.material_family] = [];
+                    acc[item.material_family].push(item.color_name);
+                    return acc;
+                }, {});
+
+                // Ensure Technician's Choice is always there
+                materialMap["Technician's Choice"] = ["Standard Selection"];
+                
+                setMaterials(materialMap);
+
+                // Set default if exists in DB and form is empty
+                const defaultItem = data.find(item => item.is_default);
+                if (defaultItem && !formData.selectedMaterial) {
+                    setFormData(prev => ({
+                        ...prev,
+                        selectedMaterial: defaultItem.material_family,
+                        selectedColors: [defaultItem.color_name, '', '', '']
+                    }));
+                }
+            } catch (err) {
+                console.error('Error fetching materials:', err);
+                // Fallback to minimal state if DB fails
+                setMaterials({ "Technician's Choice": ["Standard Selection"] });
+            } finally {
+                setIsLoadingMaterials(false);
+            }
+        };
+
+        fetchMaterials();
+    }, []);
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -146,9 +192,14 @@ const QuoteLab = ({
                                     <select
                                         value={formData.selectedMaterial}
                                         onChange={(e) => setFormData({ ...formData, selectedMaterial: e.target.value, selectedColors: ['', '', '', ''] })}
-                                        className="w-full bg-white border border-gray-300 p-4 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer"
+                                        className="w-full bg-white border border-gray-300 p-4 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer disabled:opacity-50"
+                                        disabled={isLoadingMaterials}
                                     >
-                                        {Object.keys(colorDatabase).map(mat => <option key={mat}>{mat}</option>)}
+                                        {isLoadingMaterials ? (
+                                            <option>Fetching stock...</option>
+                                        ) : (
+                                            Object.keys(materials).map(mat => <option key={mat}>{mat}</option>)
+                                        )}
                                     </select>
                                 </div>
                                 <div className="space-y-4">
@@ -167,10 +218,17 @@ const QuoteLab = ({
                                                 <select
                                                     value={formData.selectedColors[i]}
                                                     onChange={(e) => handleColorChange(i, e.target.value)}
-                                                    className="flex-1 bg-white border border-gray-300 p-3 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer"
+                                                    className="flex-1 bg-white border border-gray-300 p-3 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer disabled:opacity-50"
+                                                    disabled={isLoadingMaterials}
                                                 >
-                                                    <option value="">{`SELECT COLOR ${i + 1}`}</option>
-                                                    {colorDatabase[formData.selectedMaterial]?.map(color => <option key={color} value={color}>{color}</option>)}
+                                                    {isLoadingMaterials ? (
+                                                        <option>Fetching stock...</option>
+                                                    ) : (
+                                                        <>
+                                                            <option value="">{`SELECT COLOR ${i + 1}`}</option>
+                                                            {materials[formData.selectedMaterial]?.map(color => <option key={color} value={color}>{color}</option>)}
+                                                        </>
+                                                    )}
                                                 </select>
                                             </div>
                                         ))}
