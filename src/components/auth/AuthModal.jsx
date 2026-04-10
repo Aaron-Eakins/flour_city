@@ -116,8 +116,6 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input 
                                 type="email" 
-                                name="email"
-                                autoComplete="username"
                                 placeholder="Email Address" 
                                 required
                                 className="w-full pl-12 pr-4 py-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all"
@@ -129,8 +127,6 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input 
                                 type="password" 
-                                name="password"
-                                autoComplete={isSignUp ? "new-password" : "current-password"}
                                 placeholder="Password" 
                                 required
                                 className="w-full pl-12 pr-4 py-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all"
