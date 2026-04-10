@@ -35,7 +35,7 @@ const QuoteLab = ({
 
                 // Ensure Technician's Choice is always there
                 materialMap["Technician's Choice"] = ["Standard Selection"];
-                
+
                 setMaterials(materialMap);
 
                 // Set default if exists in DB and form is empty
@@ -66,7 +66,7 @@ const QuoteLab = ({
         // 1. Validation
         const allowedExts = ['.stl', '.3mf', '.obj'];
         const ext = '.' + file.name.split('.').pop().toLowerCase();
-        
+
         if (!allowedExts.includes(ext)) {
             alert('Invalid file format. Please use STL, 3MF, or OBJ.');
             return;
@@ -91,10 +91,10 @@ const QuoteLab = ({
 
             if (error) throw error;
 
-            setFormData({ 
-                ...formData, 
-                fileName: file.name, 
-                storagePath: data.path 
+            setFormData({
+                ...formData,
+                fileName: file.name,
+                storagePath: data.path
             });
             setIsUploading(false);
             setQuoteStep(2);
@@ -107,7 +107,7 @@ const QuoteLab = ({
 
     const handleTransmit = async (e) => {
         if (e) e.preventDefault();
-        
+
         if (!formData.name || !formData.email) {
             alert('Name and Email are required to initiate the Lab connection.');
             return;
@@ -164,11 +164,11 @@ const QuoteLab = ({
                 <div className="px-8 pt-6">
                     <div className="p-6 bg-[#1A1B1E] text-white rounded-sm border-l-4 border-[#D4A017] flex justify-between items-center shadow-lg animate-in fade-in slide-in-from-top-2">
                         <div className="space-y-1">
-                            <h4 className="text-sm font-black uppercase italic tracking-wider">Returning Customer?</h4>
-                            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Sign in to track your project history, or continue as a guest below.</p>
+                            <h4 className="text-sm font-black uppercase italic tracking-wider">Sign In to Get Started</h4>
+                            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">You'll need a free account to upload your file and submit for review.</p>
                         </div>
-                        <button 
-                            onClick={() => document.querySelector('[onClick*="openAuth"]')?.click()} 
+                        <button
+                            onClick={() => document.querySelector('[onClick*="openAuth"]')?.click()}
                             className="px-6 py-2 bg-[#D4A017] text-[#1A1B1E] font-black text-[10px] uppercase tracking-widest hover:bg-white transition-colors"
                         >
                             Sign In
@@ -183,13 +183,13 @@ const QuoteLab = ({
                             <h3 className="text-4xl font-black uppercase italic tracking-tighter">1. Project Entry</h3>
                             <p className="text-gray-500 font-medium text-sm italic tracking-tight text-center">Select an STL, 3MF, or OBJ file to start.</p>
                         </div>
-                        
+
                         <label className="group border-2 border-dashed border-gray-300 rounded-sm p-20 flex flex-col items-center justify-center text-center space-y-6 hover:border-[#D4A017] hover:bg-[#2C3E50]/10 transition-all cursor-pointer bg-[#2C3E50]/5 relative overflow-hidden">
                             <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} accept=".stl,.3mf,.obj" />
                             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
                                 <Shield size={64} className="text-[#D4A017]" />
                             </div>
-                            
+
                             {isUploading ? (
                                 <div className="flex flex-col items-center space-y-4">
                                     <div className="w-12 h-12 border-4 border-[#D4A017] border-t-transparent rounded-full animate-spin"></div>
@@ -288,7 +288,7 @@ const QuoteLab = ({
                                 <label className="flex items-start space-x-4 p-4 border border-gray-300 bg-white/50 rounded-sm cursor-pointer group hover:border-[#D4A017] transition-colors">
                                     <input
                                         type="checkbox"
-                                        className="mt-1 accent-[#D4A017] cursor-pointer w-4 h-4"
+                                        className="mt-1 accent-[#D4A017] w-4 h-4"
                                         checked={formData.visualValidation}
                                         onChange={(e) => setFormData({ ...formData, visualValidation: e.target.checked })}
                                     />
@@ -315,7 +315,7 @@ const QuoteLab = ({
                         {showAdvanced && (
                             <div className="p-10 bg-[#2C3E50]/5 border border-gray-300 rounded-sm grid md:grid-cols-3 gap-10 animate-in fade-in slide-in-from-top-4">
                                 {[
-                                    { id: 'nozzle', label: "Nozzle Size", options: ["0.4mm (Recommended)", "0.2mm (Detail)", "0.6mm (Industrial)", "0.8mm (Rapid)"] },
+                                    { id: 'nozzle', label: "Nozzle Size", options: ["0.4mm (Recommended)", "0.2mm (Detail)", "0.6mm (Industrial)", "0.8mm (Structural)"] },
                                     { id: 'infill', label: "Infill Density", options: ["15% (Recommended)", "5% (Light)", "40% (Structural)", "100% (Solid)"] },
                                     { id: 'walls', label: "Wall Count", options: ["2 Loops (Recommended)", "3 Loops (Heavy)", "6+ Loops (Industrial)"] },
                                     { id: 'speed', label: "Print Speed", options: ["Balanced (Recommended)", "High-Resolution", "Draft"] },
@@ -345,21 +345,21 @@ const QuoteLab = ({
                             <p className="text-gray-500 font-medium text-sm italic text-center">Review your details and submit for a quote.</p>
                         </div>
                         <form onSubmit={handleTransmit} className="max-w-md mx-auto space-y-4">
-                            <input 
-                                type="text" 
-                                placeholder="Full Name" 
-                                required 
-                                className="w-full p-5 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]" 
+                            <input
+                                type="text"
+                                placeholder="Full Name"
+                                required
+                                className="w-full p-5 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
                                 value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             />
-                            <input 
-                                type="email" 
-                                placeholder="Email Address" 
-                                required 
-                                className="w-full p-5 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]" 
+                            <input
+                                type="email"
+                                placeholder="Email Address"
+                                required
+                                className="w-full p-5 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
                                 value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             />
                             <div className="p-5 bg-[#1A1B1E] text-white rounded-sm space-y-3 shadow-lg">
                                 <div className="flex items-center space-x-3 text-[#D4A017]">
@@ -368,8 +368,8 @@ const QuoteLab = ({
                                 </div>
                                 <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Ships nationwide. Rochester orders typically arrive next day.</p>
                             </div>
-                            <button 
-                                type="submit" 
+                            <button
+                                type="submit"
                                 className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4"
                             >
                                 SUBMIT FOR REVIEW
