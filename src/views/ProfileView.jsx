@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { User, Mail, Box, Clock, MessageSquare, ChevronDown, ChevronUp, Save, CheckCircle, AlertCircle, Calendar } from 'lucide-react';
+import { User, Mail, Box, Clock, MessageSquare, ChevronDown, ChevronUp, Save, CheckCircle, AlertCircle, Calendar, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import DimensionedHeader from '../components/common/DimensionedHeader';
@@ -55,7 +55,6 @@ const ProfileView = ({ setView }) => {
             const { error } = await supabase.auth.updateUser(updateData);
             if (error) throw error;
             setUpdateStatus('success');
-            setTimeout(() => setUpdateStatus('idle'), 3000);
         } catch {
             setUpdateStatus('error');
         }
@@ -112,10 +111,24 @@ const ProfileView = ({ setView }) => {
                                 </button>
 
                                 {updateStatus === 'success' && (
-                                    <div className="space-y-1 animate-in fade-in">
-                                        <p className="text-emerald-600 text-[9px] font-black uppercase tracking-widest text-center">Identity Re-Secured</p>
+                                    <div className="relative p-4 bg-emerald-50 border border-emerald-100 rounded-sm space-y-2 animate-in slide-in-from-top-2">
+                                        <button 
+                                            onClick={() => setUpdateStatus('idle')}
+                                            className="absolute top-2 right-2 text-emerald-400 hover:text-emerald-600 transition-colors"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                        <div className="flex items-center space-x-2">
+                                            <CheckCircle className="text-emerald-500" size={16} />
+                                            <p className="text-emerald-600 text-[9px] font-black uppercase tracking-[0.2em]">Identity Update Initiated</p>
+                                        </div>
                                         {email !== user.email && (
-                                            <p className="text-[8px] text-amber-600 font-bold uppercase tracking-widest text-center italic">Check your new email to confirm the change.</p>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] text-[#1A1B1E] font-medium leading-relaxed">
+                                                    Action Required: For security, Supabase requires you to click the confirmation links sent to **BOTH** your old and new email addresses.
+                                                </p>
+                                                <p className="text-[8px] text-emerald-600 font-black uppercase tracking-widest italic">The change will not take effect until both links are verified.</p>
+                                            </div>
                                         )}
                                     </div>
                                 )}
