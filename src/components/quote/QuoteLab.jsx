@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, Settings, ChevronDown, ChevronUp, Palette, Minus, Plus, ArrowRight, Globe, CheckCircle, FileText, Camera, Shield, Lock, AlertCircle } from 'lucide-react';
+import { Upload, Settings, ChevronDown, ChevronUp, Palette, Minus, Plus, ArrowRight, Globe, CheckCircle, FileText, Camera, Shield, Lock, AlertCircle, Check } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 import { SITE_CONFIG } from '../../constants/site';
@@ -298,12 +298,15 @@ const QuoteLab = ({
                                 </div>
 
                                 <label className="flex items-start space-x-4 p-4 border border-gray-300 bg-white/50 rounded-sm cursor-pointer group hover:border-[#D4A017] transition-colors">
-                                    <input
-                                        type="checkbox"
-                                        className="mt-1 accent-[#D4A017] text-[#D4A017] focus:ring-[#D4A017] border-gray-300 rounded w-4 h-4 cursor-pointer"
-                                        checked={formData.visualValidation || false}
-                                        onChange={(e) => setFormData({ ...formData, visualValidation: e.target.checked })}
-                                    />
+                                    <div className="relative mt-1 flex items-center justify-center shrink-0 w-4 h-4">
+                                        <input
+                                            type="checkbox"
+                                            className="appearance-none w-full h-full bg-white border-2 border-gray-300 rounded-[2px] checked:bg-[#D4A017] checked:border-[#D4A017] focus:outline-none focus:ring-2 focus:ring-[#D4A017]/30 transition-all cursor-pointer m-0 cursor-pointer"
+                                            checked={formData.visualValidation || false}
+                                            onChange={(e) => setFormData({ ...formData, visualValidation: e.target.checked })}
+                                        />
+                                        <Check strokeWidth={4} className={`absolute w-3 h-3 text-[#1A1B1E] pointer-events-none transition-opacity ${formData.visualValidation ? 'opacity-100' : 'opacity-0'}`} />
+                                    </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black uppercase tracking-widest flex items-center space-x-2">
                                             <Camera size={12} className="text-[#D4A017]" />
