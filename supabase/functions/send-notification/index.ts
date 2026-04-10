@@ -48,13 +48,13 @@ Deno.serve(async (req: Request) => {
       // Also send confirmation to user
       await sendEmail({
         to: record.email,
-        subject: "FCL LABS: Project Received.",
+        subject: "Your quote request is in.",
         html: `
           <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
-            <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">Project Secured.</h1>
-            <p style="font-size: 14px; line-height: 1.6;">Hello ${record.name}, your project has successfully entered the Flour City Labs pipeline.</p>
-            <p style="font-size: 14px; line-height: 1.6;">A technician is currently reviewing your geometry and configuration for: <strong>${record.material}</strong>.</p>
-            <p style="font-size: 14px; line-height: 1.6;">You will receive a formal technical quote via email within 24 hours.</p>
+            <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">Got it.</h1>
+            <p style="font-size: 14px; line-height: 1.6;">Hi ${record.name}, your file is in and I'll take a look within 24 hours.</p>
+            <p style="font-size: 14px; line-height: 1.6;">I'll be reviewing your request for <strong>${record.material}</strong> and will follow up with a quote and timeline.</p>
+            <p style="font-size: 14px; line-height: 1.6;">If you have questions in the meantime, reply to this email.</p>
             <div style="margin-top: 30px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; color: #D4A017;">
               FLOUR CITY LABS // ROCHESTER NY
             </div>
