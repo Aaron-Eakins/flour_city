@@ -22,7 +22,8 @@ const App = () => {
     const [formData, setFormData] = useState({
         name: '', email: '', selectedMaterial: 'PLA - Matte', intent: '',
         colorCount: 1, selectedColors: ['', '', '', ''],
-        visualValidation: false, fileName: '', fileContent: ''
+        visualValidation: false, fileName: '', storagePath: '',
+        nozzle: '', infill: '', walls: '', speed: '', layer_height: '', supports: ''
     });
 
     useEffect(() => {

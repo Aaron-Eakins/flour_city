@@ -46,7 +46,7 @@ Deno.serve(async (req: Request) => {
               <tr><td style="color: #666;">Core Infill:</td><td>${record.infill || 'Standard'}</td></tr>
               <tr><td style="color: #666;">Walls:</td><td>${record.walls || 'Standard'}</td></tr>
               <tr><td style="color: #666;">Speed:</td><td>${record.speed || 'Standard'}</td></tr>
-              <tr><td style="color: #666;">Resolution:</td><td>${record.resolution || 'Standard'}</td></tr>
+              <tr><td style="color: #666;">Layer Height:</td><td>${record.layer_height || 'Standard'}</td></tr>
               <tr><td style="color: #666;">Scaffolding:</td><td>${record.supports || 'Standard'}</td></tr>
             </table>
           </div>
