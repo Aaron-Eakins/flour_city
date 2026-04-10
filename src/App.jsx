@@ -29,6 +29,10 @@ const App = () => {
         nozzle: '', infill: '', walls: '', speed: '', layer_height: '', supports: ''
     });
 
+    const navigateTo = (newView) => {
+        window.location.hash = newView;
+    };
+
     useEffect(() => {
         if (user) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -65,10 +69,6 @@ const App = () => {
         
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
-
-    const navigateTo = (newView) => {
-        window.location.hash = newView;
-    };
 
     useEffect(() => {
         window.scrollTo(0, 0);

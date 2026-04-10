@@ -34,7 +34,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             }, 500);
             return () => clearInterval(timer);
         }
-    }, []);
+    }, [turnstileToken]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

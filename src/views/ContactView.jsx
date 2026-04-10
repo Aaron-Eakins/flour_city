@@ -28,11 +28,44 @@ const ContactView = ({ setView }) => {
     
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [errorMessage, setErrorMessage] = useState('');
+    const [turnstileToken, setTurnstileToken] = useState('');
+
+    useEffect(() => {
+        const initTurnstile = () => {
+            const container = document.getElementById('turnstile-container-contact');
+            if (window.turnstile && container && !turnstileToken) {
+                window.turnstile.render('#turnstile-container-contact', {
+                    sitekey: '0x4AAAAAAC6yWDKB2X7isRW7',
+                    callback: (token) => setTurnstileToken(token),
+                    theme: 'light'
+                });
+            }
+        };
+
+        if (window.turnstile) {
+            initTurnstile();
+        } else {
+            const timer = setInterval(() => {
+                if (window.turnstile) {
+                    initTurnstile();
+                    clearInterval(timer);
+                }
+            }, 500);
+            return () => clearInterval(timer);
+        }
+    }, [turnstileToken]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // 1. Honeypot check: If the hidden field is filled, it's a bot
+        // 1. Bot check
+        if (!turnstileToken) {
+            setErrorMessage('Security verification required');
+            setStatus('error');
+            return;
+        }
+
+        // 2. Honeypot check: If the hidden field is filled, it's a bot
         if (formData._honeypot) {
             console.warn('Spam detected via honeypot.');
             setStatus('success'); // Pretend success to bot
@@ -42,18 +75,33 @@ const ContactView = ({ setView }) => {
         setStatus('loading');
         
         try {
-            const { error } = await supabase
+            const { data: contact, error } = await supabase
                 .from('contacts')
                 .insert({
                     name: formData.name,
                     email: formData.email,
                     message: formData.message
-                });
+                })
+                .select()
+                .single();
 
             if (error) throw error;
             
+            // 3. Explicitly trigger notification Edge Function
+            const { error: funcError } = await supabase.functions.invoke('send-notification', {
+                body: {
+                    record: contact,
+                    table: 'contacts',
+                    type: 'INSERT',
+                    turnstile_token: turnstileToken
+                }
+            });
+
+            if (funcError) throw new Error(`Notification failed: ${funcError.message}`);
+
             setStatus('success');
             setFormData({ name: '', email: '', message: '', _honeypot: '' });
+            setTurnstileToken(''); // Clear token for next time
         } catch (err) {
             console.error('Contact error:', err.message);
             setErrorMessage(`Something went wrong. Please try again or email me directly at ${SITE_CONFIG.email}.`);
@@ -169,8 +217,13 @@ const ContactView = ({ setView }) => {
                                         </div>
                                     )}
 
+                                    {/* Turnstile Container */}
+                                    <div className="flex justify-start py-2">
+                                        <div id="turnstile-container-contact"></div>
+                                    </div>
+
                                     <button 
-                                        disabled={status === 'loading'}
+                                        disabled={status === 'loading' || !turnstileToken}
                                         className="w-full py-5 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center justify-center space-x-3 disabled:opacity-50"
                                     >
                                         <span>{status === 'loading' ? 'Sending...' : 'Send Message'}</span>
