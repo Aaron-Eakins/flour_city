@@ -573,6 +573,7 @@ const ProcessView = () => (
     </div>
 );
 
+// eslint-disable-next-line no-unused-vars
 const HeritageView = (props) => (
     <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-1000 text-[#1A1B1E]">
         <div className="max-w-7xl mx-auto px-6 text-left">

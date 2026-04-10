@@ -40,12 +40,17 @@ const QuoteLab = ({
 
                 // Set default if exists in DB and form is empty
                 const defaultItem = data.find(item => item.is_default);
-                if (defaultItem && !formData.selectedMaterial) {
-                    setFormData(prev => ({
-                        ...prev,
-                        selectedMaterial: defaultItem.material_family,
-                        selectedColors: [defaultItem.color_name, '', '', '']
-                    }));
+                if (defaultItem) {
+                    setFormData(prev => {
+                        if (!prev.selectedMaterial) {
+                            return {
+                                ...prev,
+                                selectedMaterial: defaultItem.material_family,
+                                selectedColors: [defaultItem.color_name, '', '', '']
+                            };
+                        }
+                        return prev;
+                    });
                 }
             } catch (err) {
                 console.error('Error fetching materials:', err);
@@ -57,7 +62,9 @@ const QuoteLab = ({
         };
 
         fetchMaterials();
-    }, [formData.selectedMaterial, setFormData]);
+        // FLASHAUTONOTE: Fetch materials only once on mount. Do not add formData to dependencies to prevent infinite fetch loops.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -121,7 +128,7 @@ const QuoteLab = ({
                     name: formData.name,
                     email: formData.email,
                     material: formData.selectedMaterial,
-                    colors: (formData.selectedColors || []).filter(c => c !== ''),
+                    colors: (formData.selectedColors || []).slice(0, formData.colorCount || 1).filter(c => c !== ''),
                     intent: formData.intent,
                     visual_validation: formData.visualValidation,
                     file_path: formData.storagePath,
@@ -160,22 +167,7 @@ const QuoteLab = ({
                         <span>Signed in as {user.email}</span>
                     </div>
                 </div>
-            ) : (
-                <div className="px-8 pt-6">
-                    <div className="p-6 bg-[#1A1B1E] text-white rounded-sm border-l-4 border-[#D4A017] flex justify-between items-center shadow-lg animate-in fade-in slide-in-from-top-2">
-                        <div className="space-y-1">
-                            <h4 className="text-sm font-black uppercase italic tracking-wider">Sign In to Get Started</h4>
-                            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">You'll need a free account to upload your file and submit for review.</p>
-                        </div>
-                        <button
-                            onClick={() => document.querySelector('[onClick*="openAuth"]')?.click()}
-                            className="px-6 py-2 bg-[#D4A017] text-[#1A1B1E] font-black text-[10px] uppercase tracking-widest hover:bg-white transition-colors"
-                        >
-                            Sign In
-                        </button>
-                    </div>
-                </div>
-            )}
+            ) : null /* FLASHAUTONOTE: Do NOT add a sign in banner for guests. Flour City Labs uses guest-first quoting. */}
             <div className="p-8 md:p-14 text-left">
                 {quoteStep === 1 && (
                     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
@@ -228,7 +220,7 @@ const QuoteLab = ({
                                         {isLoadingMaterials ? (
                                             <option>Fetching stock...</option>
                                         ) : (
-                                            Object.keys(materials).map(mat => <option key={mat}>{mat}</option>)
+                                            Object.keys(materials).map(mat => <option key={mat} value={mat}>{mat}</option>)
                                         )}
                                     </select>
                                 </div>
@@ -329,8 +321,8 @@ const QuoteLab = ({
                                             onChange={(e) => setFormData({ ...formData, [cfg.id]: e.target.value })}
                                             className="w-full bg-white border border-gray-300 p-3 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer"
                                         >
-                                            {cfg.options.map(opt => <option key={opt}>{opt}</option>)}
-                                            <option>Technician's Choice</option>
+                                            {cfg.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                            <option value="Technician's Choice">Technician's Choice</option>
                                         </select>
                                     </div>
                                 ))}
