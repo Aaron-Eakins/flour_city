@@ -37,8 +37,11 @@ const App = () => {
                 email: user.email || prev.email,
                 name: user.user_metadata?.full_name || user.user_metadata?.name || prev.name
             }));
+        } else if (view === 'profile') {
+            // If user logs out while on profile page, redirect home
+            navigateTo('home');
         }
-    }, [user]);
+    }, [user, view]);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
