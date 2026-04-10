@@ -421,12 +421,7 @@ const QuoteLab = ({
                                 ></div>
                             </div>
 
-                            {/* Inline script for Turnstile callback */}
-                            <script dangerouslySetInnerHTML={{ __html: `
-                                window.onTurnstileQuoteVerified = function(token) {
-                                    window.dispatchEvent(new CustomEvent('turnstile-quote-verified', { detail: token }));
-                                };
-                            ` }} />
+                            {/* Inline script for Turnstile callback moved to index.html */}
 
                             <button
                                 type="submit"

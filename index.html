@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flour City Labs</title>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script>
+      window.onTurnstileQuoteVerified = function(token) {
+        window.dispatchEvent(new CustomEvent('turnstile-quote-verified', { detail: token }));
+      };
+      window.onTurnstileNoteVerified = function(token) {
+        window.dispatchEvent(new CustomEvent('turnstile-note-verified', { detail: token }));
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>

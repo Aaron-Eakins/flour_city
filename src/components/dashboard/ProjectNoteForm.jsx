@@ -99,12 +99,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
                 data-theme="light"
             ></div>
 
-            {/* Inline script for Turnstile callback */}
-            <script dangerouslySetInnerHTML={{ __html: `
-                window.onTurnstileNoteVerified = function(token) {
-                    window.dispatchEvent(new CustomEvent('turnstile-note-verified', { detail: token }));
-                };
-            ` }} />
+            {/* Inline script for Turnstile callback moved to index.html */}
             
             {status === 'success' && (
                 <div className="flex items-center space-x-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-left-2">
