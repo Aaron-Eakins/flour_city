@@ -1,9 +1,13 @@
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
-
+// Supabase Edge Functions use Deno. We use '@ts-ignore' for the Deno global 
+// if your local environment is not yet configured with the Deno extension.
+// @ts-ignore: Deno is built-in to the Supabase runtime
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+// @ts-ignore: Deno is built-in to the Supabase runtime
 const FCL_EMAIL = Deno.env.get('FCL_EMAIL') || "lab@flourcitylabs.com"
 
-serve(async (req: Request) => {
+// Deno.serve is the modern way to handle HTTP in Edge Functions
+// @ts-ignore: Deno is built-in to the Supabase runtime
+Deno.serve(async (req: Request) => {
   try {
     const payload = await req.json()
     const { record, table, type } = payload
