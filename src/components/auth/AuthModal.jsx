@@ -32,6 +32,7 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
             } else {
                 const { error: signInError } = await signIn(email, password);
                 if (signInError) throw signInError;
+                setView('profile');
                 onClose();
             }
         } catch (err) {
