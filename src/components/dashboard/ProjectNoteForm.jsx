@@ -30,13 +30,15 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             if (error) throw error;
 
             // Explicitly trigger notification Edge Function
-            await supabase.functions.invoke('send-notification', {
+            const { error: funcError } = await supabase.functions.invoke('send-notification', {
                 body: {
                     record: note,
                     table: 'project_notes',
                     type: 'INSERT'
                 }
             });
+
+            if (funcError) throw new Error(`Notification failed: ${funcError.message}`);
 
             setStatus('success');
             setContent('');
