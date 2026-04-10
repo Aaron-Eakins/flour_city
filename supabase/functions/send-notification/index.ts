@@ -4,7 +4,7 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 const FCL_EMAIL = Deno.env.get('FCL_EMAIL') || "lab@flourcitylabs.com"
 
-serve(async (req) => {
+serve(async (req: Request) => {
   try {
     const payload = await req.json()
     const { record, table, type } = payload
