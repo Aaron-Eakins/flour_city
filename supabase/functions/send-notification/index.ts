@@ -81,7 +81,7 @@ serve(async (req) => {
   }
 })
 
-async function sendEmail({ to, subject, html, replyTo }) {
+async function sendEmail({ to, subject, html, replyTo }: { to: any, subject: any, html: any, replyTo?: any }) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
