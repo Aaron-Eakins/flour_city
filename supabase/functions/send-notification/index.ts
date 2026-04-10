@@ -11,14 +11,27 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
 const supabaseAdmin = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY || '')
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 // @ts-ignore: Deno is built-in to the Supabase runtime
 Deno.serve(async (req: Request) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
   try {
     const payload = await req.json()
     const { record, table, type } = payload
 
     if (type !== 'INSERT') {
-      return new Response(JSON.stringify({ message: 'Ignore non-insert' }), { status: 200 })
+      return new Response(JSON.stringify({ message: 'Ignore non-insert' }), { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
     }
 
     let emailContent = {
@@ -91,7 +104,10 @@ Deno.serve(async (req: Request) => {
         `
       })
 
-      return new Response(JSON.stringify({ success: true }), { status: 200 })
+      return new Response(JSON.stringify({ success: true }), { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
 
     } else if (table === 'contacts') {
       emailContent.subject = `Lab Inquiry: ${record.name}`
@@ -107,7 +123,10 @@ Deno.serve(async (req: Request) => {
         </div>
       `
       const res = await sendEmail(emailContent)
-      return new Response(JSON.stringify(res), { status: 200 })
+      return new Response(JSON.stringify(res), { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
 
     } else if (table === 'project_notes') {
       // 1. Fetch parent quote details
@@ -139,14 +158,23 @@ Deno.serve(async (req: Request) => {
       }
 
       const res = await sendEmail(emailContent)
-      return new Response(JSON.stringify(res), { status: 200 })
+      return new Response(JSON.stringify(res), { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
     }
 
-    return new Response(JSON.stringify({ message: 'Unhandled Table' }), { status: 200 })
+    return new Response(JSON.stringify({ message: 'Unhandled Table' }), { 
+      status: 200, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    })
 
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
-    return new Response(JSON.stringify({ error: errorMsg }), { status: 500 })
+    return new Response(JSON.stringify({ error: errorMsg }), { 
+      status: 500, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    })
   }
 })
 

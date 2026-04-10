@@ -17,15 +17,26 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
         setStatus('idle');
 
         try {
-            const { error } = await supabase
+            const { data: note, error } = await supabase
                 .from('project_notes')
                 .insert({
                     quote_id: quoteId,
                     user_id: user.id,
                     content: content.trim()
-                });
+                })
+                .select()
+                .single();
 
             if (error) throw error;
+
+            // Explicitly trigger notification Edge Function
+            await supabase.functions.invoke('send-notification', {
+                body: {
+                    record: note,
+                    table: 'project_notes',
+                    type: 'INSERT'
+                }
+            });
 
             setStatus('success');
             setContent('');

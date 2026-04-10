@@ -122,7 +122,7 @@ const QuoteLab = ({
         }
 
         try {
-            const { error } = await supabase
+            const { data: quote, error } = await supabase
                 .from('quotes')
                 .insert({
                     user_id: user?.id || null,
@@ -140,9 +140,21 @@ const QuoteLab = ({
                     layer_height: formData.layer_height || "0.20mm (Recommended)",
                     supports: formData.supports || "Auto (Recommended)",
                     status: 'pending_review'
-                });
+                })
+                .select()
+                .single();
 
             if (error) throw error;
+
+            // Explicitly trigger notification Edge Function
+            await supabase.functions.invoke('send-notification', {
+                body: {
+                    record: quote,
+                    table: 'quotes',
+                    type: 'INSERT'
+                }
+            });
+
             setQuoteStep(4);
         } catch (error) {
             console.error('Submission error:', error.message);
