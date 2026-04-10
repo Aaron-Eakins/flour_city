@@ -77,7 +77,8 @@ serve(async (req) => {
     return new Response(JSON.stringify(res), { status: 200 })
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 })
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return new Response(JSON.stringify({ error: errorMsg }), { status: 500 })
   }
 })
 
