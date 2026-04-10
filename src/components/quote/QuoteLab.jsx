@@ -164,8 +164,8 @@ const QuoteLab = ({
                 <div className="px-8 pt-6">
                     <div className="p-6 bg-[#1A1B1E] text-white rounded-sm border-l-4 border-[#D4A017] flex justify-between items-center shadow-lg animate-in fade-in slide-in-from-top-2">
                         <div className="space-y-1">
-                            <h4 className="text-sm font-black uppercase italic tracking-wider">Sign In to Get Started</h4>
-                            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">You'll need a free account to upload your file and submit for review.</p>
+                            <h4 className="text-sm font-black uppercase italic tracking-wider">Returning Customer?</h4>
+                            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Sign in to track your project history, or continue as a guest below.</p>
                         </div>
                         <button 
                             onClick={() => document.querySelector('[onClick*="openAuth"]')?.click()} 
@@ -288,7 +288,7 @@ const QuoteLab = ({
                                 <label className="flex items-start space-x-4 p-4 border border-gray-300 bg-white/50 rounded-sm cursor-pointer group hover:border-[#D4A017] transition-colors">
                                     <input
                                         type="checkbox"
-                                        className="mt-1 accent-[#D4A017] w-4 h-4"
+                                        className="mt-1 accent-[#D4A017] cursor-pointer w-4 h-4"
                                         checked={formData.visualValidation}
                                         onChange={(e) => setFormData({ ...formData, visualValidation: e.target.checked })}
                                     />
