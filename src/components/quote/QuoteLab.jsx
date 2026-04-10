@@ -315,12 +315,12 @@ const QuoteLab = ({
                         {showAdvanced && (
                             <div className="p-10 bg-[#2C3E50]/5 border border-gray-300 rounded-sm grid md:grid-cols-3 gap-10 animate-in fade-in slide-in-from-top-4">
                                 {[
-                                    { id: 'nozzle', label: "Nozzle Size", options: ["0.4mm (Std)", "0.2mm (Detail)", "0.6mm (Ind)", "0.8mm (Rapid)"] },
-                                    { id: 'infill', label: "Infill Density", options: ["15% (Std)", "5% (Light)", "40% (Structural)", "100% (Solid)"] },
-                                    { id: 'walls', label: "Wall Count", options: ["2 Loops (Std)", "3 Loops (Heavy)", "6+ Loops (Ind)"] },
-                                    { id: 'speed', label: "Print Speed", options: ["Balanced", "High-Resolution (Slow)", "Draft (Fast)"] },
-                                    { id: 'layer_height', label: "Layer Height", options: ["0.20mm (Std)", "0.08mm (Fine)", "0.28mm (Draft)"] },
-                                    { id: 'supports', label: "Support Type", options: ["Auto (Tech Choice)", "No Supports", "Tree Supports"] }
+                                    { id: 'nozzle', label: "Nozzle Size", options: ["0.4mm (Recommended)", "0.2mm (Detail)", "0.6mm (Industrial)", "0.8mm (Rapid)"] },
+                                    { id: 'infill', label: "Infill Density", options: ["15% (Recommended)", "5% (Light)", "40% (Structural)", "100% (Solid)"] },
+                                    { id: 'walls', label: "Wall Count", options: ["2 Loops (Recommended)", "3 Loops (Heavy)", "6+ Loops (Industrial)"] },
+                                    { id: 'speed', label: "Print Speed", options: ["Balanced (Recommended)", "High-Resolution", "Draft"] },
+                                    { id: 'layer_height', label: "Layer Height", options: ["0.20mm (Recommended)", "0.08mm (Fine)", "0.28mm (Draft)"] },
+                                    { id: 'supports', label: "Support Type", options: ["Auto (Technician's Choice)", "None Needed", "Included in File", "Tree Supports"] }
                                 ].map((cfg) => (
                                     <div key={cfg.id} className="space-y-3">
                                         <label className="text-[9px] font-black uppercase tracking-widest text-gray-400">{cfg.label}</label>
