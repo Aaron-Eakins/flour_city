@@ -146,7 +146,7 @@ const QuoteLab = ({
                                     <select
                                         value={formData.selectedMaterial}
                                         onChange={(e) => setFormData({ ...formData, selectedMaterial: e.target.value, selectedColors: ['', '', '', ''] })}
-                                        className="w-full bg-[#2C3E50]/5 border border-gray-300 p-4 rounded-sm font-bold uppercase text-xs outline-none focus:border-[#D4A017]"
+                                        className="w-full bg-white border border-gray-300 p-4 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer"
                                     >
                                         {Object.keys(colorDatabase).map(mat => <option key={mat}>{mat}</option>)}
                                     </select>
@@ -167,7 +167,7 @@ const QuoteLab = ({
                                                 <select
                                                     value={formData.selectedColors[i]}
                                                     onChange={(e) => handleColorChange(i, e.target.value)}
-                                                    className="flex-1 bg-[#2C3E50]/5 border border-gray-300 p-3 rounded-sm font-bold uppercase text-[10px] outline-none focus:border-[#D4A017]"
+                                                    className="flex-1 bg-white border border-gray-300 p-3 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer"
                                                 >
                                                     <option value="">{`SELECT COLOR ${i + 1}`}</option>
                                                     {colorDatabase[formData.selectedMaterial]?.map(color => <option key={color} value={color}>{color}</option>)}
@@ -193,7 +193,7 @@ const QuoteLab = ({
                                         value={formData.intent}
                                         onChange={(e) => setFormData({ ...formData, intent: e.target.value })}
                                         placeholder="Describe the part's function or tolerance needs..."
-                                        className="w-full bg-[#2C3E50]/5 border border-gray-300 p-4 rounded-sm font-medium text-sm outline-none focus:border-[#D4A017] h-32"
+                                        className="w-full bg-white border border-gray-300 p-4 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] h-32"
                                     ></textarea>
                                 </div>
 
@@ -238,7 +238,7 @@ const QuoteLab = ({
                                         <label className="text-[9px] font-black uppercase tracking-widest text-gray-400">{cfg.label}</label>
                                         <select
                                             onChange={(e) => setFormData({ ...formData, [cfg.id]: e.target.value })}
-                                            className="w-full bg-white border border-gray-300 p-3 rounded-sm font-black text-[10px] uppercase outline-none focus:border-[#D4A017]"
+                                            className="w-full bg-white border border-gray-300 p-3 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer"
                                         >
                                             {cfg.options.map(opt => <option key={opt}>{opt}</option>)}
                                             <option>Technician's Choice</option>
@@ -259,17 +259,17 @@ const QuoteLab = ({
                         <form onSubmit={handleTransmit} className="max-w-md mx-auto space-y-4">
                             <input 
                                 type="text" 
-                                placeholder="FULL NAME" 
+                                placeholder="Full Name" 
                                 required 
-                                className="w-full p-5 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]" 
+                                className="w-full p-5 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]" 
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
                             />
                             <input 
                                 type="email" 
-                                placeholder="EMAIL ADDRESS" 
+                                placeholder="Email Address" 
                                 required 
-                                className="w-full p-5 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]" 
+                                className="w-full p-5 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]" 
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
                             />

@@ -127,25 +127,25 @@ const ContactView = ({ setView }) => {
                                     <div className="grid md:grid-cols-2 gap-4 text-left">
                                         <input 
                                             type="text" 
-                                            placeholder="FULL NAME" 
+                                            placeholder="Full Name" 
                                             required
-                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]" 
+                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all" 
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         />
                                         <input 
                                             type="email" 
-                                            placeholder="EMAIL ADDRESS" 
+                                            placeholder="Email Address" 
                                             required
-                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017]" 
+                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all" 
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         />
                                     </div>
                                     <textarea 
-                                        placeholder="WHAT CAN I HELP YOU WITH?" 
+                                        placeholder="What can I help you with?" 
                                         required
-                                        className="w-full p-4 bg-white border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017] h-40"
+                                        className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all h-40"
                                         value={formData.message}
                                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                     ></textarea>

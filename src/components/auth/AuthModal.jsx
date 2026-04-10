@@ -104,9 +104,9 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                                 <input 
                                     type="text" 
-                                    placeholder="FULL NAME" 
+                                    placeholder="Full Name" 
                                     required
-                                    className="w-full pl-12 pr-4 py-4 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017] transition-colors"
+                                    className="w-full pl-12 pr-4 py-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all"
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
                                 />
@@ -116,9 +116,9 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input 
                                 type="email" 
-                                placeholder="EMAIL ADDRESS" 
+                                placeholder="Email Address" 
                                 required
-                                className="w-full pl-12 pr-4 py-4 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017] transition-colors"
+                                className="w-full pl-12 pr-4 py-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
@@ -127,9 +127,9 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input 
                                 type="password" 
-                                placeholder="PASSWORD" 
+                                placeholder="Password" 
                                 required
-                                className="w-full pl-12 pr-4 py-4 bg-[#2C3E50]/5 border border-gray-300 rounded-sm text-xs font-black uppercase tracking-widest outline-none focus:border-[#D4A017] transition-colors"
+                                className="w-full pl-12 pr-4 py-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
