@@ -1,5 +1,5 @@
 import React from 'react';
-import { Waves, Anchor, Compass, Cpu } from 'lucide-react';
+import { Waves, Anchor, Compass, Cpu, Leaf } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import OpticsIcon from '../components/common/OpticsIcon';
 import LogoIcon from '../components/common/LogoIcon';
@@ -10,7 +10,7 @@ const HeritageView = () => (
             <header className="mb-32 space-y-12 text-left">
                 <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">The Archive</span>
                 <DimensionedHeader line1="BUILT TO" line2="LAST." layerHt="0.16mm" partWd="180mm" variant="light" />
-                <p className="text-gray-500 max-w-xl font-medium leading-relaxed text-xl italic text-left">"Continuing a two-hundred-year-old conversation about how things are made in the Flour City."</p>
+                <p className="text-gray-500 max-w-xl font-medium leading-relaxed text-xl italic text-left">"Continuing Rochester's 200-year tradition of making things that work."</p>
             </header>
             <div className="space-y-40 relative text-left">
                 <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-300 hidden md:block opacity-30"></div>
@@ -27,6 +27,22 @@ const HeritageView = () => (
                                 <Anchor size={24} className="text-[#D4A017]" />
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-12 items-center text-left">
+                    <div className="flex justify-center order-1">
+                        <div className="w-64 h-64 bg-emerald-900 flex items-center justify-center rounded-sm shadow-2xl relative">
+                            <Leaf size={80} className="text-white/10" />
+                            <div className="absolute -top-4 -left-4 w-20 h-20 bg-[#F2F1EF] border border-[#D4A017]/30 flex flex-col items-center justify-center shadow-lg">
+                                <Leaf size={20} className="text-[#D4A017]" />
+                                <span className="text-[8px] font-black uppercase text-[#D4A017]">Growth</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="space-y-6 text-left order-2">
+                        <span className="text-4xl font-black text-[#D4A017] italic">1850</span>
+                        <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Flower City</h3>
+                        <p className="text-gray-600 font-medium leading-relaxed text-left text-[#1A1B1E]">As the mills moved west, Rochester turned to the earth. The region became the nursery capital of the country.</p>
                     </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -50,7 +66,7 @@ const HeritageView = () => (
                     <div className="space-y-6 text-right order-2 md:order-1">
                         <span className="text-4xl font-black text-[#D4A017] italic">{new Date().getFullYear()}</span>
                         <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Digital Mill</h3>
-                        <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-right">Flour City Labs replaces the milling stone with high-resolution nozzles, building complex realities layer by layer.</p>
+                        <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-right">Flour City Labs continues that tradition layer by layer, with a printer instead of a mill.</p>
                     </div>
                     <div className="flex justify-center order-1 md:order-2">
                         <div className="w-64 h-64 bg-[#1A1B1E] flex items-center justify-center rounded-sm shadow-2xl relative">
