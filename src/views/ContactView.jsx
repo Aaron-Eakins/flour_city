@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, MapPin, Truck, CheckCircle, MessageSquare, AlertCircle, Send } from 'lucide-react';
 import { SITE_CONFIG } from '../constants/site';
+import { useAuth } from '../context/AuthContext';
 
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import LogoIcon from '../components/common/LogoIcon';
 import { supabase } from '../lib/supabaseClient';
 
 const ContactView = ({ setView }) => {
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         message: '',
         _honeypot: '' // Spam prevention
     });
+
+    useEffect(() => {
+        if (user) {
+            setFormData(prev => ({
+                ...prev,
+                email: user.email || prev.email,
+                name: user.user_metadata?.full_name || user.user_metadata?.name || prev.name
+            }));
+        }
+    }, [user]);
     
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [errorMessage, setErrorMessage] = useState('');

@@ -10,8 +10,10 @@ import TOSView from './views/TOSView';
 import PrivacyView from './views/PrivacyView';
 import ContactView from './views/ContactView';
 import AuthModal from './components/auth/AuthModal';
+import { useAuth } from './context/AuthContext';
 
 const App = () => {
+    const { user } = useAuth();
     const [view, setView] = useState('home');
     const [isScrolled, setIsScrolled] = useState(false);
     const [quoteStep, setQuoteStep] = useState(1);
@@ -25,6 +27,17 @@ const App = () => {
         visualValidation: false, fileName: '', storagePath: '',
         nozzle: '', infill: '', walls: '', speed: '', layer_height: '', supports: ''
     });
+
+    useEffect(() => {
+        if (user) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setFormData(prev => ({
+                ...prev,
+                email: user.email || prev.email,
+                name: user.user_metadata?.full_name || user.user_metadata?.name || prev.name
+            }));
+        }
+    }, [user]);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
