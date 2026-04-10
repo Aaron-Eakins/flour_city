@@ -319,7 +319,7 @@ const QuoteLab = ({
                                     { id: 'infill', label: "Infill Density", options: ["15% (Std)", "5% (Light)", "40% (Structural)", "100% (Solid)"] },
                                     { id: 'walls', label: "Wall Count", options: ["2 Loops (Std)", "3 Loops (Heavy)", "6+ Loops (Ind)"] },
                                     { id: 'speed', label: "Print Speed", options: ["Balanced", "High-Resolution (Slow)", "Draft (Fast)"] },
-                                    { id: 'resolution', label: "Layer Resolution", options: ["0.20mm (Std)", "0.08mm (Fine)", "0.28mm (Draft)"] },
+                                    { id: 'resolution', label: "Layer Height", options: ["0.20mm (Std)", "0.08mm (Fine)", "0.28mm (Draft)"] },
                                     { id: 'supports', label: "Support Type", options: ["Auto (Tech Choice)", "No Supports", "Tree Supports"] }
                                 ].map((cfg) => (
                                     <div key={cfg.id} className="space-y-3">
