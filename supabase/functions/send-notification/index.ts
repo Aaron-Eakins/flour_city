@@ -25,6 +25,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const payload = await req.json()
+    console.log('Incoming Payload:', JSON.stringify(payload, null, 2))
     const { record, table, type } = payload
 
     if (type !== 'INSERT') {
@@ -78,7 +79,12 @@ Deno.serve(async (req: Request) => {
 
       // Send to Admin
       const res = await sendEmail(emailContent)
+      console.log('Resend Response (Admin):', JSON.stringify(res, null, 2))
       
+      if (res.error) {
+        throw new Error(`Resend Admin Error: ${res.error.message || JSON.stringify(res.error)}`)
+      }
+
       // Persist the message ID for threading
       if (res?.id) {
         await supabaseAdmin
@@ -88,7 +94,7 @@ Deno.serve(async (req: Request) => {
       }
 
       // Also send confirmation to user
-      await sendEmail({
+      const userRes = await sendEmail({
         to: record.email,
         subject: "Your quote request is in.",
         html: `
@@ -103,6 +109,7 @@ Deno.serve(async (req: Request) => {
           </div>
         `
       })
+      console.log('Resend Response (User):', JSON.stringify(userRes, null, 2))
 
       return new Response(JSON.stringify({ success: true }), { 
         status: 200, 
@@ -123,6 +130,12 @@ Deno.serve(async (req: Request) => {
         </div>
       `
       const res = await sendEmail(emailContent)
+      console.log('Resend Response (Contact):', JSON.stringify(res, null, 2))
+
+      if (res.error) {
+        throw new Error(`Resend Contact Error: ${res.error.message || JSON.stringify(res.error)}`)
+      }
+
       return new Response(JSON.stringify(res), { 
         status: 200, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -136,7 +149,17 @@ Deno.serve(async (req: Request) => {
         .eq('id', record.quote_id)
         .single()
 
-      if (quoteError) throw quoteError
+      if (quoteError) {
+        console.error('Database Error (Quotes):', quoteError.message)
+        throw quoteError
+      }
+
+      if (!quote) {
+        console.error('No quote found for ID:', record.quote_id)
+        throw new Error('Associated project not found')
+      }
+
+      console.log('Found Parent Project:', quote.name)
 
       emailContent.subject = `Quote Request: ${quote.name}`
       emailContent.to = FCL_EMAIL
@@ -158,6 +181,12 @@ Deno.serve(async (req: Request) => {
       }
 
       const res = await sendEmail(emailContent)
+      console.log('Resend Response (Note):', JSON.stringify(res, null, 2))
+
+      if (res.error) {
+        throw new Error(`Resend Note Error: ${res.error.message || JSON.stringify(res.error)}`)
+      }
+
       return new Response(JSON.stringify(res), { 
         status: 200, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

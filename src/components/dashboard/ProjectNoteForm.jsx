@@ -8,6 +8,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
     const [content, setContent] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [status, setStatus] = useState('idle'); // idle, success, error
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,6 +16,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
 
         setIsSubmitting(true);
         setStatus('idle');
+        setErrorMessage('');
 
         try {
             const { data: note, error } = await supabase
@@ -48,6 +50,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             setTimeout(() => setStatus('idle'), 3000);
         } catch (err) {
             console.error('Error adding note:', err.message);
+            setErrorMessage(err.message);
             setStatus('error');
         } finally {
             setIsSubmitting(false);
@@ -82,9 +85,14 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             )}
             
             {status === 'error' && (
-                <div className="flex items-center space-x-2 text-red-600 text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-left-2">
-                    <AlertCircle size={12} />
-                    <span>Failed to Dispatch Note</span>
+                <div className="flex flex-col space-y-1 animate-in slide-in-from-left-2 text-left">
+                    <div className="flex items-center space-x-2 text-red-600 text-[10px] font-black uppercase tracking-widest">
+                        <AlertCircle size={12} />
+                        <span>Failed to Dispatch Note</span>
+                    </div>
+                    {errorMessage && (
+                        <p className="text-[9px] text-red-500 font-medium pl-5 italic">{errorMessage}</p>
+                    )}
                 </div>
             )}
         </form>
