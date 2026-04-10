@@ -60,7 +60,7 @@ const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
                         onClick={() => { handleLinkClick('home'); setTimeout(() => document.getElementById('quote-section')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
                         className="px-6 py-2 border border-[#D4A017] text-[#D4A017] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all rounded-sm font-black"
                     >
-                        QUOTELAB
+                        QuoteLab
                     </button>
                 </div>
 

@@ -11,26 +11,7 @@ const ProcessView = () => (
                 <p className="text-gray-500 max-w-xl font-medium leading-relaxed text-lg text-left">Simple process. Careful work.</p>
             </header>
 
-            <div className="grid md:grid-cols-2 gap-8 mb-20 text-left">
-                <div className="p-8 bg-[#1A1B1E] text-white rounded-sm space-y-4">
-                    <div className="flex items-center space-x-3 text-[#D4A017]">
-                        <Shield size={20} />
-                        <h4 className="text-sm font-black uppercase tracking-widest italic">A Note on File Health</h4>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                        I review every file before printing, but some geometry issues only surface during the print itself. If a failed print is traced back to the file, a $25 reset fee covers material and setup costs.
-                    </p>
-                </div>
-                <div className="p-8 bg-[#EAE8E4] border border-gray-300 rounded-sm space-y-4">
-                    <div className="flex items-center space-x-3 text-[#2C3E50]">
-                        <Layers size={20} />
-                        <h4 className="text-sm font-black uppercase tracking-widest italic text-[#1A1B1E]">Support Policy</h4>
-                    </div>
-                    <p className="text-xs text-gray-500 leading-relaxed font-medium">
-                        All parts ship with supports intact. This protects delicate features during transit. Support removal and finishing services are available on a project-by-project basis.
-                    </p>
-                </div>
-            </div>
+
 
             <div className="space-y-12 relative text-[#1A1B1E]">
                 {[
@@ -52,6 +33,27 @@ const ProcessView = () => (
                     </div>
                 ))}
                 <div className="hidden md:block absolute left-[3.5rem] top-24 bottom-24 w-px bg-gray-300 opacity-50 z-0"></div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 mt-20 text-left">
+                <div className="p-8 bg-[#1A1B1E] text-white rounded-sm space-y-4">
+                    <div className="flex items-center space-x-3 text-[#D4A017]">
+                        <Shield size={20} />
+                        <h4 className="text-sm font-black uppercase tracking-widest italic">A Note on File Health</h4>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                        I review every file before printing, but some geometry issues only surface during the print itself. If a failed print is traced back to the file, a $25 reset fee covers material and setup costs.
+                    </p>
+                </div>
+                <div className="p-8 bg-[#EAE8E4] border border-gray-300 rounded-sm space-y-4">
+                    <div className="flex items-center space-x-3 text-[#2C3E50]">
+                        <Layers size={20} />
+                        <h4 className="text-sm font-black uppercase tracking-widest italic text-[#1A1B1E]">Support Policy</h4>
+                    </div>
+                    <p className="text-xs text-gray-500 leading-relaxed font-medium">
+                        All parts ship with supports intact. This protects delicate features during transit. Support removal and finishing services are available on a project-by-project basis.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

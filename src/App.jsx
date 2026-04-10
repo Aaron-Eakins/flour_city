@@ -62,7 +62,7 @@ const App = () => {
                 {view === 'heritage' && <HeritageView />}
                 {view === 'tos' && <TOSView />}
                 {view === 'privacy' && <PrivacyView />}
-                {view === 'contact' && <ContactView />}
+                {view === 'contact' && <ContactView setView={setView} />}
             </main>
 
             <Footer setView={setView} />

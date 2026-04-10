@@ -41,7 +41,17 @@ const MaterialsView = ({ setView }) => (
                     </div>
                 </div>
             </div>
-            <p className="text-gray-500 text-sm font-medium mt-12">Don't see what you need? I source materials on a per-project basis. <button onClick={() => setView('contact')} className="text-[#D4A017] hover:underline">Send me a message</button> and we'll figure it out.</p>
+            <div className="mt-20 p-8 border border-[#D4A017]/20 bg-[#1A1B1E]/5 rounded-sm flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl mx-auto md:mx-0">
+                <p className="text-gray-600 text-sm font-medium italic text-left">
+                    Don't see what you need? I source materials on a per-project basis.
+                </p>
+                <button 
+                    onClick={() => setView('contact')} 
+                    className="px-8 py-3 bg-[#1A1B1E] text-white font-black uppercase text-[10px] tracking-[0.3em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all whitespace-nowrap"
+                >
+                    Send me a message
+                </button>
+            </div>
         </div>
     </div>
 );

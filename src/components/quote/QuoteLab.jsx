@@ -125,10 +125,7 @@ const QuoteLab = ({
                                         <Upload className="w-8 h-8 text-white group-hover:text-[#1A1B1E]" />
                                     </div>
                                     <div className="space-y-1 relative z-10">
-                                        <p className="text-xl font-black uppercase tracking-tighter">Select CAD Geometry</p>
-                                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] opacity-60 italic text-center underline decoration-[#D4A017]/30 decoration-2 underline-offset-4">
-                                            {user ? 'Authenticated Access Active' : 'Guest Technical Review'}
-                                        </p>
+                                        <p className="text-xl font-black uppercase tracking-tighter">Select Your File</p>
                                     </div>
                                 </>
                             )}

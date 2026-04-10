@@ -58,7 +58,7 @@ const HomeView = (props) => (
             <div className="max-w-5xl mx-auto px-6 text-center">
                 <header className="mb-12 space-y-2 text-center">
                     <h2 className="text-4xl font-black uppercase italic tracking-tighter">The QuoteLab</h2>
-                    <p className="text-gray-500 text-sm font-medium italic">Boutique pricing with professional technical data capture.</p>
+                    <p className="text-gray-500 text-sm font-medium italic">Upload your file. I'll review it and send you a quote within 24 hours.</p>
                 </header>
                 <QuoteLab {...props} />
             </div>

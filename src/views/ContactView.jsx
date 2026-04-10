@@ -6,7 +6,7 @@ import DimensionedHeader from '../components/common/DimensionedHeader';
 import LogoIcon from '../components/common/LogoIcon';
 import { supabase } from '../lib/supabaseClient';
 
-const ContactView = () => {
+const ContactView = ({ setView }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -71,10 +71,16 @@ const ContactView = () => {
                         <section className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-6 text-left">
                             <div className="flex items-center space-x-2 text-[#D4A017]"><Truck size={20} /> <h4 className="text-sm font-black uppercase tracking-widest italic text-white">Secure Logistics</h4></div>
                             <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Every order is carefully packaged for transit. We ship nationwide through standard courier networks.</p>
-                            <div className="p-3 bg-white/5 border border-white/10 rounded-sm flex items-center justify-between">
+                            <button 
+                                onClick={() => { setView('home'); setTimeout(() => document.getElementById('quote-section')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
+                                className="w-full p-3 bg-white/5 border border-[#D4A017]/30 hover:border-[#D4A017] hover:bg-[#D4A017]/10 rounded-sm flex items-center justify-between transition-all group"
+                            >
                                 <span className="text-[9px] font-black uppercase tracking-widest text-[#D4A017]">Orders Open</span>
-                                <CheckCircle size={12} className="text-[#D4A017]" />
-                            </div>
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-[8px] font-black uppercase tracking-widest text-[#D4A017] opacity-0 group-hover:opacity-100 transition-opacity">Launch QuoteLab</span>
+                                    <CheckCircle size={12} className="text-[#D4A017]" />
+                                </div>
+                            </button>
                         </section>
                     </div>
 
