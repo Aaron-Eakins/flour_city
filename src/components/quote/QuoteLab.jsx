@@ -57,7 +57,7 @@ const QuoteLab = ({
         };
 
         fetchMaterials();
-    }, []);
+    }, [formData.selectedMaterial, setFormData]);
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -121,7 +121,7 @@ const QuoteLab = ({
                     name: formData.name,
                     email: formData.email,
                     material: formData.selectedMaterial,
-                    colors: formData.selectedColors.filter(c => c !== ''),
+                    colors: (formData.selectedColors || []).filter(c => c !== ''),
                     intent: formData.intent,
                     visual_validation: formData.visualValidation,
                     file_path: formData.storagePath,
@@ -143,7 +143,7 @@ const QuoteLab = ({
     };
 
     const handleColorChange = (index, value) => {
-        const newColors = [...formData.selectedColors];
+        const newColors = [...(formData.selectedColors || ['', '', '', ''])];
         newColors[index] = value;
         setFormData({ ...formData, selectedColors: newColors });
     };
@@ -236,17 +236,17 @@ const QuoteLab = ({
                                     <div className="flex justify-between items-center">
                                         <label className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Multi-Color Config</label>
                                         <div className="flex items-center space-x-2">
-                                            <button onClick={() => setFormData({ ...formData, colorCount: Math.max(1, formData.colorCount - 1) })} className="p-1 border border-gray-300 bg-white hover:bg-gray-100"><Minus size={12} /></button>
-                                            <span className="text-xs font-black w-4 text-center">{formData.colorCount}</span>
-                                            <button onClick={() => setFormData({ ...formData, colorCount: Math.min(4, formData.colorCount + 1) })} className="p-1 border border-gray-300 bg-white hover:bg-gray-100"><Plus size={12} /></button>
+                                            <button type="button" onClick={() => setFormData({ ...formData, colorCount: Math.max(1, (formData.colorCount || 1) - 1) })} className="p-1 border border-gray-300 bg-white hover:bg-gray-100"><Minus size={12} /></button>
+                                            <span className="text-xs font-black w-4 text-center">{formData.colorCount || 1}</span>
+                                            <button type="button" onClick={() => setFormData({ ...formData, colorCount: Math.min(4, (formData.colorCount || 1) + 1) })} className="p-1 border border-gray-300 bg-white hover:bg-gray-100"><Plus size={12} /></button>
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        {[...Array(formData.colorCount)].map((_, i) => (
+                                        {[...Array(formData.colorCount || 1)].map((_, i) => (
                                             <div key={i} className="flex items-center space-x-2 animate-in fade-in slide-in-from-left-1">
                                                 <Palette size={14} className="text-[#D4A017]" />
                                                 <select
-                                                    value={formData.selectedColors[i]}
+                                                    value={formData.selectedColors?.[i] || ''}
                                                     onChange={(e) => handleColorChange(i, e.target.value)}
                                                     className="flex-1 bg-white border border-gray-300 p-3 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer disabled:opacity-50"
                                                     disabled={isLoadingMaterials}
@@ -288,8 +288,8 @@ const QuoteLab = ({
                                 <label className="flex items-start space-x-4 p-4 border border-gray-300 bg-white/50 rounded-sm cursor-pointer group hover:border-[#D4A017] transition-colors">
                                     <input
                                         type="checkbox"
-                                        className="mt-1 accent-[#D4A017] w-4 h-4"
-                                        checked={formData.visualValidation}
+                                        className="mt-1 accent-[#D4A017] text-[#D4A017] focus:ring-[#D4A017] border-gray-300 rounded w-4 h-4 cursor-pointer"
+                                        checked={formData.visualValidation || false}
                                         onChange={(e) => setFormData({ ...formData, visualValidation: e.target.checked })}
                                     />
                                     <div className="space-y-1">
@@ -325,6 +325,7 @@ const QuoteLab = ({
                                     <div key={cfg.id} className="space-y-3">
                                         <label className="text-[9px] font-black uppercase tracking-widest text-gray-400">{cfg.label}</label>
                                         <select
+                                            value={formData[cfg.id] || "Technician's Choice"}
                                             onChange={(e) => setFormData({ ...formData, [cfg.id]: e.target.value })}
                                             className="w-full bg-white border border-gray-300 p-3 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer"
                                         >
