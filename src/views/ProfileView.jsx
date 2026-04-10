@@ -112,7 +112,12 @@ const ProfileView = ({ setView }) => {
                                 </button>
 
                                 {updateStatus === 'success' && (
-                                    <p className="text-emerald-600 text-[9px] font-black uppercase tracking-widest text-center animate-in fade-in">Identity Re-Secured</p>
+                                    <div className="space-y-1 animate-in fade-in">
+                                        <p className="text-emerald-600 text-[9px] font-black uppercase tracking-widest text-center">Identity Re-Secured</p>
+                                        {email !== user.email && (
+                                            <p className="text-[8px] text-amber-600 font-bold uppercase tracking-widest text-center italic">Check your new email to confirm the change.</p>
+                                        )}
+                                    </div>
                                 )}
                             </form>
                         </section>
@@ -122,7 +127,7 @@ const ProfileView = ({ setView }) => {
                                 <AlertCircle size={14} />
                                 <span className="text-[9px] font-black uppercase tracking-widest">Lab Connection</span>
                             </div>
-                            <p className="text-[10px] text-slate-400 leading-relaxed font-medium">To change your primary login email, please contact <a href={`mailto:${SITE_CONFIG.email}`} className="text-[#D4A017]">{SITE_CONFIG.email}</a> for manual verification.</p>
+                            <p className="text-[10px] text-slate-400 leading-relaxed font-medium">Self-service email updates are now active. Note that changing your email will require confirmation via a link sent to your new address before the change is finalized.</p>
                         </div>
                     </div>
 
