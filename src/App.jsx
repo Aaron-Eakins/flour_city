@@ -33,6 +33,27 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        const handleHashChange = () => {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            setView(hash);
+        };
+        
+        window.addEventListener('hashchange', handleHashChange);
+        
+        if (window.location.hash) {
+            handleHashChange();
+        } else {
+            window.history.replaceState(null, '', '#home');
+        }
+        
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
+    const navigateTo = (newView) => {
+        window.location.hash = newView;
+    };
+
+    useEffect(() => {
         window.scrollTo(0, 0);
     }, [view]);
 
@@ -40,7 +61,7 @@ const App = () => {
         <div className="min-h-screen bg-[#F2F1EF] font-sans selection:bg-[#D4A017] selection:text-[#1A1B1E] overflow-x-hidden text-[#1A1B1E]">
             <Navigation 
                 view={view} 
-                setView={setView} 
+                setView={navigateTo} 
                 isScrolled={isScrolled} 
                 isHome={view === 'home'} 
                 openAuth={() => setShowAuthModal(true)}
@@ -53,25 +74,25 @@ const App = () => {
                         isUploading={isUploading} setIsUploading={setIsUploading}
                         showAdvanced={showAdvanced} setShowAdvanced={setShowAdvanced}
                         formData={formData} setFormData={setFormData}
-                        setView={setView}
+                        setView={navigateTo}
                         openAuth={() => setShowAuthModal(true)}
                     />
                 )}
-                {view === 'materials' && <MaterialsView setView={setView} />}
+                {view === 'materials' && <MaterialsView setView={navigateTo} />}
                 {view === 'gallery' && <GalleryView />}
                 {view === 'process' && <ProcessView />}
                 {view === 'heritage' && <HeritageView />}
                 {view === 'tos' && <TOSView />}
                 {view === 'privacy' && <PrivacyView />}
-                {view === 'contact' && <ContactView setView={setView} />}
+                {view === 'contact' && <ContactView setView={navigateTo} />}
             </main>
 
-            <Footer setView={setView} />
+            <Footer setView={navigateTo} />
 
             <AuthModal 
                 isOpen={showAuthModal} 
                 onClose={() => setShowAuthModal(false)} 
-                setView={setView}
+                setView={navigateTo}
             />
             
             <style>{`

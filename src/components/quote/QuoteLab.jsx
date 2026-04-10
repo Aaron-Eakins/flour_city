@@ -13,6 +13,7 @@ const QuoteLab = ({
     const { user } = useAuth();
     const [materials, setMaterials] = useState({});
     const [isLoadingMaterials, setIsLoadingMaterials] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchMaterials = async () => {
@@ -75,12 +76,12 @@ const QuoteLab = ({
         const ext = '.' + file.name.split('.').pop().toLowerCase();
 
         if (!allowedExts.includes(ext)) {
-            alert('Invalid file format. Please use STL, 3MF, or OBJ.');
+            setError('Invalid file format. Please use STL, 3MF, or OBJ.');
             return;
         }
 
         if (file.size > 50 * 1024 * 1024) {
-            alert('File exceeds 50MB limit. Contact lab@flourcitylabs.com for larger volumes.');
+            setError({ type: 'size_limit_error', message: 'File exceeds 50MB limit' });
             return;
         }
 
@@ -107,7 +108,7 @@ const QuoteLab = ({
             setQuoteStep(2);
         } catch (error) {
             console.error('Upload error:', error.message);
-            alert('Upload failed. Check your connection and try again.');
+            setError('Upload failed. Check your connection and try again.');
             setIsUploading(false);
         }
     };
@@ -116,7 +117,7 @@ const QuoteLab = ({
         if (e) e.preventDefault();
 
         if (!formData.name || !formData.email) {
-            alert('Name and Email are required to initiate the Lab connection.');
+            setError('Name and Email are required to initiate the Lab connection.');
             return;
         }
 
@@ -132,12 +133,12 @@ const QuoteLab = ({
                     intent: formData.intent,
                     visual_validation: formData.visualValidation,
                     file_path: formData.storagePath,
-                    nozzle: formData.nozzle,
-                    infill: formData.infill,
-                    walls: formData.walls,
-                    speed: formData.speed,
-                    layer_height: formData.layer_height,
-                    supports: formData.supports,
+                    nozzle: formData.nozzle || "0.4mm (Recommended)",
+                    infill: formData.infill || "15% (Recommended)",
+                    walls: formData.walls || "2 Loops (Recommended)",
+                    speed: formData.speed || "Balanced (Recommended)",
+                    layer_height: formData.layer_height || "0.20mm (Recommended)",
+                    supports: formData.supports || "Auto (Recommended)",
                     status: 'pending_review'
                 });
 
@@ -145,7 +146,7 @@ const QuoteLab = ({
             setQuoteStep(4);
         } catch (error) {
             console.error('Submission error:', error.message);
-            alert(`Something went wrong. Please try again or email us at ${SITE_CONFIG.email}.`);
+            setError({ type: 'transmit_error', message: 'Something went wrong.' });
         }
     };
 
@@ -168,6 +169,25 @@ const QuoteLab = ({
                     </div>
                 </div>
             ) : null /* FLASHAUTONOTE: Do NOT add a sign in banner for guests. Flour City Labs uses guest-first quoting. */}
+            
+            {error && (
+                <div className="mx-8 md:mx-14 mt-8 p-4 rounded-sm border border-red-500/30 bg-red-500/5 flex items-start space-x-3 text-[#1A1B1E] animate-in fade-in slide-in-from-top-2 relative">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-600" />
+                    <div className="flex-1 text-sm font-medium leading-relaxed">
+                        {error?.type === 'transmit_error' ? (
+                            <>Something went wrong. Please try again or email us at <a href={`mailto:${SITE_CONFIG.email}`} className="font-bold text-red-600 hover:text-red-800 transition-colors">{SITE_CONFIG.email}</a>.</>
+                        ) : error?.type === 'size_limit_error' ? (
+                            <>File exceeds 50MB limit. Contact <a href={`mailto:${SITE_CONFIG.email}`} className="font-bold text-red-600 hover:text-red-800 transition-colors">{SITE_CONFIG.email}</a> for larger volumes.</>
+                        ) : (
+                            <>{error}</>
+                        )}
+                    </div>
+                    <button onClick={() => setError(null)} className="opacity-50 hover:opacity-100 transition-opacity absolute top-4 right-4">
+                        <Plus className="w-4 h-4 rotate-45 transform" />
+                    </button>
+                </div>
+            )}
+
             <div className="p-8 md:p-14 text-left">
                 {quoteStep === 1 && (
                     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
@@ -307,22 +327,21 @@ const QuoteLab = ({
                         {showAdvanced && (
                             <div className="p-10 bg-[#2C3E50]/5 border border-gray-300 rounded-sm grid md:grid-cols-3 gap-10 animate-in fade-in slide-in-from-top-4">
                                 {[
-                                    { id: 'nozzle', label: "Nozzle Size", options: ["0.4mm (Recommended)", "0.2mm (Detail)", "0.6mm (Industrial)", "0.8mm (Structural)"] },
-                                    { id: 'infill', label: "Infill Density", options: ["15% (Recommended)", "5% (Light)", "40% (Structural)", "100% (Solid)"] },
-                                    { id: 'walls', label: "Wall Count", options: ["2 Loops (Recommended)", "3 Loops (Heavy)", "6+ Loops (Industrial)"] },
-                                    { id: 'speed', label: "Print Speed", options: ["Balanced (Recommended)", "High-Resolution", "Draft"] },
-                                    { id: 'layer_height', label: "Layer Height", options: ["0.20mm (Recommended)", "0.08mm (Fine)", "0.28mm (Draft)"] },
-                                    { id: 'supports', label: "Support Type", options: ["Auto (Technician's Choice)", "None Needed", "Included in File", "Tree Supports"] }
+                                    { id: 'nozzle', label: "Nozzle Size", options: ["0.4mm (Recommended)", "0.2mm (Detail)", "0.6mm (Industrial)", "0.8mm (Structural)", "Technician's Choice"] },
+                                    { id: 'infill', label: "Infill Density", options: ["15% (Recommended)", "5% (Light)", "40% (Structural)", "100% (Solid)", "Technician's Choice"] },
+                                    { id: 'walls', label: "Wall Count", options: ["2 Loops (Recommended)", "3 Loops (Heavy)", "6+ Loops (Industrial)", "Technician's Choice"] },
+                                    { id: 'speed', label: "Print Speed", options: ["Balanced (Recommended)", "High-Resolution", "Draft", "Technician's Choice"] },
+                                    { id: 'layer_height', label: "Layer Height", options: ["0.20mm (Recommended)", "0.08mm (Fine)", "0.28mm (Draft)", "Technician's Choice"] },
+                                    { id: 'supports', label: "Support Type", options: ["Auto (Recommended)", "None Needed", "Included in File", "Tree Supports", "Technician's Choice"] }
                                 ].map((cfg) => (
                                     <div key={cfg.id} className="space-y-3">
                                         <label className="text-[9px] font-black uppercase tracking-widest text-gray-400">{cfg.label}</label>
                                         <select
-                                            value={formData[cfg.id] || "Technician's Choice"}
+                                            value={formData[cfg.id] || cfg.options[0]}
                                             onChange={(e) => setFormData({ ...formData, [cfg.id]: e.target.value })}
                                             className="w-full bg-white border border-gray-300 p-3 rounded-sm font-medium text-sm text-[#1A1B1E] outline-none focus:border-[#D4A017] cursor-pointer"
                                         >
                                             {cfg.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                            <option value="Technician's Choice">Technician's Choice</option>
                                         </select>
                                     </div>
                                 ))}
