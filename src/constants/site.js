@@ -11,7 +11,8 @@ export const SITE_CONFIG = {
     tagline: 'Engineering trust in Rochester\'s additive future since 2026.',
     socials: {
         instagram: 'flourcitylabs',
-    }
+    },
+    TURNSTILE_SITE_KEY: '0x4AAAAAAC6yWDKB2X7isRW7'
 };
 
 export default SITE_CONFIG;

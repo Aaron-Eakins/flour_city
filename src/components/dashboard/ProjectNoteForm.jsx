@@ -9,10 +9,23 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [status, setStatus] = useState('idle'); // idle, success, error
     const [errorMessage, setErrorMessage] = useState('');
+    const [turnstileToken, setTurnstileToken] = useState('');
+
+    React.useEffect(() => {
+        const handler = (e) => setTurnstileToken(e.detail);
+        window.addEventListener('turnstile-note-verified', handler);
+        return () => window.removeEventListener('turnstile-note-verified', handler);
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
         if (!content.trim() || isSubmitting) return;
+        if (!turnstileToken) {
+            setErrorMessage('Security verification required');
+            setStatus('error');
+            return;
+        }
 
         setIsSubmitting(true);
         setStatus('idle');
@@ -36,7 +49,8 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
                 body: {
                     record: note,
                     table: 'project_notes',
-                    type: 'INSERT'
+                    type: 'INSERT',
+                    turnstile_token: turnstileToken
                 }
             });
 
@@ -70,12 +84,27 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
                 />
                 <button
                     type="submit"
-                    disabled={isSubmitting || !content.trim()}
+                    disabled={isSubmitting || !content.trim() || !turnstileToken}
                     className="absolute bottom-3 right-3 p-2 bg-[#1A1B1E] text-white rounded-sm hover:bg-[#D4A017] transition-all disabled:opacity-50"
                 >
                     <Send size={14} />
                 </button>
             </div>
+
+            {/* Turnstile Widget */}
+            <div 
+                className="cf-turnstile inline-block" 
+                data-sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY || '0x4AAAAAAC6yWDKB2X7isRW7'}
+                data-callback="onTurnstileNoteVerified"
+                data-theme="light"
+            ></div>
+
+            {/* Inline script for Turnstile callback */}
+            <script dangerouslySetInnerHTML={{ __html: `
+                window.onTurnstileNoteVerified = function(token) {
+                    window.dispatchEvent(new CustomEvent('turnstile-note-verified', { detail: token }));
+                };
+            ` }} />
             
             {status === 'success' && (
                 <div className="flex items-center space-x-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-left-2">

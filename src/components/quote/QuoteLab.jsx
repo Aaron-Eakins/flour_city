@@ -14,6 +14,13 @@ const QuoteLab = ({
     const [materials, setMaterials] = useState({});
     const [isLoadingMaterials, setIsLoadingMaterials] = useState(true);
     const [error, setError] = useState(null);
+    const [turnstileToken, setTurnstileToken] = useState('');
+
+    useEffect(() => {
+        const handler = (e) => setTurnstileToken(e.detail);
+        window.addEventListener('turnstile-quote-verified', handler);
+        return () => window.removeEventListener('turnstile-quote-verified', handler);
+    }, []);
 
     useEffect(() => {
         const fetchMaterials = async () => {
@@ -121,6 +128,11 @@ const QuoteLab = ({
             return;
         }
 
+        if (!turnstileToken) {
+            setError('Security verification required');
+            return;
+        }
+
         try {
             const { data: quote, error } = await supabase
                 .from('quotes')
@@ -151,7 +163,8 @@ const QuoteLab = ({
                 body: {
                     record: quote,
                     table: 'quotes',
-                    type: 'INSERT'
+                    type: 'INSERT',
+                    turnstile_token: turnstileToken
                 }
             });
 
@@ -397,9 +410,28 @@ const QuoteLab = ({
                                 </div>
                                 <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Ships nationwide. Rochester orders typically arrive next day.</p>
                             </div>
+
+                            {/* Turnstile Widget */}
+                            <div className="flex justify-center py-4">
+                                <div 
+                                    className="cf-turnstile" 
+                                    data-sitekey="0x4AAAAAAC6yWDKB2X7isRW7"
+                                    data-callback="onTurnstileQuoteVerified"
+                                    data-theme="light"
+                                ></div>
+                            </div>
+
+                            {/* Inline script for Turnstile callback */}
+                            <script dangerouslySetInnerHTML={{ __html: `
+                                window.onTurnstileQuoteVerified = function(token) {
+                                    window.dispatchEvent(new CustomEvent('turnstile-quote-verified', { detail: token }));
+                                };
+                            ` }} />
+
                             <button
                                 type="submit"
-                                className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4"
+                                disabled={!turnstileToken}
+                                className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4 disabled:opacity-50"
                             >
                                 SUBMIT FOR REVIEW
                             </button>

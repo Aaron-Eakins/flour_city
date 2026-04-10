@@ -9,15 +9,21 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
 // @ts-ignore: Deno is built-in to the Supabase runtime
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-const supabaseAdmin = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY || '')
+const ALLOWED_ORIGINS = ['https://flourcitylabs.com', 'http://localhost:5173']
+const TURNSTILE_SECRET_KEY = Deno.env.get('TURNSTILE_SECRET_KEY')
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+const supabaseAdmin = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY || '')
 
 // @ts-ignore: Deno is built-in to the Supabase runtime
 Deno.serve(async (req: Request) => {
+  const origin = req.headers.get('Origin')
+  
+  // Dynamic CORS
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  }
+
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -25,8 +31,39 @@ Deno.serve(async (req: Request) => {
 
   try {
     const payload = await req.json()
+    const { record, table, type, turnstile_token } = payload
+
+    // 1. Bot Verification (Turnstile)
+    if (turnstile_token) {
+      console.log('Verifying Turnstile token...')
+      const turnstileRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `secret=${TURNSTILE_SECRET_KEY}&response=${turnstile_token}`,
+      })
+      const turnstileData = await turnstileRes.json()
+      
+      if (!turnstileData.success) {
+        console.error('Turnstile verification failed:', JSON.stringify(turnstileData))
+        return new Response(JSON.stringify({ error: 'Security verification failed (Bot detected)' }), { 
+          status: 403, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        })
+      }
+      console.log('Turnstile verified successfully.')
+    } else {
+      // For now, keep it compatible with background webhooks by checking for token presence
+      // If no token is provided and it's from a browser (has Origin), reject it
+      if (origin && !TURNSTILE_SECRET_KEY?.startsWith('0x4AAAAAAA')) { // Skip check for test keys
+        console.error('Missing Turnstile token from browser origin.')
+        return new Response(JSON.stringify({ error: 'Security verification required' }), { 
+          status: 403, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        })
+      }
+    }
+
     console.log('Incoming Payload:', JSON.stringify(payload, null, 2))
-    const { record, table, type } = payload
 
     if (type !== 'INSERT') {
       return new Response(JSON.stringify({ message: 'Ignore non-insert' }), { 
