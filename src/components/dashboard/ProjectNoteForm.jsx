@@ -12,9 +12,28 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
     const [turnstileToken, setTurnstileToken] = useState('');
 
     React.useEffect(() => {
-        const handler = (e) => setTurnstileToken(e.detail);
-        window.addEventListener('turnstile-note-verified', handler);
-        return () => window.removeEventListener('turnstile-note-verified', handler);
+        const initTurnstile = () => {
+            if (window.turnstile && !turnstileToken) {
+                window.turnstile.render('#turnstile-container-note', {
+                    sitekey: '0x4AAAAAAC6yWDKB2X7isRW7',
+                    callback: (token) => setTurnstileToken(token),
+                    theme: 'light'
+                });
+            }
+        };
+
+        // Try immediately or wait for script load
+        if (window.turnstile) {
+            initTurnstile();
+        } else {
+            const timer = setInterval(() => {
+                if (window.turnstile) {
+                    initTurnstile();
+                    clearInterval(timer);
+                }
+            }, 500);
+            return () => clearInterval(timer);
+        }
     }, []);
 
     const handleSubmit = async (e) => {
@@ -91,15 +110,10 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
                 </button>
             </div>
 
-            {/* Turnstile Widget */}
-            <div 
-                className="cf-turnstile inline-block" 
-                data-sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY || '0x4AAAAAAC6yWDKB2X7isRW7'}
-                data-callback="onTurnstileNoteVerified"
-                data-theme="light"
-            ></div>
-
-            {/* Inline script for Turnstile callback moved to index.html */}
+            {/* Turnstile Container */}
+            <div id="turnstile-container-note" className="flex justify-start py-1"></div>
+            
+            {/* Inline script callback moved back to manual render for reliability */}
             
             {status === 'success' && (
                 <div className="flex items-center space-x-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-left-2">

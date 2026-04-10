@@ -17,10 +17,31 @@ const QuoteLab = ({
     const [turnstileToken, setTurnstileToken] = useState('');
 
     useEffect(() => {
-        const handler = (e) => setTurnstileToken(e.detail);
-        window.addEventListener('turnstile-quote-verified', handler);
-        return () => window.removeEventListener('turnstile-quote-verified', handler);
-    }, []);
+        const initTurnstile = () => {
+            const container = document.getElementById('turnstile-container-quote');
+            if (window.turnstile && container && !turnstileToken) {
+                window.turnstile.render('#turnstile-container-quote', {
+                    sitekey: '0x4AAAAAAC6yWDKB2X7isRW7',
+                    callback: (token) => setTurnstileToken(token),
+                    theme: 'light'
+                });
+            }
+        };
+
+        // Note: In QuoteLab, step 3 must be active for the element to exist.
+        // We'll run this on every render, but initTurnstile checks for the element.
+        if (window.turnstile) {
+            initTurnstile();
+        } else {
+            const timer = setInterval(() => {
+                if (window.turnstile) {
+                    initTurnstile();
+                    clearInterval(timer);
+                }
+            }, 500);
+            return () => clearInterval(timer);
+        }
+    });
 
     useEffect(() => {
         const fetchMaterials = async () => {
@@ -411,17 +432,12 @@ const QuoteLab = ({
                                 <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Ships nationwide. Rochester orders typically arrive next day.</p>
                             </div>
 
-                            {/* Turnstile Widget */}
+                            {/* Turnstile Container */}
                             <div className="flex justify-center py-4">
-                                <div 
-                                    className="cf-turnstile" 
-                                    data-sitekey="0x4AAAAAAC6yWDKB2X7isRW7"
-                                    data-callback="onTurnstileQuoteVerified"
-                                    data-theme="light"
-                                ></div>
+                                <div id="turnstile-container-quote"></div>
                             </div>
 
-                            {/* Inline script for Turnstile callback moved to index.html */}
+                            {/* Inline script callback moved back to manual render for reliability */}
 
                             <button
                                 type="submit"
