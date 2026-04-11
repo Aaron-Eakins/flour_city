@@ -19,10 +19,6 @@ Deno.serve(async (req: Request) => {
   const origin = req.headers.get('Origin')
   const authHeader = req.headers.get('Authorization')
   
-  console.log(`[Diagnostic] Origin: ${origin}`)
-  console.log(`[Diagnostic] Auth Header Length: ${authHeader?.length || 0}`)
-  console.log(`[Diagnostic] Auth Header Start: ${authHeader?.substring(0, 15)}...`)
-
   // Dynamic CORS
   const corsHeaders = {
     'Access-Control-Allow-Origin': origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
@@ -39,24 +35,19 @@ Deno.serve(async (req: Request) => {
     const payload = await req.json()
     const { record, table, type, turnstile_token } = payload
 
-    // EMERGENCY BYPASS: Trust any request from official origins for testing
+    // Trust official origins or valid auth
     const isTrustedOrigin = origin && ALLOWED_ORIGINS.includes(origin)
     const hasBridgeSecret = authHeader?.includes(Deno.env.get('CF_INBOUND_SECRET') || 'NONE')
     const hasValidJWT = authHeader?.startsWith('Bearer ') && authHeader.length > 50
 
-    if (isTrustedOrigin || hasBridgeSecret || hasValidJWT) {
-        console.log('Security check passed via Bypass/JWT/Secret.')
-    } else {
-        // Only enforce Turnstile for non-trusted, non-authenticated requests
+    if (!isTrustedOrigin && !hasBridgeSecret && !hasValidJWT) {
         if (!turnstile_token) {
-            console.error('Security violation: No trusted origin, no auth, and no turnstile token.')
             return new Response(JSON.stringify({ error: 'Security verification required' }), { 
                 status: 403, 
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
             })
         }
 
-        console.log('Verifying Turnstile token...')
         const turnstileRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -65,9 +56,8 @@ Deno.serve(async (req: Request) => {
         const turnstileData = await turnstileRes.json()
         
         if (!turnstileData.success) {
-            console.error('Turnstile verification failed:', JSON.stringify(turnstileData))
             return new Response(JSON.stringify({ error: 'Security verification failed' }), { 
-                status: 200, // Returning 200 with error to avoid 401/403 runtime issues for now
+                status: 403, 
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
             })
         }
@@ -90,7 +80,8 @@ Deno.serve(async (req: Request) => {
 
     if (table === 'quotes') {
       emailContent.subject = `Quote Request: ${record.name}`
-      emailContent.replyTo = `reply+${record.id}@replies.flourcitylabs.com`
+      // SWITCHED TO ROOT DOMAIN FOR CLOUDFLARE CATCH-ALL COMPATIBILITY
+      emailContent.replyTo = `reply+${record.id}@flourcitylabs.com`
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
           <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">Project Secured in Pipeline</h1>
@@ -109,7 +100,7 @@ Deno.serve(async (req: Request) => {
 
       await sendEmail({
         to: record.email,
-        replyTo: `reply+${record.id}@replies.flourcitylabs.com`,
+        replyTo: `reply+${record.id}@flourcitylabs.com`,
         subject: "Your quote request is in.",
         html: `<div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;"><p>Hi ${record.name}, your file is in. I'll take a look within 24 hours.</p></div>`
       })
@@ -127,7 +118,7 @@ Deno.serve(async (req: Request) => {
 
       emailContent.subject = `Project Update: ${quote.name}`
       emailContent.to = FCL_EMAIL
-      emailContent.replyTo = `reply+${record.quote_id}@replies.flourcitylabs.com`
+      emailContent.replyTo = `reply+${record.quote_id}@flourcitylabs.com`
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
             <p><strong>New message from:</strong> ${quote.name}</p>
@@ -152,7 +143,7 @@ Deno.serve(async (req: Request) => {
     const errorMsg = err instanceof Error ? err.message : String(err);
     console.error('Fatal Function Error:', errorMsg)
     return new Response(JSON.stringify({ error: errorMsg }), { 
-      status: 200, // Returning 200 to avoid Edge 401/403 defaults for now
+      status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     })
   }
