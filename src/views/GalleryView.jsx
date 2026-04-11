@@ -18,7 +18,7 @@ const GalleryView = () => {
                 <header className="mb-20 space-y-12 text-left">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Visual Validation</span>
                     <DimensionedHeader line1="LAB" line2="OUTPUTS." layerHt="0.08mm" partWd="220mm" variant="light" />
-                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left text-[#1A1B1E]">A visual archive of technical fidelity across our material library and nozzle architectures.</p>
+                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left text-[#1A1B1E]">Photos from the workshop. Real parts, real materials.</p>
                 </header>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
