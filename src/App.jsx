@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { AlertTriangle, Clock } from 'lucide-react';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import HomeView from './views/HomeView';
@@ -21,6 +22,9 @@ const App = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showInactivityWarning, setShowInactivityWarning] = useState(false);
+    const [countdown, setCountdown] = useState(180); // 3 minutes in seconds
+    const countdownIntervalRef = useRef(null);
 
     const [formData, setFormData] = useState({
         name: '', email: '', selectedMaterial: 'PLA - Matte', intent: '',
@@ -42,38 +46,73 @@ const App = () => {
                 email: user.email || prev.email,
                 name: user.user_metadata?.full_name || user.user_metadata?.name || prev.name
             }));
-        } else if (view === 'profile') {
-            // If user logs out while on profile page, redirect home
-            navigateTo('home');
         }
-    }, [user, view]);
+    }, [user]);
 
-    // Inactivity Timeout (60 Minutes)
+    // Inactivity Timeout Management
     const { signOut } = useAuth();
     useEffect(() => {
         if (!user) return;
 
-        let timeout;
-        const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour
+        let warningTimer;
+        let logoutTimer;
+        
+        const WARNING_LIMIT = 57 * 60 * 1000; // 57 minutes
+        const TOTAL_LIMIT = 60 * 60 * 1000;    // 60 minutes
 
-        const resetTimer = () => {
-            if (timeout) clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                console.log('Automated Logout: 60 minutes of inactivity reached.');
+        const startTimers = () => {
+            if (warningTimer) clearTimeout(warningTimer);
+            if (logoutTimer) clearTimeout(logoutTimer);
+            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+            
+            setShowInactivityWarning(false);
+            setCountdown(180);
+
+            // Set Warning Timer (57 mins)
+            warningTimer = setTimeout(() => {
+                setShowInactivityWarning(true);
+                // Start Countdown Interval
+                countdownIntervalRef.current = setInterval(() => {
+                    setCountdown(prev => {
+                        if (prev <= 1) {
+                            clearInterval(countdownIntervalRef.current);
+                            return 0;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
+            }, WARNING_LIMIT);
+
+            // Set Hard Logout Timer (60 mins)
+            logoutTimer = setTimeout(() => {
+                console.log('Security Protocol: Automated Logout due to 60m inactivity.');
                 signOut();
-            }, INACTIVITY_LIMIT);
+            }, TOTAL_LIMIT);
         };
 
-        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-        events.forEach(event => window.addEventListener(event, resetTimer));
-        
-        resetTimer();
+        const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        const handleActivity = () => {
+            if (!showInactivityWarning) {
+                startTimers();
+            }
+        };
+
+        activityEvents.forEach(event => window.addEventListener(event, handleActivity));
+        startTimers();
 
         return () => {
-            if (timeout) clearTimeout(timeout);
-            events.forEach(event => window.removeEventListener(event, resetTimer));
+            if (warningTimer) clearTimeout(warningTimer);
+            if (logoutTimer) clearTimeout(logoutTimer);
+            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+            activityEvents.forEach(event => window.removeEventListener(event, handleActivity));
         };
-    }, [user, signOut]);
+    }, [user, signOut, showInactivityWarning]);
+
+    const formatCountdown = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -140,6 +179,50 @@ const App = () => {
                 onClose={() => setShowAuthModal(false)} 
                 setView={navigateTo}
             />
+
+            {/* Inactivity Warning Modal */}
+            {showInactivityWarning && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+                    <div className="absolute inset-0 bg-[#1A1B1E]/95 backdrop-blur-sm" />
+                    <div className="relative w-full max-w-md bg-white border-2 border-[#D4A017] p-10 text-center space-y-8 shadow-2xl">
+                        <div className="flex justify-center">
+                            <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center animate-pulse">
+                                <AlertTriangle className="text-[#D4A017] w-8 h-8" />
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-3">
+                            <h2 className="text-2xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">Security Timeout</h2>
+                            <p className="text-sm text-gray-500 font-medium leading-relaxed">
+                                You have been inactive for 57 minutes. For your security, you will be logged out in:
+                            </p>
+                            <div className="flex items-center justify-center space-x-3 text-4xl font-mono font-black text-[#D4A017] py-4 bg-[#F2F1EF] rounded-sm">
+                                <Clock size={24} />
+                                <span>{formatCountdown(countdown)}</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 pt-4">
+                            <button 
+                                onClick={() => {
+                                    setShowInactivityWarning(false);
+                                    setCountdown(180);
+                                    // Timers will reset via useEffect activity listener
+                                }}
+                                className="w-full py-5 bg-[#D4A017] text-[#1A1B1E] font-black uppercase tracking-[0.3em] text-[10px] hover:scale-[1.02] transition-transform shadow-lg"
+                            >
+                                Stay Logged In
+                            </button>
+                            <button 
+                                onClick={() => signOut()}
+                                className="w-full py-2 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-red-600 transition-colors"
+                            >
+                                Log out now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             
             <style>{`
                 @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

@@ -15,9 +15,15 @@ export const AuthProvider = ({ children }) => {
         });
 
         // Listen for changes on auth state (sign in, sign out, etc.)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             setUser(session?.user ?? null);
             setLoading(false);
+
+            // Global Refresh on Sign Out
+            if (event === 'SIGNED_OUT') {
+                window.location.hash = '#home'; // Ensure they land home
+                window.location.reload(); // Force full reload
+            }
         });
 
         return () => subscription.unsubscribe();

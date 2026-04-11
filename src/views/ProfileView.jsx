@@ -3,7 +3,6 @@ import { User, Mail, Box, Clock, MessageSquare, ChevronDown, ChevronUp, Save, Ch
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import DimensionedHeader from '../components/common/DimensionedHeader';
-import ProjectNoteForm from '../components/dashboard/ProjectNoteForm';
 import { SITE_CONFIG } from '../constants/site';
 
 const ProfileView = ({ setView }) => {
@@ -41,23 +40,6 @@ const ProfileView = ({ setView }) => {
 
     useEffect(() => {
         fetchQuotes();
-
-        // Subscribe to real-time updates for notes
-        const channel = supabase
-            .channel('project_notes_changes')
-            .on(
-                'postgres_changes', 
-                { event: 'INSERT', schema: 'public', table: 'project_notes' }, 
-                () => {
-                    console.log('New note detected, refreshing pipeline...');
-                    fetchQuotes();
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
     }, [fetchQuotes]);
 
     const handleUpdateProfile = async (e) => {
@@ -213,42 +195,26 @@ const ProfileView = ({ setView }) => {
                                                     </div>
                                                 </div>
 
-                                                <div className="space-y-4">
-                                                    <div className="flex items-center space-x-2 mb-4">
-                                                        <MessageSquare size={14} className="text-[#D4A017]" />
-                                                        <h6 className="text-[9px] font-black uppercase tracking-widest">Lab Communication Thread</h6>
+                                                <div className="pt-8 border-t border-gray-100">
+                                                    <div className="bg-[#1A1B1E] p-6 rounded-sm text-left relative overflow-hidden group">
+                                                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                                            <Mail size={48} className="text-[#D4A017]" />
+                                                        </div>
+                                                        <div className="space-y-4 relative z-10">
+                                                            <div className="flex items-center space-x-2">
+                                                                <MessageSquare size={14} className="text-[#D4A017]" />
+                                                                <h6 className="text-[9px] font-black uppercase tracking-widest text-[#D4A017]">Communication Protocol</h6>
+                                                            </div>
+                                                            <p className="text-[11px] text-slate-300 leading-relaxed font-medium">
+                                                                Project discussions have moved to direct email to ensure faster response times and better technical tracking.
+                                                            </p>
+                                                            <div className="pt-2">
+                                                                <p className="text-[10px] text-white font-black uppercase tracking-widest">
+                                                                    Reply to your confirmation email or message <a href={`mailto:${SITE_CONFIG.email}`} className="text-[#D4A017] hover:underline decoration-2 underline-offset-4">{SITE_CONFIG.email}</a> to discuss this project.
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    
-                                                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
-                                                        {quote.project_notes?.length === 0 ? (
-                                                            <p className="text-[9px] text-gray-400 italic">No notes appended to this project yet.</p>
-                                                        ) : (
-                                                            quote.project_notes.sort((a,b) => new Date(a.created_at) - new Date(b.created_at)).map((note) => (
-                                                                <div 
-                                                                    key={note.id} 
-                                                                    className={`p-5 rounded-sm space-y-4 transition-all ${
-                                                                        note.author_role === 'lab' 
-                                                                            ? 'bg-[#1A1B1E] text-white border-l-4 border-[#D4A017] shadow-xl md:ml-4' 
-                                                                            : 'bg-white border border-gray-200 shadow-sm md:mr-4'
-                                                                    }`}
-                                                                >
-                                                                    <p className={`text-[11px] leading-relaxed ${note.author_role === 'lab' ? 'font-medium' : ''}`}>
-                                                                        {note.content}
-                                                                    </p>
-                                                                    <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest pt-2 border-t border-white/10">
-                                                                        <span className={note.author_role === 'lab' ? 'text-[#D4A017]' : 'text-gray-400'}>
-                                                                            {note.author_role === 'lab' ? 'The Lab Update' : 'Partner Update'}
-                                                                        </span>
-                                                                        <span className={note.author_role === 'lab' ? 'text-gray-400' : 'text-gray-500'}>
-                                                                            {new Date(note.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            ))
-                                                        )}
-                                                    </div>
-
-                                                    <ProjectNoteForm quoteId={quote.id} onNoteAdded={fetchQuotes} />
                                                 </div>
                                             </div>
                                         )}

@@ -525,8 +525,12 @@ const QuoteLab = ({
                                 Your file is in. I'll review it and follow up with a quote and timeline within 24 hours.
                             </p>
                         </div>
-                        <button onClick={() => setQuoteStep(1)} className="text-[11px] font-black uppercase tracking-[0.4em] text-gray-500 hover:text-[#D4A017] transition-colors flex items-center justify-center space-x-2 mx-auto uppercase">
-                            <FileText size={14} /><span>Start a New Quote</span>
+                        <button 
+                            onClick={() => setQuoteStep(1)} 
+                            className="px-8 py-3 bg-white border border-gray-300 text-[10px] font-black uppercase tracking-[0.4em] text-[#1A1B1E] hover:border-[#D4A017] hover:text-[#D4A017] transition-all flex items-center justify-center space-x-3 mx-auto shadow-sm"
+                        >
+                            <FileText size={14} />
+                            <span>Start a New Project</span>
                         </button>
                     </div>
                 )}
