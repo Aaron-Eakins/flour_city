@@ -124,7 +124,7 @@ const ContactView = ({ setView }) => {
                             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4A017]">Direct Connection</h4>
                             <div className="space-y-4 font-bold text-sm uppercase tracking-widest text-[#1A1B1E] text-left">
                                 <div className="flex items-center space-x-3 text-[#1A1B1E]"><Mail size={16} className="text-[#D4A017]" /><a href={`mailto:${SITE_CONFIG.email}`} className="hover:text-[#D4A017] transition-colors">{SITE_CONFIG.email}</a></div>
-                                <div className="flex items-center space-x-3 text-[#1A1B1E]"><MapPin size={16} className="text-[#D4A017]" /><span>{SITE_CONFIG.district}, {SITE_CONFIG.region}</span></div>
+                                <div className="flex items-center space-x-3 text-[#1A1B1E]"><MapPin size={16} className="text-[#D4A017]" /><span>{SITE_CONFIG.region}</span></div>
                             </div>
                         </section>
 

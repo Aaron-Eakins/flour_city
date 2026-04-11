@@ -7,7 +7,6 @@ export const SITE_CONFIG = {
     name: 'Flour City Labs',
     email: 'lab@flourcitylabs.com',
     region: 'Rochester, NY',
-    district: 'Monroe Ave District',
     tagline: 'Engineering trust in Rochester\'s additive future since 2026.',
     socials: {
         instagram: 'flourcitylabs',
