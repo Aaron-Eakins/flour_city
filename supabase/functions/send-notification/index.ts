@@ -39,7 +39,7 @@ Deno.serve(async (req: Request) => {
     const hasBridgeSecret = authHeader?.includes(Deno.env.get('CF_INBOUND_SECRET') || 'NONE')
     let isUserAuthenticated = false;
 
-    // Cryptographically verify the user if standard Bearer token is provided
+    // Cryptographically verify the user using getUser()
     if (authHeader?.startsWith('Bearer ')) {
         const token = authHeader.replace('Bearer ', '');
         const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
@@ -51,7 +51,6 @@ Deno.serve(async (req: Request) => {
 
     // 2. Security Logic
     if (!isUserAuthenticated && !hasBridgeSecret) {
-        // If not a logged-in user or bridge, we REQUIRE a turnstile token
         if (!turnstile_token) {
             console.error('Security violation: No auth and no turnstile token.')
             return new Response(JSON.stringify({ error: 'Security verification required' }), { 
@@ -94,7 +93,9 @@ Deno.serve(async (req: Request) => {
 
     if (table === 'quotes') {
       emailContent.subject = `Quote Request: ${record.name}`
-      emailContent.replyTo = `reply+${record.id}@flourcitylabs.com`
+      // RESTORED SUBDOMAIN: Specifically using replies.flourcitylabs.com 
+      // to ensure Cloudflare MX records are hit.
+      emailContent.replyTo = `reply+${record.id}@replies.flourcitylabs.com`
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
           <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">Project Secured in Pipeline</h1>
@@ -113,7 +114,7 @@ Deno.serve(async (req: Request) => {
 
       await sendEmail({
         to: record.email,
-        replyTo: `reply+${record.id}@flourcitylabs.com`,
+        replyTo: `reply+${record.id}@replies.flourcitylabs.com`,
         subject: "Your quote request is in.",
         html: `<div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;"><p>Hi ${record.name}, your file is in. I'll take a look within 24 hours.</p></div>`
       })
@@ -131,7 +132,7 @@ Deno.serve(async (req: Request) => {
 
       emailContent.subject = `Project Update: ${quote.name}`
       emailContent.to = FCL_EMAIL
-      emailContent.replyTo = `reply+${record.quote_id}@flourcitylabs.com`
+      emailContent.replyTo = `reply+${record.quote_id}@replies.flourcitylabs.com`
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
             <p><strong>New message from:</strong> ${quote.name}</p>
