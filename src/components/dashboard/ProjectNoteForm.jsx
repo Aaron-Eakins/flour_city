@@ -65,17 +65,30 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
 
             if (error) throw error;
 
-            // Trigger notification
-            const { error: funcError } = await supabase.functions.invoke('send-notification', {
-                body: {
+            // MANUAL FETCH BYPASS for 401 issues
+            const { data: { session } } = await supabase.auth.getSession();
+            const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+            const functionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-notification`;
+
+            const res = await fetch(functionUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': anonKey,
+                    'Authorization': `Bearer ${session?.access_token || anonKey}`
+                },
+                body: JSON.stringify({
                     record: note,
                     table: 'project_notes',
                     type: 'INSERT',
                     turnstile_token: user ? undefined : turnstileToken
-                }
+                })
             });
 
-            if (funcError) throw new Error(`Notification failed: ${funcError.message}`);
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({ error: 'Unknown Error' }));
+                throw new Error(errData.error || `HTTP ${res.status}`);
+            }
 
             setStatus('success');
             setContent('');
