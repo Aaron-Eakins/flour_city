@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
@@ -11,7 +11,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [turnstileToken, setTurnstileToken] = useState('');
 
-    React.useEffect(() => {
+    useEffect(() => {
         // Stop Turnstile logic entirely for authenticated users
         if (user || loading) return;
 
@@ -25,7 +25,6 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             }
         };
 
-        // Try immediately or wait for script load
         if (window.turnstile) {
             initTurnstile();
         } else {
@@ -37,7 +36,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             }, 500);
             return () => clearInterval(timer);
         }
-    }, [turnstileToken, user]);
+    }, [turnstileToken, user, loading]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -66,7 +65,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
 
             if (error) throw error;
 
-            // Explicitly trigger notification Edge Function
+            // Trigger notification
             const { error: funcError } = await supabase.functions.invoke('send-notification', {
                 body: {
                     record: note,
@@ -81,8 +80,6 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             setStatus('success');
             setContent('');
             if (onNoteAdded) onNoteAdded();
-            
-            // Reset success message after 3s
             setTimeout(() => setStatus('idle'), 3000);
         } catch (err) {
             console.error('Error adding note:', err.message);
@@ -121,8 +118,6 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
 
             {/* Turnstile Container - Guest Only */}
             {!user && <div id="turnstile-container-note" className="flex justify-start py-1"></div>}
-            
-            {/* Inline script callback moved back to manual render for reliability */}
             
             {status === 'success' && (
                 <div className="flex items-center space-x-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-left-2">
