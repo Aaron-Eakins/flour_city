@@ -14,6 +14,19 @@ const TURNSTILE_SECRET_KEY = Deno.env.get('TURNSTILE_SECRET_KEY')
 
 const supabaseAdmin = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY || '')
 
+/**
+ * Basic HTML escaping to prevent injection in email templates.
+ */
+function sanitizeHtml(str: string): string {
+    if (!str) return '';
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 // @ts-ignore: Deno is built-in to the Supabase runtime
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get('Origin')
@@ -36,7 +49,7 @@ Deno.serve(async (req: Request) => {
     const { record, table, type, turnstile_token } = payload
 
     // 1. Verify Authentication / Bridge Secret
-    const hasBridgeSecret = authHeader?.includes(Deno.env.get('CF_INBOUND_SECRET') || 'NONE')
+    const hasBridgeSecret = authHeader?.includes(Deno.env.get('FCL_INBOUND_SECRET') || 'NONE')
     let isUserAuthenticated = false;
 
     // Cryptographically verify the user using getUser()
@@ -83,75 +96,118 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    let emailContent = {
-      to: FCL_EMAIL,
-      subject: "",
-      html: "",
-      replyTo: "",
-      headers: {} as Record<string, string>
-    }
-
     if (table === 'quotes') {
-      emailContent.subject = `Quote Request: ${record.name}`
-      // RESTORED SUBDOMAIN: Specifically using replies.flourcitylabs.com 
-      // to ensure Cloudflare MX records are hit.
-      emailContent.replyTo = `reply+${record.id}@replies.flourcitylabs.com`
-      emailContent.html = `
-        <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
-          <h1 style="text-transform: uppercase; font-style: italic; font-weight: 900; letter-spacing: -0.05em; border-bottom: 4px solid #D4A017; padding-bottom: 20px;">Project Secured in Pipeline</h1>
-          <div style="background: white; padding: 30px; border: 1px solid #ccc; margin-top: 20px;">
-            <p><strong>Partner:</strong> ${record.name} (${record.email})</p>
-            <p><strong>Material:</strong> ${record.material}</p>
-            <p><strong>Intent:</strong> ${record.intent}</p>
-          </div>
-        </div>
-      `
+      console.log(`Processing Quote for: ${record.name}`)
+      
+      const sName = sanitizeHtml(record.name);
+      const sEmail = sanitizeHtml(record.email);
+      const sMaterial = sanitizeHtml(record.material);
+      const sIntent = sanitizeHtml(record.intent);
+      const sAddress = sanitizeHtml(record.shipping_address);
+      const sCity = sanitizeHtml(record.city);
+      const sState = sanitizeHtml(record.state);
+      const sZip = sanitizeHtml(record.zip);
 
-      const res = await sendEmail(emailContent)
-      if (res?.id) {
-        await supabaseAdmin.from('quotes').update({ last_resend_message_id: res.id }).eq('id', record.id)
-      }
-
+      // Lead Alert to Admin
       await sendEmail({
-        to: record.email,
-        replyTo: `reply+${record.id}@replies.flourcitylabs.com`,
-        subject: "Your quote request is in.",
-        html: `<div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;"><p>Hi ${record.name}, your file is in. I'll take a look within 24 hours.</p></div>`
+        to: FCL_EMAIL,
+        replyTo: record.email,
+        subject: `New Project: ${sName}`,
+        html: `
+          <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
+            <h1 style="text-transform: uppercase;">Lead Alert</h1>
+            <div style="background: white; padding: 30px; border: 1px solid #ccc; margin-top: 20px;">
+              <p><strong>Partner:</strong> ${sName} (${sEmail})</p>
+              <p><strong>Material:</strong> ${sMaterial}</p>
+              <p><strong>Intent:</strong> ${sIntent}</p>
+              <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+              <p style="font-size: 10px; font-weight: 900; text-transform: uppercase; color: #999;">Shipping Destination</p>
+              <p style="white-space: pre-wrap;">${sAddress}\n${sCity}, ${sState} ${sZip}</p>
+            </div>
+          </div>
+        `
       })
 
-      return new Response(JSON.stringify({ success: true }), { status: 200, headers: corsHeaders })
+      // Auto-Reply to Customer
+      await sendEmail({
+        to: record.email,
+        replyTo: FCL_EMAIL,
+        subject: "Your project is in the pipeline.",
+        html: `
+          <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
+            <p>Hi ${sName},</p>
+            <p>Your file is in. I'll take a look at the technical details and follow up with a quote and timeline within 24 hours.</p>
+            <p style="margin-top: 30px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; color: #D4A017;">
+              FLOUR CITY LABS // ROCHESTER NY
+            </p>
+          </div>
+        `
+      })
+
+      return new Response(JSON.stringify({ success: true }), { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
+
+    } else if (table === 'contacts') {
+      const sName = sanitizeHtml(record.name);
+      const sMessage = sanitizeHtml(record.message);
+
+      await sendEmail({
+        to: FCL_EMAIL,
+        replyTo: record.email,
+        subject: `Lab Inquiry: ${sName}`,
+        html: `
+          <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
+            <p><strong>New message from:</strong> ${sName}</p>
+            <div style="background: white; padding: 20px; border: 1px solid #ccc; margin-top: 20px; font-style: italic;">
+              "${sMessage}"
+            </div>
+          </div>
+        `
+      })
+
+      return new Response(JSON.stringify({ success: true }), { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
 
     } else if (table === 'project_notes') {
       const { data: quote, error: quoteError } = await supabaseAdmin
         .from('quotes')
-        .select('name, email, last_resend_message_id')
+        .select('name, email')
         .eq('id', record.quote_id)
         .single()
 
       if (quoteError) throw quoteError
 
-      emailContent.subject = `Project Update: ${quote.name}`
-      emailContent.to = FCL_EMAIL
-      emailContent.replyTo = `reply+${record.quote_id}@replies.flourcitylabs.com`
-      emailContent.html = `
-        <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
-            <p><strong>New message from:</strong> ${quote.name}</p>
-            <p style="font-style: italic;">"${record.content}"</p>
-        </div>
-      `
-      
-      if (quote.last_resend_message_id) {
-        emailContent.headers = {
-          'In-Reply-To': quote.last_resend_message_id,
-          'References': quote.last_resend_message_id
-        }
-      }
+      const sName = sanitizeHtml(quote.name);
+      const sContent = sanitizeHtml(record.content);
 
-      const res = await sendEmail(emailContent)
-      return new Response(JSON.stringify(res), { status: 200, headers: corsHeaders })
+      await sendEmail({
+        to: FCL_EMAIL,
+        replyTo: quote.email,
+        subject: `Project Update: ${sName}`,
+        html: `
+          <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
+            <p><strong>Update on ${sName}:</strong></p>
+            <div style="background: white; padding: 20px; border: 1px solid #ccc; margin-top: 20px; font-style: italic;">
+              "${sContent}"
+            </div>
+          </div>
+        `
+      })
+
+      return new Response(JSON.stringify({ success: true }), { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
     }
 
-    return new Response(JSON.stringify({ message: 'Unhandled Table' }), { status: 200, headers: corsHeaders })
+    return new Response(JSON.stringify({ message: 'Unhandled Table' }), { 
+      status: 200, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    })
 
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);

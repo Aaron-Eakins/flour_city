@@ -144,6 +144,13 @@ const QuoteLab = ({
     const handleTransmit = async (e) => {
         if (e) e.preventDefault();
 
+        // 1. Bot check (Honeypot)
+        if (formData._honeypot) {
+            console.warn('Spam detected via honeypot.');
+            setQuoteStep(4); // Pretend success
+            return;
+        }
+
         if (!formData.name || !formData.email) {
             setError('Name and Email are required to initiate the Lab connection.');
             return;
@@ -161,6 +168,10 @@ const QuoteLab = ({
                     user_id: user?.id || null,
                     name: formData.name,
                     email: formData.email,
+                    shipping_address: formData.shipping_address,
+                    city: formData.city,
+                    state: formData.state,
+                    zip: formData.zip,
                     material: formData.selectedMaterial,
                     colors: (formData.selectedColors || []).slice(0, formData.colorCount || 1).filter(c => c !== ''),
                     intent: formData.intent,
@@ -172,7 +183,7 @@ const QuoteLab = ({
                     speed: formData.speed || "Balanced (Recommended)",
                     layer_height: formData.layer_height || "0.20mm (Recommended)",
                     supports: formData.supports || "Auto (Recommended)",
-                    status: 'pending_review'
+                    status: 'pending'
                 })
                 .select()
                 .single();
@@ -408,28 +419,82 @@ const QuoteLab = ({
                             <p className="text-gray-500 font-medium text-sm italic text-center">Review your details and submit for a quote.</p>
                         </div>
                         <form onSubmit={handleTransmit} className="max-w-md mx-auto space-y-4">
-                            <input
-                                type="text"
-                                placeholder="Full Name"
-                                required
-                                className="w-full p-5 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            {/* Honeypot field (hidden from humans) */}
+                            <input 
+                                type="text" 
+                                name="_honeypot" 
+                                style={{ display: 'none' }} 
+                                tabIndex="-1" 
+                                autoComplete="off"
+                                value={formData._honeypot || ''}
+                                onChange={(e) => setFormData({ ...formData, _honeypot: e.target.value })}
                             />
-                            <input
-                                type="email"
-                                placeholder="Email Address"
-                                required
-                                className="w-full p-5 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            />
+
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <input
+                                    type="text"
+                                    placeholder="Full Name"
+                                    required
+                                    className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                />
+                                <input
+                                    type="email"
+                                    placeholder="Email Address"
+                                    required
+                                    className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-4 pt-4 border-t border-gray-200">
+                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 block pb-2">Shipping Logistics</label>
+                                <input
+                                    type="text"
+                                    placeholder="Street Address"
+                                    required
+                                    className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
+                                    value={formData.shipping_address || ''}
+                                    onChange={(e) => setFormData({ ...formData, shipping_address: e.target.value })}
+                                />
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <input
+                                        type="text"
+                                        placeholder="City"
+                                        required
+                                        className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
+                                        value={formData.city || ''}
+                                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                    />
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="State"
+                                            required
+                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
+                                            value={formData.state || ''}
+                                            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Zip"
+                                            required
+                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
+                                            value={formData.zip || ''}
+                                            onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="p-5 bg-[#1A1B1E] text-white rounded-sm space-y-3 shadow-lg">
                                 <div className="flex items-center space-x-3 text-[#D4A017]">
                                     <Globe size={18} />
-                                    <p className="text-[10px] font-black uppercase tracking-[0.15em]">Shipping</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.15em]">Shipping Info</p>
                                 </div>
-                                <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Ships nationwide. Rochester orders typically arrive next day.</p>
+                                <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest leading-relaxed text-left">Domestic shipping only. Rates calculated after technical review.</p>
                             </div>
 
                             {/* Turnstile Container */}

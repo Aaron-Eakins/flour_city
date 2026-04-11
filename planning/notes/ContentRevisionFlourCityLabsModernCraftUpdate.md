@@ -33,13 +33,8 @@
 
 ---
 
-## 3. "The Lab" -> "The Workshop" (About Section)
-**Objective:** Establish founder authority as a "Maker" without claiming to be an engineering firm.
-
-- **Section Header:** "Why Flour City Labs?"
-- **Body Copy:** "I started Flour City Labs because I love the process of making. I’m a maker with a deep technical background and a focus on precision. When you send a file to a big print farm, you’re just another job in a queue. When you work with me, I’m the one checking the tolerances, calibrating the print settings, and ensuring the finish is right.
-
-    I use a Bambu Lab P1S to produce parts that are ready to use the moment they’re off the plate. While I'm starting with 3D printing, this workshop is my home base for all kinds of technical experiments—from custom electronics to web design."
+## 3. "The Lab" -> "The Workshop" (About Section/heritage page)
+we are not making changes to this section at this time and will come back to it when I have copy ready for it. 
 
 ---
 

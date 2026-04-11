@@ -26,7 +26,8 @@ const App = () => {
         name: '', email: '', selectedMaterial: 'PLA - Matte', intent: '',
         colorCount: 1, selectedColors: ['', '', '', ''],
         visualValidation: false, fileName: '', storagePath: '',
-        nozzle: '', infill: '', walls: '', speed: '', layer_height: '', supports: ''
+        nozzle: '', infill: '', walls: '', speed: '', layer_height: '', supports: '',
+        shipping_address: '', city: '', state: '', zip: '', _honeypot: ''
     });
 
     const navigateTo = (newView) => {
