@@ -41,6 +41,23 @@ const ProfileView = ({ setView }) => {
 
     useEffect(() => {
         fetchQuotes();
+
+        // Subscribe to real-time updates for notes
+        const channel = supabase
+            .channel('project_notes_changes')
+            .on(
+                'postgres_changes', 
+                { event: 'INSERT', schema: 'public', table: 'project_notes' }, 
+                () => {
+                    console.log('New note detected, refreshing pipeline...');
+                    fetchQuotes();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, [fetchQuotes]);
 
     const handleUpdateProfile = async (e) => {
@@ -74,7 +91,7 @@ const ProfileView = ({ setView }) => {
                         <section className="bg-white border border-gray-300 p-8 rounded-sm shadow-xl">
                             <div className="flex items-center space-x-3 mb-8">
                                 <User className="text-[#D4A017]" size={20} />
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em]">Account Identity</h4>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em]">Account</h4>
                             </div>
 
                             <form onSubmit={handleUpdateProfile} className="space-y-6">
@@ -88,7 +105,7 @@ const ProfileView = ({ setView }) => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Authorized Email</label>
+                                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Email</label>
                                     <input 
                                         type="email"
                                         value={email}
@@ -105,44 +122,19 @@ const ProfileView = ({ setView }) => {
                                     {updateStatus === 'loading' ? <span>Updating...</span> : (
                                         <>
                                             <Save size={14} />
-                                            <span>Update Profile</span>
+                                            <span>Save Changes</span>
                                         </>
                                     )}
                                 </button>
 
-                                {updateStatus === 'success' && (
-                                    <div className="relative p-4 bg-emerald-50 border border-emerald-100 rounded-sm space-y-2 animate-in slide-in-from-top-2">
-                                        <button 
-                                            onClick={() => setUpdateStatus('idle')}
-                                            className="absolute top-2 right-2 text-emerald-400 hover:text-emerald-600 transition-colors"
-                                        >
-                                            <X size={14} />
-                                        </button>
-                                        <div className="flex items-center space-x-2">
-                                            <CheckCircle className="text-emerald-500" size={16} />
-                                            <p className="text-emerald-600 text-[9px] font-black uppercase tracking-[0.2em]">Identity Update Initiated</p>
-                                        </div>
-                                        {email !== user.email && (
-                                            <div className="space-y-1">
-                                                <p className="text-[10px] text-[#1A1B1E] font-medium leading-relaxed">
-                                                    Action Required: For security, Supabase requires you to click the confirmation links sent to **BOTH** your old and new email addresses.
-                                                </p>
-                                                <p className="text-[8px] text-emerald-600 font-black uppercase tracking-widest italic">The change will not take effect until both links are verified.</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </form>
-                        </section>
-
-                        <div className="p-6 bg-[#1A1B1E] text-white rounded-sm space-y-4">
-                            <div className="flex items-center space-x-2 text-[#D4A017]">
-                                <AlertCircle size={14} />
-                                <span className="text-[9px] font-black uppercase tracking-widest">Lab Connection</span>
+                                <div className="space-y-1">
+                                    <p className="text-[8px] text-[#1A1B1E] font-black uppercase tracking-widest italic opacity-50">Updating your email requires confirmation from both your old and new address before the change takes effect.</p>
+                                </div>
                             </div>
-                            <p className="text-[10px] text-slate-400 leading-relaxed font-medium">Self-service email updates are now active. Note that changing your email will require confirmation via a link sent to your new address before the change is finalized.</p>
-                        </div>
-                    </div>
+                        )}
+                    </form>
+                </section>
+            </div>
 
                     {/* Inquiry list */}
                     <div className="lg:col-span-2 space-y-8">
@@ -234,11 +226,24 @@ const ProfileView = ({ setView }) => {
                                                             <p className="text-[9px] text-gray-400 italic">No notes appended to this project yet.</p>
                                                         ) : (
                                                             quote.project_notes.sort((a,b) => new Date(a.created_at) - new Date(b.created_at)).map((note) => (
-                                                                <div key={note.id} className="p-3 bg-white border border-gray-200 rounded-sm space-y-2">
-                                                                    <p className="text-[10px] leading-relaxed">{note.content}</p>
-                                                                    <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest text-gray-400">
-                                                                        <span>Client Update</span>
-                                                                        <span>{new Date(note.created_at).toLocaleString()}</span>
+                                                                <div 
+                                                                    key={note.id} 
+                                                                    className={`p-5 rounded-sm space-y-4 transition-all ${
+                                                                        note.author_role === 'lab' 
+                                                                            ? 'bg-[#1A1B1E] text-white border-l-4 border-[#D4A017] shadow-xl md:ml-4' 
+                                                                            : 'bg-white border border-gray-200 shadow-sm md:mr-4'
+                                                                    }`}
+                                                                >
+                                                                    <p className={`text-[11px] leading-relaxed ${note.author_role === 'lab' ? 'font-medium' : ''}`}>
+                                                                        {note.content}
+                                                                    </p>
+                                                                    <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest pt-2 border-t border-white/10">
+                                                                        <span className={note.author_role === 'lab' ? 'text-[#D4A017]' : 'text-gray-400'}>
+                                                                            {note.author_role === 'lab' ? 'The Lab Update' : 'Partner Update'}
+                                                                        </span>
+                                                                        <span className={note.author_role === 'lab' ? 'text-gray-400' : 'text-gray-500'}>
+                                                                            {new Date(note.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                                                        </span>
                                                                     </div>
                                                                 </div>
                                                             ))

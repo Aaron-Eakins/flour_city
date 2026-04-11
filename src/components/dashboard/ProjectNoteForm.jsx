@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 
 const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const [content, setContent] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [status, setStatus] = useState('idle'); // idle, success, error
@@ -12,6 +12,9 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
     const [turnstileToken, setTurnstileToken] = useState('');
 
     React.useEffect(() => {
+        // Stop Turnstile logic entirely for authenticated users
+        if (user || loading) return;
+
         const initTurnstile = () => {
             if (window.turnstile && !turnstileToken) {
                 window.turnstile.render('#turnstile-container-note', {
@@ -34,13 +37,13 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             }, 500);
             return () => clearInterval(timer);
         }
-    }, [turnstileToken]);
+    }, [turnstileToken, user]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (!content.trim() || isSubmitting) return;
-        if (!turnstileToken) {
+        if (!user && !turnstileToken) {
             setErrorMessage('Security verification required');
             setStatus('error');
             return;
@@ -69,7 +72,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
                     record: note,
                     table: 'project_notes',
                     type: 'INSERT',
-                    turnstile_token: turnstileToken
+                    turnstile_token: user ? undefined : turnstileToken
                 }
             });
 
@@ -88,10 +91,14 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
         } finally {
             setIsSubmitting(false);
         }
-    };
+    if (loading) return null;
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-3 mt-4 animate-in fade-in duration-500">
+        <form 
+            key={user?.id || 'guest'}
+            onSubmit={handleSubmit} 
+            className="space-y-3 mt-4 animate-in fade-in duration-500"
+        >
             <div className="relative">
                 <textarea
                     value={content}
@@ -103,15 +110,15 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
                 />
                 <button
                     type="submit"
-                    disabled={isSubmitting || !content.trim() || !turnstileToken}
+                    disabled={isSubmitting || !content.trim() || (!user && !turnstileToken)}
                     className="absolute bottom-3 right-3 p-2 bg-[#1A1B1E] text-white rounded-sm hover:bg-[#D4A017] transition-all disabled:opacity-50"
                 >
                     <Send size={14} />
                 </button>
             </div>
 
-            {/* Turnstile Container */}
-            <div id="turnstile-container-note" className="flex justify-start py-1"></div>
+            {/* Turnstile Container - Guest Only */}
+            {!user && <div id="turnstile-container-note" className="flex justify-start py-1"></div>}
             
             {/* Inline script callback moved back to manual render for reliability */}
             

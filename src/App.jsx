@@ -47,6 +47,33 @@ const App = () => {
         }
     }, [user, view]);
 
+    // Inactivity Timeout (60 Minutes)
+    const { signOut } = useAuth();
+    useEffect(() => {
+        if (!user) return;
+
+        let timeout;
+        const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour
+
+        const resetTimer = () => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                console.log('Automated Logout: 60 minutes of inactivity reached.');
+                signOut();
+            }, INACTIVITY_LIMIT);
+        };
+
+        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        events.forEach(event => window.addEventListener(event, resetTimer));
+        
+        resetTimer();
+
+        return () => {
+            if (timeout) clearTimeout(timeout);
+            events.forEach(event => window.removeEventListener(event, resetTimer));
+        };
+    }, [user, signOut]);
+
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
