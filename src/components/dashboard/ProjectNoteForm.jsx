@@ -91,6 +91,8 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
         } finally {
             setIsSubmitting(false);
         }
+    };
+
     if (loading) return null;
 
     return (
