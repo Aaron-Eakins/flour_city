@@ -35,19 +35,32 @@ Deno.serve(async (req: Request) => {
     const payload = await req.json()
     const { record, table, type, turnstile_token } = payload
 
-    // Trust official origins or valid auth
-    const isTrustedOrigin = origin && ALLOWED_ORIGINS.includes(origin)
+    // 1. Verify Authentication / Bridge Secret
     const hasBridgeSecret = authHeader?.includes(Deno.env.get('CF_INBOUND_SECRET') || 'NONE')
-    const hasValidJWT = authHeader?.startsWith('Bearer ') && authHeader.length > 50
+    let isUserAuthenticated = false;
 
-    if (!isTrustedOrigin && !hasBridgeSecret && !hasValidJWT) {
+    // Cryptographically verify the user if standard Bearer token is provided
+    if (authHeader?.startsWith('Bearer ')) {
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+        if (user && !authError) {
+            isUserAuthenticated = true;
+            console.log(`Authenticated user: ${user.email}`);
+        }
+    }
+
+    // 2. Security Logic
+    if (!isUserAuthenticated && !hasBridgeSecret) {
+        // If not a logged-in user or bridge, we REQUIRE a turnstile token
         if (!turnstile_token) {
+            console.error('Security violation: No auth and no turnstile token.')
             return new Response(JSON.stringify({ error: 'Security verification required' }), { 
                 status: 403, 
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
             })
         }
 
+        console.log('Verifying Turnstile token...')
         const turnstileRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -56,6 +69,7 @@ Deno.serve(async (req: Request) => {
         const turnstileData = await turnstileRes.json()
         
         if (!turnstileData.success) {
+            console.error('Turnstile verification failed:', JSON.stringify(turnstileData))
             return new Response(JSON.stringify({ error: 'Security verification failed' }), { 
                 status: 403, 
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -80,7 +94,6 @@ Deno.serve(async (req: Request) => {
 
     if (table === 'quotes') {
       emailContent.subject = `Quote Request: ${record.name}`
-      // SWITCHED TO ROOT DOMAIN FOR CLOUDFLARE CATCH-ALL COMPATIBILITY
       emailContent.replyTo = `reply+${record.id}@flourcitylabs.com`
       emailContent.html = `
         <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
