@@ -11,7 +11,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
 // @ts-ignore: Deno is built-in to the Supabase runtime
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 // @ts-ignore: Deno is built-in to the Supabase runtime
-const SUPABASE_INBOUND_SECRET = Deno.env.get('SUPABASE_INBOUND_SECRET')
+const FCL_INBOUND_SECRET = Deno.env.get('FCL_INBOUND_SECRET')
 
 const supabaseAdmin = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY || '')
 
@@ -19,8 +19,8 @@ const supabaseAdmin = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY
 Deno.serve(async (req: Request) => {
   // 1. Authorization Check (Shared Secret from Cloudflare)
   const authHeader = req.headers.get('Authorization')
-  if (!SUPABASE_INBOUND_SECRET || authHeader !== `Bearer ${SUPABASE_INBOUND_SECRET}`) {
-    console.error('Unauthorized request attempt: Invalid or missing SUPABASE_INBOUND_SECRET.')
+  if (!FCL_INBOUND_SECRET || authHeader !== `Bearer ${FCL_INBOUND_SECRET}`) {
+    console.error('Unauthorized request attempt: Invalid or missing FCL_INBOUND_SECRET.')
     return new Response('Unauthorized', { status: 401 })
   }
 
