@@ -130,11 +130,9 @@ const ProfileView = ({ setView }) => {
                                 <div className="space-y-1">
                                     <p className="text-[8px] text-[#1A1B1E] font-black uppercase tracking-widest italic opacity-50">Updating your email requires confirmation from both your old and new address before the change takes effect.</p>
                                 </div>
-                            </div>
-                        )}
-                    </form>
-                </section>
-            </div>
+                            </form>
+                        </section>
+                    </div>
 
                     {/* Inquiry list */}
                     <div className="lg:col-span-2 space-y-8">
