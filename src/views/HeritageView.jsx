@@ -74,7 +74,7 @@ const HeritageView = () => (
                     <div className="space-y-6 text-left order-2">
                         <span className="text-4xl font-black text-[#D4A017] italic">{new Date().getFullYear()}</span>
                         <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Digital Mill</h3>
-                        <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-left">Flour City Labs continues that tradition layer by layer, with a printer instead of a mill.</p>
+                        <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-left">Flour City Labs continues that tradition layer by layer. Precise enough to function. Considered enough to display.</p>
                     </div>
                 </div>
             </div>
