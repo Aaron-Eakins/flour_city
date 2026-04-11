@@ -168,6 +168,7 @@ const QuoteLab = ({
                     user_id: user?.id || null,
                     name: formData.name,
                     email: formData.email,
+                    file_name: formData.fileName,
                     shipping_address: formData.shipping_address,
                     city: formData.city,
                     state: formData.state,

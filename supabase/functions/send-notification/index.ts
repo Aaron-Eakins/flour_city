@@ -101,6 +101,7 @@ Deno.serve(async (req: Request) => {
       
       const sName = sanitizeHtml(record.name);
       const sEmail = sanitizeHtml(record.email);
+      const sFileName = sanitizeHtml(record.file_name || 'Project');
       const sMaterial = sanitizeHtml(record.material);
       const sIntent = sanitizeHtml(record.intent);
       const sAddress = sanitizeHtml(record.shipping_address);
@@ -112,11 +113,12 @@ Deno.serve(async (req: Request) => {
       await sendEmail({
         to: FCL_EMAIL,
         replyTo: record.email,
-        subject: `New Project: ${sName}`,
+        subject: `New Project: ${sFileName}`,
         html: `
           <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
             <h1 style="text-transform: uppercase;">Lead Alert</h1>
             <div style="background: white; padding: 30px; border: 1px solid #ccc; margin-top: 20px;">
+              <p><strong>Project:</strong> ${sFileName}</p>
               <p><strong>Partner:</strong> ${sName} (${sEmail})</p>
               <p><strong>Material:</strong> ${sMaterial}</p>
               <p><strong>Intent:</strong> ${sIntent}</p>
@@ -132,11 +134,11 @@ Deno.serve(async (req: Request) => {
       await sendEmail({
         to: record.email,
         replyTo: FCL_EMAIL,
-        subject: "Your project is in the pipeline.",
+        subject: `In the Pipeline: ${sFileName}`,
         html: `
           <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
             <p>Hi ${sName},</p>
-            <p>Your file is in. I'll take a look at the technical details and follow up with a quote and timeline within 24 hours.</p>
+            <p>Your file (<strong>${sFileName}</strong>) is in. I'll take a look at the technical details and follow up with a quote and timeline within 24 hours.</p>
             <p style="margin-top: 30px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; color: #D4A017;">
               FLOUR CITY LABS // ROCHESTER NY
             </p>
