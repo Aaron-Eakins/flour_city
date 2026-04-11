@@ -46,7 +46,12 @@ const HeritageView = () => (
                     </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-12 items-center">
-                    <div className="flex justify-center">
+                    <div className="space-y-6 text-right order-2 md:order-1">
+                        <span className="text-4xl font-black text-[#D4A017] italic">1945</span>
+                        <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Technical Hub</h3>
+                        <p className="text-gray-600 font-medium text-lg leading-relaxed text-right text-[#1A1B1E]">Rochester became the world's center for precision engineering, shifting from river power to the physics of light.</p>
+                    </div>
+                    <div className="flex justify-center order-1 md:order-2">
                         <div className="w-72 h-72 bg-[#1A1B1E] flex items-center justify-center rounded-sm shadow-2xl relative text-[#1A1B1E]">
                             <OpticsIcon className="w-40 h-40 text-white/20" />
                             <div className="absolute -top-4 -left-4 w-24 h-24 bg-[#F2F1EF] border border-[#D4A017]/30 flex flex-col items-center justify-center shadow-lg">
@@ -55,26 +60,21 @@ const HeritageView = () => (
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-6 text-left">
-                        <span className="text-4xl font-black text-[#D4A017] italic">1945</span>
-                        <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Technical Hub</h3>
-                        <p className="text-gray-600 font-medium text-lg leading-relaxed text-left text-[#1A1B1E]">Rochester became the world's center for precision engineering, shifting from river power to the physics of light.</p>
-                    </div>
                 </div>
                 {/* 2026 Digital Mill Section */}
                 <div className="grid md:grid-cols-2 gap-12 items-center text-left">
-                    <div className="space-y-6 text-right order-2 md:order-1">
-                        <span className="text-4xl font-black text-[#D4A017] italic">{new Date().getFullYear()}</span>
-                        <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Digital Mill</h3>
-                        <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-right">Flour City Labs continues that tradition layer by layer, with a printer instead of a mill.</p>
-                    </div>
-                    <div className="flex justify-center order-1 md:order-2">
+                    <div className="flex justify-center order-1">
                         <div className="w-64 h-64 bg-[#1A1B1E] flex items-center justify-center rounded-sm shadow-2xl relative">
                             <LogoIcon className="w-32 h-32 opacity-20" />
                             <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-[#F2F1EF] border border-[#D4A017]/30 flex items-center justify-center shadow-lg">
                                 <Cpu size={24} className="text-[#D4A017]" />
                             </div>
                         </div>
+                    </div>
+                    <div className="space-y-6 text-left order-2">
+                        <span className="text-4xl font-black text-[#D4A017] italic">{new Date().getFullYear()}</span>
+                        <h3 className="text-4xl font-black uppercase italic tracking-tighter text-[#1A1B1E]">The Digital Mill</h3>
+                        <p className="text-gray-600 font-medium leading-relaxed text-[#1A1B1E] text-left">Flour City Labs continues that tradition layer by layer, with a printer instead of a mill.</p>
                     </div>
                 </div>
             </div>
