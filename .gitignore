@@ -41,3 +41,7 @@ lerna-debug.log*
 .gstack/
 .claude/
 src/generated/prisma
+
+# Planning and Notes
+planning/notes/
+planning/slicer/
