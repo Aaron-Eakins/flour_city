@@ -45,3 +45,5 @@ src/generated/prisma
 # Planning and Notes
 planning/notes/
 planning/slicer/
+CLAUDE.md
+**/IMPLEMENTATION_NOTES.md
