@@ -2,6 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Business Context
+
+**Flour City Labs** is a web and email consulting practice for Rochester, NY small businesses. The primary service is email deliverability — SPF, DMARC, DKIM, blacklist issues. The 3D printing service (slicer app) is secondary.
+
+**Authoritative plan:** `~/.gstack/projects/Aaron-Eakins-flour_city/afloc-main-design-20260419-121835.md`
+
+**Historical planning notes** in `planning/notes/` and `apps/labs/planning/notes/` predate the consulting pivot and are focused on 3D printing. Treat them as context only — do not work from them.
+
+**Current priorities (before May 1 Tech Forum):**
+1. labs website copy reflects web/email consulting — DONE
+2. Follow up with Bob (first free audit lead) — DONE
+3. Attend Tech Forum, participate in Q&A
+
+**Phase 2 (after forum):** Astro rebuild for SSG/SEO, Check My Email web tool, PDF audit template, recurring monitoring service.
+
+---
+
 ## Monorepo Structure
 
 ```

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MapPin, Truck, CheckCircle, MessageSquare, AlertCircle, Send } from 'lucide-react';
+import { Mail, MapPin, Search, CheckCircle, MessageSquare, AlertCircle, Send } from 'lucide-react';
 import { SITE_CONFIG } from '../constants/site';
 import { useAuth } from '../context/AuthContext';
 
@@ -113,9 +113,9 @@ const ContactView = ({ setView }) => {
         <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700 text-[#1A1B1E]">
             <div className="max-w-7xl mx-auto px-6">
                 <header className="mb-20 space-y-12 text-left text-[#1A1B1E]">
-                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Region First</span>
-                    <DimensionedHeader line1="THE" line2="PIPELINE." layerHt="0.20mm" partWd="210mm" variant="light" />
-                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Based in Rochester, NY. Taking orders nationwide.</p>
+                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Rochester, NY</span>
+                    <DimensionedHeader line1="LET'S" line2="CONNECT." layerHt="SPF·DKIM" partWd="DMARC·MX" variant="light" />
+                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Based in Rochester, NY. Free initial audit — no obligation.</p>
                 </header>
 
                 <div className="grid lg:grid-cols-3 gap-12">
@@ -129,18 +129,12 @@ const ContactView = ({ setView }) => {
                         </section>
 
                         <section className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-6 text-left">
-                            <div className="flex items-center space-x-2 text-[#D4A017]"><Truck size={20} /> <h4 className="text-sm font-black uppercase tracking-widest italic text-white">Secure Logistics</h4></div>
-                            <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Every order is carefully packaged for transit. We ship nationwide through standard courier networks.</p>
-                            <button 
-                                onClick={() => { setView('home'); setTimeout(() => document.getElementById('quote-section')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
-                                className="w-full p-3 bg-white/5 border border-[#D4A017]/30 hover:border-[#D4A017] hover:bg-[#D4A017]/10 rounded-sm flex items-center justify-between transition-all group"
-                            >
-                                <span className="text-[9px] font-black uppercase tracking-widest text-[#D4A017]">Orders Open</span>
-                                <div className="flex items-center space-x-2">
-                                    <span className="text-[8px] font-black uppercase tracking-widest text-[#D4A017] opacity-0 group-hover:opacity-100 transition-opacity">Launch QuoteLab</span>
-                                    <CheckCircle size={12} className="text-[#D4A017]" />
-                                </div>
-                            </button>
+                            <div className="flex items-center space-x-2 text-[#D4A017]"><Search size={20} /> <h4 className="text-sm font-black uppercase tracking-widest italic text-white">How It Works</h4></div>
+                            <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Drop me your domain. I'll check SPF, DKIM, DMARC, MX records, and spam blacklist status, then email you what's broken and how to fix it.</p>
+                            <div className="w-full p-3 bg-white/5 border border-[#D4A017]/30 rounded-sm flex items-center justify-between">
+                                <span className="text-[9px] font-black uppercase tracking-widest text-[#D4A017]">First Audit Free</span>
+                                <CheckCircle size={12} className="text-[#D4A017]" />
+                            </div>
                         </section>
                     </div>
 
@@ -151,8 +145,8 @@ const ContactView = ({ setView }) => {
 
                         <div className="space-y-8 relative z-10 text-left">
                             <div className="space-y-2">
-                                <h4 className="text-3xl font-black uppercase italic tracking-tighter">Lab Inquiry</h4>
-                                <p className="text-gray-500 text-sm font-medium">Questions about an order, a material, or a custom project? Send me a message.</p>
+                                <h4 className="text-3xl font-black uppercase italic tracking-tighter">Free Audit Request</h4>
+                                <p className="text-gray-500 text-sm font-medium">Got a domain you'd like me to check? Email deliverability issue? Or just want to know if your setup is healthy? Send me a message.</p>
                             </div>
 
                             {status === 'success' ? (

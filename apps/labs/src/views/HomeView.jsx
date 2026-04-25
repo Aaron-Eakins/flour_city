@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, ChevronRight } from 'lucide-react';
+import { Mail, ChevronRight } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import LogoIcon from '../components/common/LogoIcon';
 import QuoteLab from '../components/quote/QuoteLab';
@@ -15,18 +15,18 @@ const HomeView = (props) => (
             <div className="relative z-20 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center text-left">
                 <div className="relative z-50 space-y-8">
                     <div className="space-y-2">
-                        <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Rochester Built. Layered with Purpose.</span>
+                        <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Rochester, NY · Web & Email Consulting</span>
                         <DimensionedHeader
-                            line1="LOCAL SCALE."
-                            line2="MODERN CRAFT."
-                            layerHt="0.10mm"
-                            partWd="250mm"
+                            line1="WEB & EMAIL"
+                            line2="CONSULTING."
+                            layerHt="SPF·DKIM"
+                            partWd="DMARC·MX"
                             variant="dark"
                         />
                     </div>
-                    <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Quality 3D printing for prototypes, custom parts, and one-off projects. Every order gets a personal review before it prints.</p>
-                    <button onClick={() => document.getElementById('quote-section')?.scrollIntoView({ behavior: 'smooth' })} className="px-10 py-5 bg-[#D4A017] text-[#1A1B1E] font-black rounded-sm flex items-center space-x-3 hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl">
-                        <span>Have a File? Get a Quote</span><ChevronRight className="w-5 h-5" />
+                    <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Is your email ending up in spam? Are DNS records misconfigured? Most small businesses don't know what they're losing. I find what's broken and fix it.</p>
+                    <button onClick={() => props.setView('contact')} className="px-10 py-5 bg-[#D4A017] text-[#1A1B1E] font-black rounded-sm flex items-center space-x-3 hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl">
+                        <span>Get a Free Audit</span><ChevronRight className="w-5 h-5" />
                     </button>
                 </div>
                 <div className="relative hidden md:block">
@@ -34,18 +34,23 @@ const HomeView = (props) => (
                         <div className="absolute w-96 h-96 border border-[#D4A017]/20 rounded-full animate-spin-slow"></div>
                         <div className="relative z-10 w-80 h-80 bg-gradient-to-br from-[#2C3E50] to-[#1A1B1E] rounded-2xl shadow-2xl border border-white/10 p-8 flex flex-col justify-between overflow-hidden text-[#F2F1EF]">
                             <div className="flex justify-between items-start">
-                                <Box className="w-12 h-12 text-[#D4A017]" />
+                                <Mail className="w-12 h-12 text-[#D4A017]" />
                                 <div className="text-right text-[#F2F1EF]">
-                                    <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest leading-none">Lab Status</div>
-                                    <div className="text-xl font-black tracking-tighter uppercase italic mt-1">Ready to Print</div>
+                                    <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest leading-none">Audit Status</div>
+                                    <div className="text-xl font-black tracking-tighter uppercase italic mt-1">Audit Ready</div>
                                 </div>
                             </div>
-                            <div className="space-y-2 text-[#F2F1EF]">
-                                <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#D4A017] w-1/3 animate-pulse"></div>
+                            <div className="space-y-4 text-[#F2F1EF]">
+                                <div className="space-y-1">
+                                    {['SPF', 'DKIM', 'DMARC', 'Blacklist'].map((check) => (
+                                        <div key={check} className="flex justify-between text-[10px] font-mono font-bold uppercase tracking-widest">
+                                            <span className="text-gray-500">{check}</span>
+                                            <span className="text-[#D4A017]">Checking...</span>
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="flex justify-between text-[10px] font-mono text-gray-500 font-bold uppercase tracking-widest">
-                                    <span>Queue: Active</span><span>Est. 24-48h</span>
+                                <div className="flex justify-between text-[10px] font-mono text-gray-500 font-bold uppercase tracking-widest border-t border-white/10 pt-2">
+                                    <span>Response</span><span>Est. 24h</span>
                                 </div>
                             </div>
                         </div>
@@ -57,6 +62,7 @@ const HomeView = (props) => (
         <section id="quote-section" className="py-24 bg-[#F2F1EF] scroll-mt-20 border-b border-gray-200 text-[#1A1B1E]">
             <div className="max-w-5xl mx-auto px-6 text-center">
                 <header className="mb-12 space-y-2 text-center">
+                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4">3D Printing Services</span>
                     <h2 className="text-4xl font-black uppercase italic tracking-tighter">The QuoteLab</h2>
                     <p className="text-gray-500 text-sm font-medium italic">Upload your file. I'll review it and send you a quote within 24 hours.</p>
                 </header>
