@@ -67,17 +67,17 @@ function HopCard({ hop, delta }) {
           {deltaLabel}
         </span>
       </div>
-      <div className="grid grid-cols-[56px_1fr] gap-x-5 gap-y-1.5 text-sm">
-        <span className="text-gray-500 font-medium">From</span>
-        <span className="text-[#F2F1EF] font-mono break-all">
-          {hop.from ? `${hop.from}${hop.fromIp ? ` [${hop.fromIp}]` : ''}` : <span className="text-gray-600 italic">not present</span>}
+      <div className="grid grid-cols-[52px_1fr] gap-x-5 gap-y-2 text-sm">
+        <span className="text-gray-500 font-medium pt-0.5">From</span>
+        <span className="text-[#F2F1EF] font-mono text-base break-all leading-snug">
+          {hop.from ? `${hop.from}${hop.fromIp ? ` [${hop.fromIp}]` : ''}` : <span className="text-gray-600 italic text-sm">not present</span>}
         </span>
-        <span className="text-gray-500 font-medium">By</span>
-        <span className="text-[#F2F1EF] font-mono break-all">{hop.by || <span className="text-gray-600 italic">not present</span>}</span>
-        <span className="text-gray-500 font-medium">Via</span>
-        <span className="text-[#F2F1EF] font-mono">{hop.with || <span className="text-gray-600 italic">not present</span>}</span>
-        <span className="text-gray-500 font-medium">Time</span>
-        <span className="text-gray-300 font-mono text-xs">{hop.timestampRaw || <span className="text-gray-600 italic">not present</span>}</span>
+        <span className="text-gray-500 font-medium pt-0.5">By</span>
+        <span className="text-[#F2F1EF] font-mono text-base break-all leading-snug">{hop.by || <span className="text-gray-600 italic text-sm">not present</span>}</span>
+        <span className="text-gray-500 font-medium pt-0.5">Via</span>
+        <span className="text-[#F2F1EF] font-mono text-base">{hop.with || <span className="text-gray-600 italic text-sm">not present</span>}</span>
+        <span className="text-gray-500 font-medium pt-0.5">Time</span>
+        <span className="text-gray-300 font-mono text-sm">{hop.timestampRaw || <span className="text-gray-600 italic">not present</span>}</span>
       </div>
     </div>
   );
@@ -93,7 +93,7 @@ function AuthSection({ authResults }) {
     <div className="space-y-4">
       {authResults.map((auth, i) => (
         <div key={i} className="border border-white/10 p-5 space-y-4">
-          <p className="text-xs font-semibold text-gray-400">{auth.reporter}</p>
+          <p className="text-sm font-medium text-gray-300 font-mono">{auth.reporter}</p>
           <div className="flex flex-wrap gap-6">
             <div className="space-y-1.5">
               <p className="text-xs font-bold uppercase tracking-wide text-gray-500">DKIM</p>
@@ -101,7 +101,7 @@ function AuthSection({ authResults }) {
                 ? auth.dkim.map((d, j) => (
                     <div key={j} className="flex items-center gap-2">
                       <ResultBadge result={d.result} />
-                      {d.domain && <span className="text-xs text-gray-400 font-mono">{d.domain}</span>}
+                      {d.domain && <span className="text-sm text-gray-300 font-mono">{d.domain}</span>}
                     </div>
                   ))
                 : <span className="text-gray-500 text-sm italic">not checked</span>
@@ -116,7 +116,7 @@ function AuthSection({ authResults }) {
               <div className="flex items-center gap-2">
                 <ResultBadge result={auth.dmarc?.result} />
                 {auth.dmarc?.policy && (
-                  <span className="text-xs text-gray-400 font-mono">p={auth.dmarc.policy}</span>
+                  <span className="text-sm text-gray-300 font-mono">p={auth.dmarc.policy}</span>
                 )}
               </div>
             </div>
@@ -219,10 +219,10 @@ export default function EmailAnalyzerView({ setView }) {
         {/* Header */}
         <div className="space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-[#D4A017]">Email Deliverability</p>
-          <h1 className="text-4xl font-black uppercase italic tracking-tighter text-[#F2F1EF] leading-none">
+          <h1 className="text-5xl font-black uppercase italic tracking-tighter text-[#F2F1EF] leading-none">
             Header Analyzer
           </h1>
-          <p className="text-gray-300 text-base leading-relaxed max-w-lg">
+          <p className="text-gray-300 text-lg leading-relaxed max-w-xl">
             Upload a <code className="text-[#D4A017] font-mono text-sm">.eml</code> or{' '}
             <code className="text-[#D4A017] font-mono text-sm">.msg</code> file, or paste raw headers.
             We parse the Received chain, verify DKIM / SPF / DMARC, and flag anything suspicious.
