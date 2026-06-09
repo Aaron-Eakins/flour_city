@@ -32,7 +32,7 @@ async function extractHeaders(file) {
 }
 
 function ResultBadge({ result }) {
-  if (!result) return <span className="text-gray-500 text-xs uppercase tracking-widest">—</span>;
+  if (!result) return <span className="text-gray-500 text-sm">—</span>;
   const pass = result === 'pass';
   const neutral = result === 'none' || result === 'neutral' || result === 'bestguesspass';
   const color = pass
@@ -41,7 +41,7 @@ function ResultBadge({ result }) {
     ? 'text-amber-400 border-amber-400/30 bg-amber-400/10'
     : 'text-red-400 border-red-400/30 bg-red-400/10';
   return (
-    <span className={`inline-block px-2 py-0.5 border text-[10px] font-black uppercase tracking-widest rounded-sm ${color}`}>
+    <span className={`inline-block px-2.5 py-0.5 border text-xs font-bold uppercase tracking-wide rounded-sm ${color}`}>
       {result}
     </span>
   );
@@ -57,27 +57,27 @@ function HopCard({ hop, delta }) {
   const delayed = delta !== null && delta > 60;
 
   return (
-    <div className="border border-white/10 p-5 space-y-2">
+    <div className="border border-white/10 p-5 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">
+        <span className="text-xs font-bold uppercase tracking-wide text-gray-400">
           Hop {hop.order}
         </span>
-        <span className={`text-[10px] font-mono font-bold tracking-wider ${delayed ? 'text-red-400' : 'text-gray-400'}`}>
-          {delayed && <AlertTriangle size={10} className="inline mr-1" />}
+        <span className={`text-xs font-mono font-semibold ${delayed ? 'text-red-400' : 'text-gray-400'}`}>
+          {delayed && <AlertTriangle size={11} className="inline mr-1" />}
           {deltaLabel}
         </span>
       </div>
-      <div className="grid grid-cols-[80px_1fr] gap-x-4 gap-y-1 text-xs">
-        <span className="text-gray-500 font-bold uppercase tracking-wider">From</span>
+      <div className="grid grid-cols-[56px_1fr] gap-x-5 gap-y-1.5 text-sm">
+        <span className="text-gray-500 font-medium">From</span>
         <span className="text-[#F2F1EF] font-mono break-all">
           {hop.from ? `${hop.from}${hop.fromIp ? ` [${hop.fromIp}]` : ''}` : <span className="text-gray-600 italic">not present</span>}
         </span>
-        <span className="text-gray-500 font-bold uppercase tracking-wider">By</span>
+        <span className="text-gray-500 font-medium">By</span>
         <span className="text-[#F2F1EF] font-mono break-all">{hop.by || <span className="text-gray-600 italic">not present</span>}</span>
-        <span className="text-gray-500 font-bold uppercase tracking-wider">Via</span>
+        <span className="text-gray-500 font-medium">Via</span>
         <span className="text-[#F2F1EF] font-mono">{hop.with || <span className="text-gray-600 italic">not present</span>}</span>
-        <span className="text-gray-500 font-bold uppercase tracking-wider">Time</span>
-        <span className="text-gray-400 font-mono text-[11px]">{hop.timestampRaw || <span className="text-gray-600 italic">not present</span>}</span>
+        <span className="text-gray-500 font-medium">Time</span>
+        <span className="text-gray-300 font-mono text-xs">{hop.timestampRaw || <span className="text-gray-600 italic">not present</span>}</span>
       </div>
     </div>
   );
@@ -92,31 +92,31 @@ function AuthSection({ authResults }) {
   return (
     <div className="space-y-4">
       {authResults.map((auth, i) => (
-        <div key={i} className="border border-white/10 p-5 space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">{auth.reporter}</p>
-          <div className="flex flex-wrap gap-4">
-            <div className="space-y-1">
-              <p className="text-[9px] font-black uppercase tracking-widest text-gray-600">DKIM</p>
+        <div key={i} className="border border-white/10 p-5 space-y-4">
+          <p className="text-xs font-semibold text-gray-400">{auth.reporter}</p>
+          <div className="flex flex-wrap gap-6">
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-500">DKIM</p>
               {auth.dkim.length > 0
                 ? auth.dkim.map((d, j) => (
                     <div key={j} className="flex items-center gap-2">
                       <ResultBadge result={d.result} />
-                      {d.domain && <span className="text-[11px] text-gray-400 font-mono">{d.domain}</span>}
+                      {d.domain && <span className="text-xs text-gray-400 font-mono">{d.domain}</span>}
                     </div>
                   ))
-                : <span className="text-gray-600 text-xs italic">not checked</span>
+                : <span className="text-gray-500 text-sm italic">not checked</span>
               }
             </div>
-            <div className="space-y-1">
-              <p className="text-[9px] font-black uppercase tracking-widest text-gray-600">SPF</p>
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-500">SPF</p>
               <ResultBadge result={auth.spf?.result} />
             </div>
-            <div className="space-y-1">
-              <p className="text-[9px] font-black uppercase tracking-widest text-gray-600">DMARC</p>
+            <div className="space-y-1.5">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-500">DMARC</p>
               <div className="flex items-center gap-2">
                 <ResultBadge result={auth.dmarc?.result} />
                 {auth.dmarc?.policy && (
-                  <span className="text-[11px] text-gray-400 font-mono">p={auth.dmarc.policy}</span>
+                  <span className="text-xs text-gray-400 font-mono">p={auth.dmarc.policy}</span>
                 )}
               </div>
             </div>
@@ -218,15 +218,15 @@ export default function EmailAnalyzerView({ setView }) {
 
         {/* Header */}
         <div className="space-y-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4A017]">Email Deliverability</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#D4A017]">Email Deliverability</p>
           <h1 className="text-4xl font-black uppercase italic tracking-tighter text-[#F2F1EF] leading-none">
             Header Analyzer
           </h1>
-          <p className="text-gray-400 text-sm leading-relaxed max-w-lg">
-            Upload a <code className="text-[#D4A017] font-mono text-xs">.eml</code> or{' '}
-            <code className="text-[#D4A017] font-mono text-xs">.msg</code> file, or paste raw headers.
+          <p className="text-gray-300 text-base leading-relaxed max-w-lg">
+            Upload a <code className="text-[#D4A017] font-mono text-sm">.eml</code> or{' '}
+            <code className="text-[#D4A017] font-mono text-sm">.msg</code> file, or paste raw headers.
             We parse the Received chain, verify DKIM / SPF / DMARC, and flag anything suspicious.
-            Header content is analyzed in your browser. We save a summary of findings (no raw content).
+            Headers are analyzed in your browser. We save a summary of findings (no raw content).
           </p>
         </div>
 
@@ -247,16 +247,16 @@ export default function EmailAnalyzerView({ setView }) {
               {loading ? (
                 <div className="flex flex-col items-center gap-3">
                   <div className="w-8 h-8 border-2 border-[#D4A017] border-t-transparent rounded-full animate-spin" />
-                  <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Analyzing {fileName}</p>
+                  <p className="text-sm text-gray-400">Analyzing {fileName}</p>
                 </div>
               ) : (
                 <>
                   <Upload size={28} className="text-gray-600" />
-                  <div className="text-center space-y-1">
-                    <p className="text-sm font-black uppercase tracking-widest text-gray-400">
+                  <div className="text-center space-y-1.5">
+                    <p className="text-base font-semibold text-gray-300">
                       Drop file here or click to browse
                     </p>
-                    <p className="text-[11px] text-gray-600 uppercase tracking-widest">.eml · .msg</p>
+                    <p className="text-sm text-gray-500">.eml · .msg</p>
                   </div>
                 </>
               )}
@@ -265,7 +265,7 @@ export default function EmailAnalyzerView({ setView }) {
             {/* Divider */}
             <div className="flex items-center gap-4">
               <div className="flex-1 h-px bg-white/10" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">or</span>
+              <span className="text-sm text-gray-500">or</span>
               <div className="flex-1 h-px bg-white/10" />
             </div>
 
@@ -281,7 +281,7 @@ export default function EmailAnalyzerView({ setView }) {
               <button
                 onClick={processPaste}
                 disabled={!pasteText.trim()}
-                className="px-6 py-2.5 bg-[#D4A017] text-[#1A1B1E] font-black uppercase tracking-[0.3em] text-[10px] hover:scale-[1.02] transition-transform disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="px-6 py-2.5 bg-[#D4A017] text-[#1A1B1E] font-bold text-sm hover:scale-[1.02] transition-transform disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 Analyze
               </button>
@@ -295,11 +295,11 @@ export default function EmailAnalyzerView({ setView }) {
             <div className="flex items-start gap-3">
               <XCircle size={18} className="text-red-400 mt-0.5 shrink-0" />
               <div className="space-y-1">
-                <p className="text-sm font-black uppercase tracking-wider text-red-400">Parse Error</p>
-                <p className="text-sm text-gray-400 leading-relaxed">{error}</p>
+                <p className="text-sm font-bold text-red-400">Parse Error</p>
+                <p className="text-sm text-gray-300 leading-relaxed">{error}</p>
               </div>
             </div>
-            <button onClick={reset} className="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-[#D4A017] transition-colors">
+            <button onClick={reset} className="text-sm text-gray-500 hover:text-[#D4A017] transition-colors">
               Try another file
             </button>
           </div>
@@ -313,20 +313,20 @@ export default function EmailAnalyzerView({ setView }) {
               <div className="flex items-center gap-3">
                 <FileText size={16} className="text-[#D4A017]" />
                 <span className="text-sm font-mono text-[#F2F1EF]">{fileName}</span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-600">
+                <span className="text-sm text-gray-500">
                   {result.hops.length} hop{result.hops.length !== 1 ? 's' : ''}
                 </span>
               </div>
               <div className="flex items-center gap-4">
                 {hasFlags
-                  ? <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-red-400">
-                      <AlertTriangle size={11} /> {result.analysis.flags.length} flag{result.analysis.flags.length !== 1 ? 's' : ''}
+                  ? <span className="flex items-center gap-1.5 text-sm font-semibold text-red-400">
+                      <AlertTriangle size={13} /> {result.analysis.flags.length} flag{result.analysis.flags.length !== 1 ? 's' : ''}
                     </span>
-                  : <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-400">
-                      <CheckCircle size={11} /> Clean
+                  : <span className="flex items-center gap-1.5 text-sm font-semibold text-emerald-400">
+                      <CheckCircle size={13} /> Clean
                     </span>
                 }
-                <button onClick={reset} className="text-[10px] font-black uppercase tracking-widest text-gray-600 hover:text-[#D4A017] transition-colors">
+                <button onClick={reset} className="text-sm text-gray-500 hover:text-[#D4A017] transition-colors">
                   Clear
                 </button>
               </div>
@@ -334,7 +334,7 @@ export default function EmailAnalyzerView({ setView }) {
 
             {/* Received Chain */}
             <section className="space-y-4">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4A017]">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-[#D4A017]">
                 Received Chain
               </h2>
               <div className="space-y-2">
@@ -353,7 +353,7 @@ export default function EmailAnalyzerView({ setView }) {
 
             {/* Authentication */}
             <section className="space-y-4">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4A017]">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-[#D4A017]">
                 Authentication Results
               </h2>
               <AuthSection authResults={result.analysis.authResults} />
@@ -361,7 +361,7 @@ export default function EmailAnalyzerView({ setView }) {
 
             {/* Flags */}
             <section className="space-y-4">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4A017]">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-[#D4A017]">
                 Flags
               </h2>
               {hasFlags ? (
@@ -383,17 +383,17 @@ export default function EmailAnalyzerView({ setView }) {
 
             {/* CTA */}
             <div className="border border-[#D4A017]/30 bg-[#D4A017]/5 p-8 space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-[0.3em] text-[#F2F1EF]">
+              <h3 className="text-base font-bold text-[#F2F1EF]">
                 Want a full deliverability audit?
               </h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-300 leading-relaxed">
                 This tool reads the headers. A real audit goes deeper — SPF record inspection,
                 DKIM key rotation, DMARC policy review, blacklist checks, and a plain-English
                 action plan your team can actually implement.
               </p>
               <button
                 onClick={() => setView('contact')}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A017] text-[#1A1B1E] font-black uppercase tracking-[0.3em] text-[10px] hover:scale-[1.02] transition-transform"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A017] text-[#1A1B1E] font-bold text-sm hover:scale-[1.02] transition-transform"
               >
                 Book a free audit <ArrowRight size={12} />
               </button>
