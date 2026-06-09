@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Upload, AlertTriangle, CheckCircle, XCircle, Clock, ArrowRight, FileText } from 'lucide-react';
 import { parseReceivedChain, splitHeaders, unfoldHeaders } from '../lib/email/parser.js';
 import { analyze, parseHeadersFromText } from '../lib/email/analyzer.js';
+import { supabase } from '../lib/supabaseClient.js';
 
 // Reads an .eml or .msg file and returns the raw header text string.
 // .msg parsing uses @kenjiuno/msgreader loaded dynamically to avoid SSR issues.
@@ -132,26 +133,63 @@ export default function EmailAnalyzerView({ setView }) {
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState(null);
   const [dragging, setDragging] = useState(false);
+  const [pasteText, setPasteText] = useState('');
   const inputRef = useRef(null);
 
-  const processFile = useCallback(async (file) => {
-    if (!file) return;
-    setLoading(true);
-    setError(null);
-    setResult(null);
-    setFileName(file.name);
+  const runAnalysis = useCallback((rawText, label, inputType) => {
     try {
-      const rawText = await extractHeaders(file);
       const { headers, raw } = parseHeadersFromText(rawText);
       const hops = parseReceivedChain(raw);
+      if (hops.length === 0) throw new Error('No Received headers found. Make sure you pasted the full email headers, not just the body.');
       const analysis = analyze(headers, hops);
+      setFileName(label);
       setResult({ hops, analysis });
+
+      // Save metadata to Supabase — fire and forget, never blocks UI
+      const fromHdr = headers.find(h => h.name.toLowerCase() === 'from');
+      const fromDomain = fromHdr
+        ? (fromHdr.value.match(/@([^>\s]+)/) || [])[1]?.toLowerCase() ?? null
+        : null;
+      const firstAuth = analysis.authResults[0];
+      supabase.from('email_audits').insert({
+        input_type:   inputType,
+        hop_count:    hops.length,
+        from_domain:  fromDomain,
+        flags:        analysis.flags,
+        spf_result:   firstAuth?.spf?.result ?? null,
+        dkim_result:  firstAuth?.dkim[0]?.result ?? null,
+        dmarc_result: firstAuth?.dmarc?.result ?? null,
+        dmarc_policy: firstAuth?.dmarc?.policy ?? null,
+      }).then(() => {});
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  const processFile = useCallback(async (file) => {
+    if (!file) return;
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    setPasteText('');
+    try {
+      const rawText = await extractHeaders(file);
+      runAnalysis(rawText, file.name, 'file');
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  }, [runAnalysis]);
+
+  const processPaste = () => {
+    if (!pasteText.trim()) return;
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    runAnalysis(pasteText, 'pasted headers', 'paste');
+  };
 
   const onFileChange = (e) => {
     processFile(e.target.files[0]);
@@ -168,6 +206,7 @@ export default function EmailAnalyzerView({ setView }) {
     setResult(null);
     setError(null);
     setFileName(null);
+    setPasteText('');
   };
 
   const deltaMap = result ? new Map(result.analysis.hopDeltas.map(d => [d.order, d.delta])) : null;
@@ -185,40 +224,68 @@ export default function EmailAnalyzerView({ setView }) {
           </h1>
           <p className="text-gray-400 text-sm leading-relaxed max-w-lg">
             Upload a <code className="text-[#D4A017] font-mono text-xs">.eml</code> or{' '}
-            <code className="text-[#D4A017] font-mono text-xs">.msg</code> file.
-            We parse the Received chain, verify DKIM / SPF / DMARC, and flag anything suspicious — all locally in your browser.
-            Your email never leaves your machine.
+            <code className="text-[#D4A017] font-mono text-xs">.msg</code> file, or paste raw headers.
+            We parse the Received chain, verify DKIM / SPF / DMARC, and flag anything suspicious.
+            Header content is analyzed in your browser. We save a summary of findings (no raw content).
           </p>
         </div>
 
-        {/* Drop zone */}
+        {/* Input area */}
         {!result && !error && (
-          <div
-            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-            onDragLeave={() => setDragging(false)}
-            onDrop={onDrop}
-            onClick={() => inputRef.current?.click()}
-            className={`border-2 border-dashed rounded-sm p-16 flex flex-col items-center justify-center gap-4 cursor-pointer transition-colors ${
-              dragging ? 'border-[#D4A017] bg-[#D4A017]/5' : 'border-white/15 hover:border-[#D4A017]/50 hover:bg-white/5'
-            }`}
-          >
-            <input ref={inputRef} type="file" accept=".eml,.msg" className="hidden" onChange={onFileChange} />
-            {loading ? (
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-2 border-[#D4A017] border-t-transparent rounded-full animate-spin" />
-                <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Analyzing {fileName}</p>
-              </div>
-            ) : (
-              <>
-                <Upload size={28} className="text-gray-600" />
-                <div className="text-center space-y-1">
-                  <p className="text-sm font-black uppercase tracking-widest text-gray-400">
-                    Drop file here or click to browse
-                  </p>
-                  <p className="text-[11px] text-gray-600 uppercase tracking-widest">.eml · .msg</p>
+          <div className="space-y-4">
+            {/* Drop zone */}
+            <div
+              onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={onDrop}
+              onClick={() => inputRef.current?.click()}
+              className={`border-2 border-dashed rounded-sm p-12 flex flex-col items-center justify-center gap-4 cursor-pointer transition-colors ${
+                dragging ? 'border-[#D4A017] bg-[#D4A017]/5' : 'border-white/15 hover:border-[#D4A017]/50 hover:bg-white/5'
+              }`}
+            >
+              <input ref={inputRef} type="file" accept=".eml,.msg" className="hidden" onChange={onFileChange} />
+              {loading ? (
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-8 h-8 border-2 border-[#D4A017] border-t-transparent rounded-full animate-spin" />
+                  <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Analyzing {fileName}</p>
                 </div>
-              </>
-            )}
+              ) : (
+                <>
+                  <Upload size={28} className="text-gray-600" />
+                  <div className="text-center space-y-1">
+                    <p className="text-sm font-black uppercase tracking-widest text-gray-400">
+                      Drop file here or click to browse
+                    </p>
+                    <p className="text-[11px] text-gray-600 uppercase tracking-widest">.eml · .msg</p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4">
+              <div className="flex-1 h-px bg-white/10" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">or</span>
+              <div className="flex-1 h-px bg-white/10" />
+            </div>
+
+            {/* Paste area */}
+            <div className="space-y-2">
+              <textarea
+                value={pasteText}
+                onChange={e => setPasteText(e.target.value)}
+                placeholder="Paste raw email headers here..."
+                rows={6}
+                className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-sm font-mono text-[#F2F1EF] placeholder-gray-600 focus:outline-none focus:border-[#D4A017]/50 resize-y"
+              />
+              <button
+                onClick={processPaste}
+                disabled={!pasteText.trim()}
+                className="px-6 py-2.5 bg-[#D4A017] text-[#1A1B1E] font-black uppercase tracking-[0.3em] text-[10px] hover:scale-[1.02] transition-transform disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                Analyze
+              </button>
+            </div>
           </div>
         )}
 
