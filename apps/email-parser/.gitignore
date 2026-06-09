@@ -1,0 +1,4 @@
+node_modules/
+fixtures/*.eml
+fixtures/*.msg
+fixtures/*.txt

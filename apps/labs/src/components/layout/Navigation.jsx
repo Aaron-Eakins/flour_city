@@ -10,7 +10,7 @@ const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
     const { user, signOut } = useAuth();
     
     const navBg = (isHome && !isScrolled && !isMenuOpen) ? 'bg-transparent' : 'bg-[#1A1B1E]';
-    const navItems = ['home', 'materials', 'process', 'heritage', 'contact'];
+    const navItems = ['home', 'audit', 'materials', 'process', 'heritage', 'contact'];
 
     const handleLinkClick = (target) => {
         setView(target);

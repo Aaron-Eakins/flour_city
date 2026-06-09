@@ -11,6 +11,7 @@ import TOSView from './views/TOSView';
 import PrivacyView from './views/PrivacyView';
 import ContactView from './views/ContactView';
 import ProfileView from './views/ProfileView';
+import EmailAnalyzerView from './views/EmailAnalyzerView';
 import AuthModal from './components/auth/AuthModal';
 import { useAuth } from './context/AuthContext';
 
@@ -170,6 +171,7 @@ const App = () => {
                 {view === 'privacy' && <PrivacyView />}
                 {view === 'contact' && <ContactView setView={navigateTo} />}
                 {view === 'profile' && <ProfileView setView={navigateTo} />}
+                {view === 'audit' && <EmailAnalyzerView setView={navigateTo} />}
             </main>
 
             <Footer setView={navigateTo} />
