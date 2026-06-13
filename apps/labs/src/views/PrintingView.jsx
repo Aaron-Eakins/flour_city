@@ -99,7 +99,7 @@ const PrintingView = (props) => (
                         {
                             id: '02',
                             title: 'Review',
-                            desc: 'I review every file personally within 24 hours to make sure it's ready to print, then send a quote.',
+                            desc: "I review every file personally within 24 hours to make sure it's ready to print, then send a quote.",
                             items: ['File review', 'Pricing quote'],
                         },
                         {
