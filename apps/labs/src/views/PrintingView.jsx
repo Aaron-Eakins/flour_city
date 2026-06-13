@@ -67,6 +67,10 @@ const PrintingView = (props) => (
                     </table>
                 </div>
 
+                <blockquote className="mt-10 border-l-4 border-[#D4A017] pl-6 max-w-xl">
+                    <p className="font-display text-xl font-black italic tracking-tight text-[#1A1B1E]">"If your part needs to handle heat, stress, or the outdoors, PETG is the call."</p>
+                </blockquote>
+
                 <div className="mt-8 p-6 border border-[#D4A017]/20 bg-[#1A1B1E]/5 rounded-sm flex flex-col md:flex-row items-center justify-between gap-6 max-w-2xl">
                     <p className="text-gray-600 text-sm font-medium italic text-left">
                         Don't see what you need? I source materials per project.

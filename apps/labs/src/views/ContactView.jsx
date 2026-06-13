@@ -12,8 +12,10 @@ const ContactView = ({ setView }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        category: '3D printing',
+        subject: '',
         message: '',
-        _honeypot: '' // Spam prevention
+        _honeypot: ''
     });
 
     useEffect(() => {
@@ -21,7 +23,7 @@ const ContactView = ({ setView }) => {
             setFormData(prev => ({
                 ...prev,
                 email: user.email || prev.email,
-                name: user.user_metadata?.full_name || user.user_metadata?.name || prev.name
+                name: user.user_metadata?.full_name || user.user_metadata?.name || prev.name,
             }));
         }
     }, [user]);
@@ -75,12 +77,14 @@ const ContactView = ({ setView }) => {
         setStatus('loading');
         
         try {
+            const composedMessage = `[${formData.category}] ${formData.subject}\n\n${formData.message}`;
+
             const { data: contact, error } = await supabase
                 .from('contacts')
                 .insert({
                     name: formData.name,
                     email: formData.email,
-                    message: formData.message
+                    message: composedMessage,
                 })
                 .select()
                 .single();
@@ -100,7 +104,7 @@ const ContactView = ({ setView }) => {
             if (funcError) throw new Error(`Notification failed: ${funcError.message}`);
 
             setStatus('success');
-            setFormData({ name: '', email: '', message: '', _honeypot: '' });
+            setFormData({ name: '', email: '', category: '3D printing', subject: '', message: '', _honeypot: '' });
             setTurnstileToken(''); // Clear token for next time
         } catch (err) {
             console.error('Contact error:', err.message);
@@ -182,7 +186,7 @@ const ContactView = ({ setView }) => {
                                             type="text"
                                             placeholder="Full name"
                                             required
-                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all" 
+                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all"
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         />
@@ -190,13 +194,33 @@ const ContactView = ({ setView }) => {
                                             type="email"
                                             placeholder="Email address"
                                             required
-                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all" 
+                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all"
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         />
                                     </div>
-                                    <textarea 
-                                        placeholder="What can I help you with?" 
+                                    <div className="grid md:grid-cols-2 gap-4 text-left">
+                                        <select
+                                            required
+                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all appearance-none"
+                                            value={formData.category}
+                                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        >
+                                            <option value="3D printing">3D printing</option>
+                                            <option value="Email/web help">Email/web help</option>
+                                            <option value="Something else">Something else</option>
+                                        </select>
+                                        <input
+                                            type="text"
+                                            placeholder="Subject"
+                                            required
+                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all"
+                                            value={formData.subject}
+                                            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                                        />
+                                    </div>
+                                    <textarea
+                                        placeholder="What can I help you with?"
                                         required
                                         className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all h-40"
                                         value={formData.message}
