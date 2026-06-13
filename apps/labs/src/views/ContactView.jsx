@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MapPin, Search, CheckCircle, MessageSquare, AlertCircle, Send } from 'lucide-react';
+import { Mail, MapPin, CheckCircle, AlertCircle, Send } from 'lucide-react';
 import { SITE_CONFIG } from '../constants/site';
 import { useAuth } from '../context/AuthContext';
 
@@ -114,27 +114,26 @@ const ContactView = ({ setView }) => {
             <div className="max-w-7xl mx-auto px-6">
                 <header className="mb-20 space-y-12 text-left text-[#1A1B1E]">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Rochester, NY</span>
-                    <DimensionedHeader line1="LET'S" line2="CONNECT." layerHt="SPF·DKIM" partWd="DMARC·MX" variant="light" />
-                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Based in Rochester, NY. Free initial audit — no obligation.</p>
+                    <DimensionedHeader line1="LET'S" line2="TALK." layerHt="SPF·DKIM" partWd="DMARC·MX" variant="light" />
+                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Based in Rochester, NY. Taking work nationwide.</p>
                 </header>
 
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-1 space-y-12 text-left">
                         <section className="space-y-6 text-left">
-                            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4A017]">Direct Connection</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4A017]">Get in touch</h4>
                             <div className="space-y-4 font-bold text-sm uppercase tracking-widest text-[#1A1B1E] text-left">
                                 <div className="flex items-center space-x-3 text-[#1A1B1E]"><Mail size={16} className="text-[#D4A017]" /><a href={`mailto:${SITE_CONFIG.email}`} className="hover:text-[#D4A017] transition-colors">{SITE_CONFIG.email}</a></div>
                                 <div className="flex items-center space-x-3 text-[#1A1B1E]"><MapPin size={16} className="text-[#D4A017]" /><span>{SITE_CONFIG.region}</span></div>
                             </div>
                         </section>
 
-                        <section className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-6 text-left">
-                            <div className="flex items-center space-x-2 text-[#D4A017]"><Search size={20} /> <h4 className="text-sm font-black uppercase tracking-widest italic text-white">How It Works</h4></div>
-                            <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Drop me your domain. I'll check SPF, DKIM, DMARC, MX records, and spam blacklist status, then email you what's broken and how to fix it.</p>
-                            <div className="w-full p-3 bg-white/5 border border-[#D4A017]/30 rounded-sm flex items-center justify-between">
-                                <span className="text-[9px] font-black uppercase tracking-widest text-[#D4A017]">First Audit Free</span>
-                                <CheckCircle size={12} className="text-[#D4A017]" />
-                            </div>
+                        <section className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4 text-left">
+                            <h4 className="text-sm font-black uppercase tracking-widest italic text-white">Free email checkup</h4>
+                            <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Send me your domain and I'll check SPF, DKIM, DMARC, MX, and blacklist status, then email you what's broken and how to fix it. No charge for the first look.</p>
+                            <button onClick={() => setView('email-checkup')} className="text-[9px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
+                                Start a checkup →
+                            </button>
                         </section>
                     </div>
 
@@ -145,8 +144,8 @@ const ContactView = ({ setView }) => {
 
                         <div className="space-y-8 relative z-10 text-left">
                             <div className="space-y-2">
-                                <h4 className="text-3xl font-black uppercase italic tracking-tighter">Free Audit Request</h4>
-                                <p className="text-gray-500 text-sm font-medium">Got a domain you'd like me to check? Email deliverability issue? Or just want to know if your setup is healthy? Send me a message.</p>
+                                <h4 className="font-display text-3xl font-black uppercase italic tracking-tighter">Send a message</h4>
+                                <p className="text-gray-500 text-sm font-medium">Question about a print, an email problem, or something else? Tell me what's going on and I'll get back to you.</p>
                             </div>
 
                             {status === 'success' ? (
@@ -155,14 +154,14 @@ const ContactView = ({ setView }) => {
                                         <CheckCircle size={40} />
                                     </div>
                                     <div className="space-y-2">
-                                        <p className="text-xl font-black uppercase tracking-tighter">Inquiry Secured</p>
+                                        <p className="font-display text-xl font-black uppercase tracking-tighter">Got it.</p>
                                         <p className="text-sm text-gray-500 italic">I'll get back to you within 24 hours.</p>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => setStatus('idle')}
                                         className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4A017] hover:underline"
                                     >
-                                        Send Another Inquiry
+                                        Send another message
                                     </button>
                                 </div>
                             ) : (
@@ -179,17 +178,17 @@ const ContactView = ({ setView }) => {
                                     />
 
                                     <div className="grid md:grid-cols-2 gap-4 text-left">
-                                        <input 
-                                            type="text" 
-                                            placeholder="Full Name" 
+                                        <input
+                                            type="text"
+                                            placeholder="Full name"
                                             required
                                             className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all" 
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         />
-                                        <input 
-                                            type="email" 
-                                            placeholder="Email Address" 
+                                        <input
+                                            type="email"
+                                            placeholder="Email address"
                                             required
                                             className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all" 
                                             value={formData.email}
@@ -220,7 +219,7 @@ const ContactView = ({ setView }) => {
                                         disabled={status === 'loading' || !turnstileToken}
                                         className="w-full py-5 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center justify-center space-x-3 disabled:opacity-50"
                                     >
-                                        <span>{status === 'loading' ? 'Sending...' : 'Send Message'}</span>
+                                        <span>{status === 'loading' ? 'Sending...' : 'Send message'}</span>
                                         {status !== 'loading' && <Send size={14} />}
                                     </button>
                                 </form>

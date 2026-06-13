@@ -1,8 +1,7 @@
 import React from 'react';
-import { Mail, ChevronRight } from 'lucide-react';
+import { Mail, ChevronRight, ArrowRight } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import LogoIcon from '../components/common/LogoIcon';
-import QuoteLab from '../components/quote/QuoteLab';
 
 const HomeView = (props) => (
     <div className="animate-in fade-in duration-1000">
@@ -24,9 +23,9 @@ const HomeView = (props) => (
                             variant="dark"
                         />
                     </div>
-                    <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Is your email ending up in spam? Are DNS records misconfigured? Most small businesses don't know what they're losing. I find what's broken and fix it.</p>
-                    <button onClick={() => props.setView('contact')} className="px-10 py-5 bg-[#D4A017] text-[#1A1B1E] font-black rounded-sm flex items-center space-x-3 hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl">
-                        <span>Get a Free Audit</span><ChevronRight className="w-5 h-5" />
+                    <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Is your email landing in spam? Are your DNS records a mess? Most small businesses don't know what they're losing until a customer says they never got the invoice. I find what's broken and fix it.</p>
+                    <button onClick={() => props.setView('email-checkup')} className="px-10 py-5 bg-[#D4A017] text-[#1A1B1E] font-black rounded-sm flex items-center space-x-3 hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl">
+                        <span>Get a Free Email Checkup</span><ChevronRight className="w-5 h-5" />
                     </button>
                 </div>
                 <div className="relative hidden md:block">
@@ -37,7 +36,7 @@ const HomeView = (props) => (
                                 <Mail className="w-12 h-12 text-[#D4A017]" />
                                 <div className="text-right text-[#F2F1EF]">
                                     <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest leading-none">Audit Status</div>
-                                    <div className="text-xl font-black tracking-tighter uppercase italic mt-1">Audit Ready</div>
+                                    <div className="text-xl font-display font-black tracking-tighter uppercase italic mt-1">Audit Ready</div>
                                 </div>
                             </div>
                             <div className="space-y-4 text-[#F2F1EF]">
@@ -59,14 +58,19 @@ const HomeView = (props) => (
             </div>
         </section>
 
-        <section id="quote-section" className="py-24 bg-[#F2F1EF] scroll-mt-20 border-b border-gray-200 text-[#1A1B1E]">
-            <div className="max-w-5xl mx-auto px-6 text-center">
-                <header className="mb-12 space-y-2 text-center">
-                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4">3D Printing Services</span>
-                    <h2 className="text-4xl font-black uppercase italic tracking-tighter">The QuoteLab</h2>
-                    <p className="text-gray-500 text-sm font-medium italic">Upload your file. I'll review it and send you a quote within 24 hours.</p>
-                </header>
-                <QuoteLab {...props} />
+        {/* 3D Printing — secondary teaser only */}
+        <section className="py-20 bg-[#F2F1EF] border-b border-gray-200 text-[#1A1B1E]">
+            <div className="max-w-5xl mx-auto px-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                    <div className="space-y-4">
+                        <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block border-l-2 border-[#D4A017] pl-4">Also in the workshop</span>
+                        <h2 className="font-display text-4xl font-black uppercase italic tracking-tighter">3D Printing</h2>
+                        <p className="text-gray-500 text-base font-medium max-w-md">Need a part printed? Upload your file in the QuoteLab and I'll send a quote within 24 hours.</p>
+                    </div>
+                    <button onClick={() => props.setView('printing')} className="shrink-0 px-8 py-4 border-2 border-[#1A1B1E] text-[#1A1B1E] font-black text-xs uppercase tracking-widest hover:bg-[#1A1B1E] hover:text-white transition-all flex items-center gap-3 rounded-sm">
+                        Open the QuoteLab <ArrowRight size={14} />
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -77,17 +81,17 @@ const HomeView = (props) => (
                     <div className="relative aspect-square w-full max-w-[500px] bg-[#1A1B1E] overflow-hidden shadow-2xl flex items-center justify-center">
                         <LogoIcon className="w-64 h-64 opacity-10" />
                         <div className="absolute bottom-10 left-10 z-20 text-left">
-                            <h4 className="text-white text-3xl font-black italic tracking-tighter uppercase leading-none">Rochester DNA</h4>
+                            <h4 className="font-display text-white text-3xl font-black italic tracking-tighter uppercase leading-none">Rochester DNA</h4>
                             <p className="text-[#D4A017] font-mono text-xs tracking-[0.4em] font-bold uppercase">Built to Last</p>
                         </div>
                     </div>
                 </div>
                 <div className="space-y-8 text-left">
-                    <div className="inline-block px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black tracking-[0.4em] uppercase">Our Mission</div>
-                    <h3 className="text-5xl font-black tracking-tighter leading-none uppercase text-white text-left">MAKING IS IN <br /><span className="text-[#D4A017]">OUR BLOOD.</span></h3>
-                    <p className="text-gray-300 text-lg font-medium italic leading-relaxed text-left">"Continuing Rochester's 200-year tradition of making things that work."</p>
-                    <button onClick={() => props.setView('heritage')} className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A017] hover:text-white transition-colors">
-                        <span>Read the Archive</span><ChevronRight size={14} className="ml-1" />
+                    <div className="inline-block px-4 py-1 border border-[#D4A017] text-[#D4A017] text-[10px] font-black tracking-[0.4em] uppercase">Why "Flour City"</div>
+                    <h3 className="font-display text-5xl font-black tracking-tighter leading-none uppercase text-white text-left">MAKING IS IN <br /><span className="text-[#D4A017]">OUR BLOOD.</span></h3>
+                    <p className="text-gray-300 text-lg font-medium italic leading-relaxed text-left">"Continuing Rochester's tradition of making things that work."</p>
+                    <button onClick={() => props.setView('about')} className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A017] hover:text-white transition-colors">
+                        <span>Read the story</span><ChevronRight size={14} className="ml-1" />
                     </button>
                 </div>
             </div>
