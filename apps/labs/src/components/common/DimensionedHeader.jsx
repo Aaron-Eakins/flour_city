@@ -41,10 +41,10 @@ const DimensionedHeader = ({
             <div className="relative">
                 {/* SOLID TEXT BLOCK */}
                 <div className="relative z-10 text-left">
-                    <h2 className={`text-[clamp(2.5rem,10vw,7rem)] font-black tracking-tighter uppercase leading-[0.85] italic ${textColor}`}>
+                    <h2 className={`font-display text-[clamp(2.5rem,10vw,7rem)] font-black tracking-tighter uppercase leading-[0.85] italic ${textColor}`}>
                         {line1}
                     </h2>
-                    <h2 className="text-[clamp(2.5rem,10vw,7rem)] font-black tracking-tighter uppercase leading-[0.85] italic text-[#D4A017]">
+                    <h2 className="font-display text-[clamp(2.5rem,10vw,7rem)] font-black tracking-tighter uppercase leading-[0.85] italic text-[#D4A017]">
                         {line2}
                     </h2>
                 </div>
