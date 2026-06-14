@@ -4,17 +4,19 @@ import { parseReceivedChain, parseAllHeaders } from './parser.js';
 import { analyze, getSenderDomain, getDkimSelector } from './analyzer.js';
 import { lookupAll } from './dns.js';
 import { formatReport } from './report.js';
+import { formatReportHtml } from './report-html.js';
 
 async function readRaw(stream) {
   return new Response(stream).text();
 }
 
-function buildReply({ to, subject, body }) {
+function buildReply({ to, subject, plainBody, htmlBody }) {
   const msg = createMimeMessage();
   msg.setSender({ name: 'Flour City Labs', addr: 'analyze@flourcitylabs.com' });
   msg.setRecipient(to);
   msg.setSubject(subject);
-  msg.addMessage({ contentType: 'text/plain', data: body });
+  msg.addMessage({ contentType: 'text/plain', data: plainBody });
+  msg.addMessage({ contentType: 'text/html', data: htmlBody });
   return msg;
 }
 
@@ -43,12 +45,15 @@ export default {
       }
     }
 
-    const reportBody = formatReport({ domain: domain || message.from, headerAnalysis, dns });
+    const reportDomain = domain || message.from;
+    const plainBody = formatReport({ domain: reportDomain, headerAnalysis, dns });
+    const htmlBody = formatReportHtml({ domain: reportDomain, headerAnalysis, dns });
 
     const reply = buildReply({
       to: message.from,
       subject: `Re: ${message.headers.get('subject') || 'Header Analysis Request'} — Deliverability Report`,
-      body: reportBody,
+      plainBody,
+      htmlBody,
     });
 
     try {
