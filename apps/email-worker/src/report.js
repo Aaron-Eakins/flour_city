@@ -136,8 +136,7 @@ export function formatReport({ domain, headerAnalysis, dns }) {
     lines.push(`${problems.length} issue${problems.length > 1 ? 's' : ''} found:`);
     for (const p of problems) lines.push(`  • ${p}`);
     lines.push('');
-    lines.push('Reply to this email if you want me to fix these. I can usually turn');
-    lines.push('these around in one session — $150 flat for a complete implementation.');
+    lines.push('Reply to this email and I\'ll walk you through what needs to be fixed.');
   }
 
   lines.push('');

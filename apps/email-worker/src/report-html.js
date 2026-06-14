@@ -169,7 +169,7 @@ export function formatReportHtml({ domain, headerAnalysis, dns }) {
     ? `<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;background:${GOLD};border-radius:6px">
         <tr><td style="padding:20px 24px">
           <p style="margin:0;font-size:14px;font-weight:700;color:${DARK}">Want me to fix this?</p>
-          <p style="margin:6px 0 0;font-size:13px;color:${DARK};opacity:0.8">Reply to this email. I can usually implement all of this in a single session — $150 flat.</p>
+          <p style="margin:6px 0 0;font-size:13px;color:${DARK};opacity:0.8">Reply to this email and I'll walk you through what needs to be fixed.</p>
         </td></tr>
       </table>`
     : '';
