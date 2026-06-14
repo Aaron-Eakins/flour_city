@@ -200,16 +200,19 @@ const ContactView = ({ setView }) => {
                                         />
                                     </div>
                                     <div className="grid md:grid-cols-2 gap-4 text-left">
-                                        <select
-                                            required
-                                            className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all appearance-none"
-                                            value={formData.category}
-                                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        >
-                                            <option value="3D printing">3D printing</option>
-                                            <option value="Email/web help">Email/web help</option>
-                                            <option value="Something else">Something else</option>
-                                        </select>
+                                        <div className="relative">
+                                            <select
+                                                required
+                                                className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium outline-none focus:border-[#D4A017] transition-all appearance-none pr-10"
+                                                value={formData.category}
+                                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                            >
+                                                <option value="3D printing">3D printing</option>
+                                                <option value="Email/web help">Email/web help</option>
+                                                <option value="Something else">Something else</option>
+                                            </select>
+                                            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs">▾</span>
+                                        </div>
                                         <input
                                             type="text"
                                             placeholder="Subject"
