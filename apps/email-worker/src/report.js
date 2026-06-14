@@ -4,6 +4,17 @@ function pass(label) { return `✓ ${label}`; }
 function fail(label) { return `✗ ${label}`; }
 function warn(label) { return `⚠ ${label}`; }
 
+export function getProblems({ dns, flags }) {
+  return [
+    !dns.spf.found && 'No SPF record',
+    !dns.dkim.found && dns.dkim.selector !== null && 'DKIM key missing',
+    !dns.dmarc.found && 'No DMARC record',
+    dns.dmarc.found && dns.dmarc.policy === 'none' && 'DMARC policy is p=none (too weak)',
+    dns.dmarc.found && dns.dmarc.orgDomain && `DMARC inherited from ${dns.dmarc.orgDomain} — consider adding a subdomain-specific record`,
+    ...flags,
+  ].filter(Boolean);
+}
+
 export function formatReport({ domain, headerAnalysis, dns }) {
   const { authResults, hopDeltas, flags } = headerAnalysis;
   const auth = authResults[0] || {};
@@ -119,14 +130,7 @@ export function formatReport({ domain, headerAnalysis, dns }) {
   }
 
   // --- Summary verdict ---
-  const problems = [
-    !dns.spf.found && 'No SPF record',
-    !dns.dkim.found && dns.dkim.selector !== null && 'DKIM key missing',
-    !dns.dmarc.found && 'No DMARC record',
-    dns.dmarc.found && dns.dmarc.policy === 'none' && 'DMARC policy is p=none (too weak)',
-    dns.dmarc.found && dns.dmarc.orgDomain && `DMARC inherited from ${dns.dmarc.orgDomain} — consider adding a subdomain-specific record`,
-    ...flags,
-  ].filter(Boolean);
+  const problems = getProblems({ dns, flags });
 
   lines.push('SUMMARY');
   lines.push('-'.repeat(30));

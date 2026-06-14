@@ -1,4 +1,5 @@
 // HTML email report — all styles inline, table-based layout for Outlook compat
+import { getProblems } from './report.js';
 
 const DARK = '#1A1B1E';
 const GOLD = '#D4A017';
@@ -143,14 +144,7 @@ export function formatReportHtml({ domain, headerAnalysis, dns }) {
       `${h.delta}s`, h.delta > 60 ? 'Unusually slow — may indicate a relay issue' : null));
 
   // ── Summary ────────────────────────────────────────────────────────
-  const problems = [
-    !dns.spf.found && 'No SPF record',
-    !dns.dkim.found && dns.dkim.selector !== null && 'DKIM key missing',
-    !dns.dmarc.found && 'No DMARC record',
-    dns.dmarc.found && dns.dmarc.policy === 'none' && 'DMARC policy is too weak (p=none)',
-    dns.dmarc.found && dns.dmarc.orgDomain && `DMARC inherited from ${dns.dmarc.orgDomain}`,
-    ...flags,
-  ].filter(Boolean);
+  const problems = getProblems({ dns, flags });
 
   const summaryColor = problems.length === 0 ? PASS_TEXT : FAIL_TEXT;
   const summaryBg = problems.length === 0 ? PASS_BG : FAIL_BG;
