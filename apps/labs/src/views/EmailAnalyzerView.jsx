@@ -220,7 +220,7 @@ export default function EmailAnalyzerView({ setView }) {
         <div className="space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-[#D4A017]">Email Deliverability</p>
           <h1 className="text-5xl font-black uppercase italic tracking-tighter text-[#F2F1EF] leading-none">
-            Header Analyzer
+            Email Analyzer
           </h1>
           <p className="text-gray-300 text-lg leading-relaxed max-w-xl">
             Upload a <code className="text-[#D4A017] font-mono text-sm">.eml</code> or{' '}
