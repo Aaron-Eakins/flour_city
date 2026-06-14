@@ -5,14 +5,23 @@ function fail(label) { return `✗ ${label}`; }
 function warn(label) { return `⚠ ${label}`; }
 
 export function getProblems({ dns, flags }) {
-  return [
+  const flagFails = flags.filter(f => /hard fail|dkim.*fail|dmarc.*fail/i.test(f));
+  const flagWarns = flags.filter(f => !flagFails.includes(f));
+
+  const fails = [
     !dns.spf.found && 'No SPF record',
     !dns.dkim.found && dns.dkim.selector !== null && 'DKIM key missing',
-    !dns.dmarc.found && 'No DMARC record',
-    dns.dmarc.found && dns.dmarc.policy === 'none' && 'DMARC policy is p=none (too weak)',
-    dns.dmarc.found && dns.dmarc.orgDomain && `DMARC inherited from ${dns.dmarc.orgDomain} — consider adding a subdomain-specific record`,
-    ...flags,
+    ...flagFails,
   ].filter(Boolean);
+
+  const warns = [
+    !dns.dmarc.found && 'No DMARC record',
+    dns.dmarc.found && dns.dmarc.policy === 'none' && 'DMARC policy is p=none — monitoring only, not yet enforcing',
+    dns.dmarc.found && dns.dmarc.orgDomain && `DMARC inherited from ${dns.dmarc.orgDomain} — consider a subdomain-specific record`,
+    ...flagWarns,
+  ].filter(Boolean);
+
+  return { warns, fails };
 }
 
 export function formatReport({ domain, headerAnalysis, dns }) {
@@ -130,15 +139,22 @@ export function formatReport({ domain, headerAnalysis, dns }) {
   }
 
   // --- Summary verdict ---
-  const problems = getProblems({ dns, flags });
+  const { warns, fails } = getProblems({ dns, flags });
 
   lines.push('SUMMARY');
   lines.push('-'.repeat(30));
-  if (problems.length === 0) {
-    lines.push('Everything looks good. Your email setup is properly configured.');
+  if (fails.length === 0 && warns.length === 0) {
+    lines.push('No issues found. Your email setup is in good shape.');
   } else {
-    lines.push(`${problems.length} issue${problems.length > 1 ? 's' : ''} found:`);
-    for (const p of problems) lines.push(`  • ${p}`);
+    if (fails.length > 0) {
+      lines.push(`${fails.length} issue${fails.length > 1 ? 's' : ''} that need${fails.length === 1 ? 's' : ''} attention:`);
+      for (const p of fails) lines.push(`  • ${p}`);
+    }
+    if (warns.length > 0) {
+      if (fails.length > 0) lines.push('');
+      lines.push(`${warns.length} thing${warns.length > 1 ? 's' : ''} worth improving:`);
+      for (const p of warns) lines.push(`  • ${p}`);
+    }
     lines.push('');
     lines.push('Reply to this email and I\'ll walk you through what needs to be fixed.');
   }

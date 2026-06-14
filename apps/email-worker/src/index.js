@@ -35,7 +35,7 @@ export default {
     }
 
     const reportDomain = domain || message.from;
-    const problems = getProblems({ dns, flags: headerAnalysis.flags });
+    const { warns, fails } = getProblems({ dns, flags: headerAnalysis.flags });
     const plainBody = formatReport({ domain: reportDomain, headerAnalysis, dns });
     const htmlBody = formatReportHtml({ domain: reportDomain, headerAnalysis, dns });
 
@@ -84,8 +84,8 @@ export default {
             dkim_ok: dns.dkim.found,
             dmarc_ok: dns.dmarc.found,
             mx_ok: dns.mx.found,
-            issues_count: problems.length,
-            issues: problems,
+            issues_count: fails.length + warns.length,
+            issues: [...fails, ...warns],
           }),
         });
         if (!res.ok) {
