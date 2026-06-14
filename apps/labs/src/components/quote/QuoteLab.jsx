@@ -383,7 +383,7 @@ const QuoteLab = ({
                                 <Settings size={14} /><span>Advanced Print Settings</span>{showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                             </button>
                             <button onClick={() => setQuoteStep(3)} className="w-full md:w-auto px-10 py-4 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] flex items-center justify-center space-x-4 hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all shadow-xl">
-                                <span>Continue</span><ArrowRight size={14} />
+                                <span>Lock in settings</span><ArrowRight size={14} />
                             </button>
                         </div>
 
@@ -510,7 +510,7 @@ const QuoteLab = ({
                                 disabled={!turnstileToken}
                                 className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4 disabled:opacity-50"
                             >
-                                SUBMIT FOR REVIEW
+                                Send for review
                             </button>
                         </form>
                     </div>
@@ -523,7 +523,7 @@ const QuoteLab = ({
                             <h3 className="font-display text-5xl font-black uppercase tracking-tighter text-center">IN THE QUEUE.</h3>
                             <div className="w-16 h-1 bg-[#D4A017] mx-auto"></div>
                             <p className="text-gray-600 max-w-sm mx-auto font-medium leading-relaxed italic opacity-90 text-center">
-                                Your file is in. I'll review it and follow up with a quote and timeline within 24 hours.
+                                Got it. I'll personally review your design and email a quote within 24 hours.
                             </p>
                         </div>
                         <button 

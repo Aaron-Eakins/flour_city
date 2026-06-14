@@ -10,19 +10,17 @@ const AboutView = ({ setView }) => (
             {/* Hero — who & what */}
             <header className="mb-24 space-y-12 text-left">
                 <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">About</span>
-                {/* TODO: Aaron — pick your headline. Options: "ROCHESTER MADE." or "ONE PERSON. NO SHORTCUTS." */}
                 <DimensionedHeader line1="ONE PERSON." line2="NO SHORTCUTS." layerHt="Rochester·NY" partWd="Est·2024" variant="light" />
             </header>
 
             {/* Bio */}
             <div className="grid md:grid-cols-2 gap-16 mb-24 items-start">
                 <div className="space-y-6">
-                    {/* TODO: Aaron — rewrite this bio in your own words. The draft is a starting point only. */}
-                    <p className="text-gray-600 text-lg font-medium leading-relaxed">
-                        I'm Aaron, and Flour City Labs is my one-person shop in Rochester. I work as a website support technician by day, which is where I spend a lot of time fixing the unglamorous things that break small businesses' email and websites — SPF records, DNS settings, deliverability problems most owners don't know they have until something stops working.
+                        <p className="text-gray-600 text-lg font-medium leading-relaxed">
+                        I'm Aaron, and Flour City Labs is my one-person shop in Rochester. I've spent years working with web and infrastructure, which gave me a deep understanding of what breaks small businesses' email and domain setups. I help clients fix those problems and understand what's actually happening under the hood.
                     </p>
                     <p className="text-gray-600 text-lg font-medium leading-relaxed">
-                        Flour City Labs is where I do that work directly for local businesses, plus 3D printing for anyone who needs a part made well. No team, no upsell machine. Just careful technical work from someone who likes getting the details right.
+                        Plus 3D printing for anyone who needs a part made well. I care about getting the details right, and that's what you get.
                     </p>
                 </div>
 
@@ -30,7 +28,7 @@ const AboutView = ({ setView }) => (
                     <div className="p-8 bg-[#1A1B1E] text-[#F2F1EF] rounded-sm space-y-6">
                         <div>
                             <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#D4A017] mb-2">Web &amp; Email Consulting</p>
-                            <p className="text-sm font-medium leading-relaxed text-gray-300">I help small businesses fix what's quietly hurting them: email landing in spam, broken DNS, deliverability problems. I find it, explain it in plain English, and fix it.</p>
+                            <p className="text-sm font-medium leading-relaxed text-gray-300">I help small businesses get their web and infrastructure working reliably so they can focus on their business.</p>
                             <button onClick={() => setView('email-checkup')} className="mt-4 text-[10px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
                                 Get a free checkup →
                             </button>

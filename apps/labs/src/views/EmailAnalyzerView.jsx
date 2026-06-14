@@ -225,8 +225,7 @@ export default function EmailAnalyzerView({ setView }) {
           <p className="text-gray-300 text-lg leading-relaxed max-w-xl">
             Upload a <code className="text-[#D4A017] font-mono text-sm">.eml</code> or{' '}
             <code className="text-[#D4A017] font-mono text-sm">.msg</code> file, or paste raw headers.
-            I'll parse the Received chain, check DKIM, SPF, and DMARC, and flag anything off.
-            Headers are analyzed in your browser. I save only a summary of findings — never the raw content.
+            I'll parse the Received chain, check DKIM, SPF, and DMARC, and flag anything suspicious.
           </p>
         </div>
 
@@ -254,7 +253,7 @@ export default function EmailAnalyzerView({ setView }) {
                   <Upload size={28} className="text-gray-600" />
                   <div className="text-center space-y-1.5">
                     <p className="text-base font-semibold text-gray-300">
-                      Drop file here or click to browse
+                      Drop a file here or click to browse
                     </p>
                     <p className="text-sm text-gray-500">.eml · .msg</p>
                   </div>
