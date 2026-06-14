@@ -73,22 +73,35 @@ This is what connects `analyze@flourcitylabs.com` to the Worker.
 
 ---
 
-## Step 5 — Confirm the send_email binding
+## Step 5 — Verify the sending address
 
-The Worker sends reply emails using a binding called `REPLY_SENDER`. It's declared in
-`wrangler.toml` already, but verify it's visible in the dashboard after deploying:
+Cloudflare requires `analyze@flourcitylabs.com` to be listed as a verified sender
+before a `send_email` binding without a fixed destination can use it.
 
-1. Cloudflare dashboard → **Workers & Pages** → `fcl-email-analyzer`
-2. Click **Settings** → **Bindings**
-3. You should see a **Send Email** binding named `REPLY_SENDER`
-4. If it's not there: click **Add** → **Send Email** → Name: `REPLY_SENDER` → Save
+1. Cloudflare dashboard → `flourcitylabs.com` → **Email** → **Email Routing** → **Settings** tab
+2. Under **Verified Sender Addresses**, click **Add**
+3. Enter `analyze@flourcitylabs.com` and save
 
-The binding has no destination restriction, which is correct — replies go back to
-whoever sent the email.
+Because the domain is on Cloudflare nameservers, no verification email is sent — it
+activates immediately.
+
+> **Do not** add `destination_address` to the `wrangler.toml` `[[send_email]]` block.
+> That would lock replies to a single inbox. The service needs to reply to anyone.
 
 ---
 
-## Step 6 — Test it
+## Step 6 — Confirm the send_email binding
+
+The binding is declared in `wrangler.toml` and deploys automatically. Verify it landed:
+
+1. Cloudflare dashboard → **Workers & Pages** → `fcl-email-analyzer`
+2. Click **Settings** → **Bindings**
+3. You should see a **Send Email** binding named `REPLY_SENDER` with no destination restriction
+4. If it's missing: click **Add** → **Send Email** → Name: `REPLY_SENDER` → Save
+
+---
+
+## Step 7 — Test it
 
 Send an email to `analyze@flourcitylabs.com` from any inbox. Subject doesn't matter.
 
@@ -108,7 +121,7 @@ Check the Worker logs if no reply comes:
 | Symptom | Likely cause |
 |---|---|
 | No reply, no log entries | Routing rule not saved or email went to spam |
-| Log shows "Failed to send reply" | `REPLY_SENDER` binding missing in dashboard |
+| Log shows "Failed to send reply" | `REPLY_SENDER` binding missing, or `analyze@flourcitylabs.com` not in Verified Sender Addresses (Step 5) |
 | Log shows "DNS lookup failed" | Transient CF DNS error — retry usually works |
 | Reply arrives but DKIM says "could not check" | Your email client strips `DKIM-Signature` before sending (rare) |
 
