@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Upload, AlertTriangle, CheckCircle, XCircle, Clock, ArrowRight, FileText } from 'lucide-react';
+import { Upload, AlertTriangle, CheckCircle, XCircle, Clock, ArrowRight, FileText, Mail } from 'lucide-react';
 import { parseReceivedChain, splitHeaders, unfoldHeaders } from '../lib/email/parser.js';
 import { analyze, parseHeadersFromText } from '../lib/email/analyzer.js';
 import { supabase } from '../lib/supabaseClient.js';
@@ -229,9 +229,29 @@ export default function EmailAnalyzerView({ setView }) {
           </p>
         </div>
 
-        {/* Input area */}
+        {/* Primary CTA — email-in flow */}
+        {!result && !error && (
+          <a
+            href="mailto:analyze@flourcitylabs.com?subject=Header Analysis Request"
+            className="flex items-start gap-5 p-7 bg-[#D4A017] text-[#1A1B1E] rounded-sm hover:bg-amber-400 transition-colors group"
+          >
+            <Mail size={28} className="shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="font-black text-lg uppercase tracking-tight leading-tight">Send me an email from your business address</p>
+              <p className="text-sm font-medium leading-relaxed opacity-80">
+                I'll check your headers, SPF, DKIM, DMARC, and MX records, then reply with a plain-English report within minutes. No file needed — just hit send.
+              </p>
+              <p className="text-xs font-black uppercase tracking-widest mt-2 flex items-center gap-1.5">
+                analyze@flourcitylabs.com <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
+              </p>
+            </div>
+          </a>
+        )}
+
+        {/* Secondary input — upload or paste */}
         {!result && !error && (
           <div className="space-y-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Or analyze a saved file</p>
             {/* Drop zone */}
             <div
               onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -286,6 +306,7 @@ export default function EmailAnalyzerView({ setView }) {
               </button>
             </div>
           </div>
+        </div>
         )}
 
         {/* Error state */}
