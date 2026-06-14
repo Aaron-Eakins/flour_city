@@ -3,10 +3,10 @@ import { AlertTriangle, Clock } from 'lucide-react';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import HomeView from './views/HomeView';
-import MaterialsView from './views/MaterialsView';
+import PrintingView from './views/PrintingView';
+import AboutView from './views/AboutView';
+import EmailCheckupView from './views/EmailCheckupView';
 import GalleryView from './views/GalleryView';
-import ProcessView from './views/ProcessView';
-import HeritageView from './views/HeritageView';
 import TOSView from './views/TOSView';
 import PrivacyView from './views/PrivacyView';
 import ContactView from './views/ContactView';
@@ -153,8 +153,9 @@ const App = () => {
             />
             
             <main>
-                {view === 'home' && (
-                    <HomeView
+                {view === 'home' && <HomeView setView={navigateTo} />}
+                {view === 'printing' && (
+                    <PrintingView
                         quoteStep={quoteStep} setQuoteStep={setQuoteStep}
                         isUploading={isUploading} setIsUploading={setIsUploading}
                         showAdvanced={showAdvanced} setShowAdvanced={setShowAdvanced}
@@ -163,15 +164,14 @@ const App = () => {
                         openAuth={() => setShowAuthModal(true)}
                     />
                 )}
-                {view === 'materials' && <MaterialsView setView={navigateTo} />}
-                {view === 'gallery' && <GalleryView />}
-                {view === 'process' && <ProcessView />}
-                {view === 'heritage' && <HeritageView />}
-                {view === 'tos' && <TOSView />}
-                {view === 'privacy' && <PrivacyView />}
+                {view === 'about' && <AboutView setView={navigateTo} />}
+                {view === 'email-checkup' && <EmailCheckupView setView={navigateTo} />}
+                {view === 'audit' && <EmailAnalyzerView setView={navigateTo} />}
                 {view === 'contact' && <ContactView setView={navigateTo} />}
                 {view === 'profile' && <ProfileView setView={navigateTo} />}
-                {view === 'audit' && <EmailAnalyzerView setView={navigateTo} />}
+                {view === 'gallery' && <GalleryView />}
+                {view === 'tos' && <TOSView />}
+                {view === 'privacy' && <PrivacyView />}
             </main>
 
             <Footer setView={navigateTo} />

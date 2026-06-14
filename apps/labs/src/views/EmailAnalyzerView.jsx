@@ -220,13 +220,12 @@ export default function EmailAnalyzerView({ setView }) {
         <div className="space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-[#D4A017]">Email Deliverability</p>
           <h1 className="text-5xl font-black uppercase italic tracking-tighter text-[#F2F1EF] leading-none">
-            Header Analyzer
+            Email Analyzer
           </h1>
           <p className="text-gray-300 text-lg leading-relaxed max-w-xl">
             Upload a <code className="text-[#D4A017] font-mono text-sm">.eml</code> or{' '}
             <code className="text-[#D4A017] font-mono text-sm">.msg</code> file, or paste raw headers.
-            We parse the Received chain, verify DKIM / SPF / DMARC, and flag anything suspicious.
-            Headers are analyzed in your browser. We save a summary of findings (no raw content).
+            I'll parse the Received chain, check DKIM, SPF, and DMARC, and flag anything suspicious.
           </p>
         </div>
 
@@ -254,7 +253,7 @@ export default function EmailAnalyzerView({ setView }) {
                   <Upload size={28} className="text-gray-600" />
                   <div className="text-center space-y-1.5">
                     <p className="text-base font-semibold text-gray-300">
-                      Drop file here or click to browse
+                      Drop a file here or click to browse
                     </p>
                     <p className="text-sm text-gray-500">.eml · .msg</p>
                   </div>
@@ -384,18 +383,18 @@ export default function EmailAnalyzerView({ setView }) {
             {/* CTA */}
             <div className="border border-[#D4A017]/30 bg-[#D4A017]/5 p-8 space-y-4">
               <h3 className="text-base font-bold text-[#F2F1EF]">
-                Want a full deliverability audit?
+                Want the full picture?
               </h3>
               <p className="text-sm text-gray-300 leading-relaxed">
-                This tool reads the headers. A real audit goes deeper — SPF record inspection,
-                DKIM key rotation, DMARC policy review, blacklist checks, and a plain-English
-                action plan your team can actually implement.
+                This tool reads one email's headers. A full checkup goes deeper — SPF inspection,
+                DKIM key review, DMARC policy, blacklist checks, and a plain-English fix list
+                you can actually act on.
               </p>
               <button
-                onClick={() => setView('contact')}
+                onClick={() => setView('email-checkup')}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A017] text-[#1A1B1E] font-bold text-sm hover:scale-[1.02] transition-transform"
               >
-                Book a free audit <ArrowRight size={12} />
+                Book a free checkup <ArrowRight size={12} />
               </button>
             </div>
           </div>
