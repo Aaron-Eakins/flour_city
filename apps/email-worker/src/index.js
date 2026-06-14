@@ -1,5 +1,3 @@
-import { EmailMessage } from 'cloudflare:email';
-import { createMimeMessage } from 'mimetext';
 import { parseReceivedChain, parseAllHeaders } from './parser.js';
 import { analyze, getSenderDomain, getDkimSelector } from './analyzer.js';
 import { lookupAll } from './dns.js';
@@ -8,16 +6,6 @@ import { formatReportHtml } from './report-html.js';
 
 async function readRaw(stream) {
   return new Response(stream).text();
-}
-
-function buildReply({ to, subject, plainBody, htmlBody }) {
-  const msg = createMimeMessage();
-  msg.setSender({ name: 'Flour City Labs', addr: 'lab@flourcitylabs.com' });
-  msg.setRecipient(to);
-  msg.setSubject(subject);
-  msg.addMessage({ contentType: 'text/plain', data: plainBody });
-  msg.addMessage({ contentType: 'text/html', data: htmlBody });
-  return msg;
 }
 
 export default {
@@ -49,20 +37,25 @@ export default {
     const plainBody = formatReport({ domain: reportDomain, headerAnalysis, dns });
     const htmlBody = formatReportHtml({ domain: reportDomain, headerAnalysis, dns });
 
-    const reply = buildReply({
-      to: message.from,
-      subject: `Re: ${message.headers.get('subject') || 'Header Analysis Request'} — Deliverability Report`,
-      plainBody,
-      htmlBody,
-    });
-
     try {
-      const replyMessage = new EmailMessage(
-        'lab@flourcitylabs.com',
-        message.from,
-        reply.asRaw(),
-      );
-      await env.REPLY_SENDER.send(replyMessage);
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Flour City Labs <lab@flourcitylabs.com>',
+          to: message.from,
+          subject: `Re: ${message.headers.get('subject') || 'Header Analysis Request'} — Deliverability Report`,
+          html: htmlBody,
+          text: plainBody,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        console.error('Resend error:', res.status, err);
+      }
     } catch (err) {
       console.error('Failed to send reply:', err);
     }
