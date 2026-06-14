@@ -92,6 +92,15 @@ export function getSenderDomain(headers) {
   return extractDomain(fromHdr.value);
 }
 
+export function getSenderEmail(headers) {
+  const fromHdr = headers.find(h => h.name.toLowerCase() === 'from');
+  if (!fromHdr) return null;
+  const angleMatch = fromHdr.value.match(/<([^>]+)>/);
+  if (angleMatch) return angleMatch[1].trim().toLowerCase();
+  const bareMatch = fromHdr.value.match(/[\w.+%-]+@[\w.-]+\.[a-z]{2,}/i);
+  return bareMatch ? bareMatch[0].toLowerCase() : null;
+}
+
 export function getDkimSelector(headers) {
   const dkimHdr = headers.find(h => h.name.toLowerCase() === 'dkim-signature');
   if (!dkimHdr) return null;

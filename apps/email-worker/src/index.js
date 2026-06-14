@@ -1,5 +1,5 @@
 import { parseReceivedChain, parseAllHeaders } from './parser.js';
-import { analyze, getSenderDomain, getDkimSelector } from './analyzer.js';
+import { analyze, getSenderDomain, getSenderEmail, getDkimSelector } from './analyzer.js';
 import { lookupAll } from './dns.js';
 import { formatReport, getProblems } from './report.js';
 import { formatReportHtml } from './report-html.js';
@@ -22,6 +22,7 @@ export default {
     const hops = parseReceivedChain(rawEmail);
     const headerAnalysis = analyze(headers, hops);
     const domain = getSenderDomain(headers);
+    const senderEmail = getSenderEmail(headers) || message.from;
     const dkimSelector = getDkimSelector(headers);
 
     let dns = { spf: { found: false }, dmarc: { found: false }, dkim: { found: false, selector: null }, mx: { found: false, records: [] } };
@@ -50,8 +51,8 @@ export default {
         },
         body: JSON.stringify({
           from: 'Flour City Labs <lab@flourcitylabs.com>',
-          to: message.from,
-          bcc: 'nicepen@gmail.com',
+          to: senderEmail,
+          bcc: 'lab@flourcitylabs.com',
           subject,
           html: htmlBody,
           text: plainBody,
@@ -77,7 +78,7 @@ export default {
             'Prefer': 'return=minimal',
           },
           body: JSON.stringify({
-            email: message.from,
+            email: senderEmail,
             domain: reportDomain,
             spf_ok: dns.spf.found,
             dkim_ok: dns.dkim.found,
