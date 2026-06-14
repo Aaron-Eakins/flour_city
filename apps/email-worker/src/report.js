@@ -70,12 +70,19 @@ export function formatReport({ domain, headerAnalysis, dns }) {
     const policy = dns.dmarc.policy;
     const ok = policy === 'reject' || policy === 'quarantine';
     lines.push(`${ok ? pass('DMARC record exists') : warn('DMARC record exists but policy is weak')}`);
+    if (dns.dmarc.orgDomain) {
+      lines.push(`   Inherited from parent domain: ${dns.dmarc.orgDomain}`);
+      lines.push(`   (No subdomain-specific record at _dmarc.${domain})`);
+    }
     lines.push(`   ${dns.dmarc.record}`);
     if (policy === 'none') {
       lines.push('   Note: p=none means failing emails still get delivered. Consider p=quarantine.');
     }
   } else {
     lines.push(fail('DMARC  no record found at _dmarc.' + domain));
+    if (domain !== dns.dmarc?.foundAt) {
+      lines.push(`   Also checked parent domain — not found there either.`);
+    }
     lines.push('   Fix: add a TXT record like: v=DMARC1; p=quarantine; rua=mailto:dmarc@' + domain);
   }
 
@@ -117,6 +124,7 @@ export function formatReport({ domain, headerAnalysis, dns }) {
     !dns.dkim.found && dns.dkim.selector !== null && 'DKIM key missing',
     !dns.dmarc.found && 'No DMARC record',
     dns.dmarc.found && dns.dmarc.policy === 'none' && 'DMARC policy is p=none (too weak)',
+    dns.dmarc.found && dns.dmarc.orgDomain && `DMARC inherited from ${dns.dmarc.orgDomain} — consider adding a subdomain-specific record`,
     ...flags,
   ].filter(Boolean);
 

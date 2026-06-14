@@ -33,12 +33,34 @@ export async function lookupSpf(domain) {
   return spf ? { found: true, record: spf } : { found: false, record: null };
 }
 
-export async function lookupDmarc(domain) {
+// Strip the first label to get the organizational domain for DMARC fallback.
+// e.g. newsletters.example.com → example.com
+// Won't handle public suffixes like .co.uk perfectly, but correct for the common case.
+function orgDomain(domain) {
+  const parts = domain.split('.');
+  return parts.length > 2 ? parts.slice(1).join('.') : null;
+}
+
+async function dmarcAt(domain) {
   const data = await dnsQuery(`_dmarc.${domain}`, 'TXT');
   const record = txtValue(data?.Answer);
-  if (!record || !record.startsWith('v=DMARC1')) return { found: false, record: null, policy: null };
+  if (!record || !record.startsWith('v=DMARC1')) return null;
   const pMatch = record.match(/\bp=(\w+)/i);
   return { found: true, record, policy: pMatch ? pMatch[1].toLowerCase() : 'none' };
+}
+
+export async function lookupDmarc(domain) {
+  const direct = await dmarcAt(domain);
+  if (direct) return { ...direct, foundAt: domain, orgDomain: null };
+
+  // Fall back to organizational domain for subdomain senders
+  const org = orgDomain(domain);
+  if (org) {
+    const inherited = await dmarcAt(org);
+    if (inherited) return { ...inherited, foundAt: org, orgDomain: org };
+  }
+
+  return { found: false, record: null, policy: null, foundAt: null, orgDomain: null };
 }
 
 export async function lookupDkim(domain, selector) {
