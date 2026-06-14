@@ -12,7 +12,7 @@ async function readRaw(stream) {
 
 function buildReply({ to, subject, plainBody, htmlBody }) {
   const msg = createMimeMessage();
-  msg.setSender({ name: 'Flour City Labs', addr: 'analyze@flourcitylabs.com' });
+  msg.setSender({ name: 'Flour City Labs', addr: 'lab@flourcitylabs.com' });
   msg.setRecipient(to);
   msg.setSubject(subject);
   msg.addMessage({ contentType: 'text/plain', data: plainBody });
@@ -58,7 +58,7 @@ export default {
 
     try {
       const replyMessage = new EmailMessage(
-        'analyze@flourcitylabs.com',
+        'lab@flourcitylabs.com',
         message.from,
         reply.asRaw(),
       );
