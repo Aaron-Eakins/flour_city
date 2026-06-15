@@ -35,7 +35,7 @@ function row({ label, status, detail, summary, subtext }) {
             <td style="text-align:right;white-space:nowrap;padding-left:8px"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:${cfg.color}">${cfg.word}</span></td>
           </tr></table>
           ${summary ? `<div style="margin-top:5px;font-size:13px;color:#374151;line-height:1.5">${summary}</div>` : ''}
-          ${subtext ? `<div style="margin-top:6px;padding:7px 9px;background:#f8fafc;border:1px solid ${BORDER};border-radius:4px;font-family:monospace;font-size:11px;color:#374151;word-break:break-all">${subtext}</div>` : ''}
+          ${subtext ? `<div style="margin-top:6px;padding:7px 9px;background:#f8fafc;border:1px solid ${BORDER};border-radius:4px;font-family:monospace;font-size:11px;color:${MUTED};word-break:break-all">${subtext}</div>` : ''}
         </td>
       </tr>
     </table>
@@ -45,7 +45,7 @@ function row({ label, status, detail, summary, subtext }) {
 
 function section(title, intro, rows) {
   return `
-<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;border:1px solid ${BORDER};border-radius:6px;overflow:hidden">
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;margin-bottom:16px;border:1px solid ${BORDER};border-radius:6px;overflow:hidden">
   <tr>
     <td style="padding:10px 16px;background:#f8fafc;border-bottom:1px solid ${BORDER}">
       <span style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:${MUTED};text-transform:uppercase">${title}</span>
@@ -265,10 +265,53 @@ export function formatReportHtml({ domain, headerAnalysis, dns }) {
       </table>`
     : '';
 
+  // ── Top summary block ─────────────────────────────────────────────
+  let topSummaryHeading, topSummaryBody, topSummaryBottomLine;
+  let topSummaryAccent, topSummaryBg;
+
+  if (fails.length > 0) {
+    topSummaryAccent = '#ef4444';
+    topSummaryBg = FAIL_BG;
+    topSummaryHeading = 'Your email needs some attention.';
+    topSummaryBody = "Part of your domain's email setup isn't doing its job, which can cause your messages to land in spam or let others send email that looks like it's from you.";
+    topSummaryBottomLine = "There's at least one issue worth fixing. The details are below, and I'm happy to help.";
+  } else if (warns.length > 0) {
+    topSummaryAccent = GOLD;
+    topSummaryBg = WARN_BG;
+    const cnt = warns.length;
+    topSummaryHeading = cnt === 1
+      ? 'Your email is working well, with one thing worth a look.'
+      : `Your email is working well, with ${cnt} things worth a look.`;
+    topSummaryBody = cnt === 1
+      ? "Your domain is set up correctly to send email and is protected against most impersonation. There's one optional improvement that would tighten things further — no rush, and nothing is broken."
+      : `Your domain is set up correctly to send email and is protected against most impersonation. There are ${cnt} optional improvements that would tighten things further — no rush, and nothing is broken.`;
+    topSummaryBottomLine = cnt === 1
+      ? "You're in good shape. One optional improvement is noted below."
+      : `You're in good shape. ${cnt} optional improvements are noted below.`;
+  } else {
+    topSummaryAccent = '#22c55e';
+    topSummaryBg = PASS_BG;
+    topSummaryHeading = 'Your email is in good shape.';
+    topSummaryBody = "Your domain is set up correctly to send email and to stop others from faking messages in your name. Nothing here needs your attention right now.";
+    topSummaryBottomLine = null;
+  }
+
+  const topSummaryBlock = `
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;border-radius:6px;background:${topSummaryBg}">
+  <tr>
+    <td style="width:4px;background:${topSummaryAccent};border-radius:6px 0 0 6px;font-size:1px;line-height:0">&nbsp;</td>
+    <td style="padding:24px 24px 24px 20px">
+      <div style="font-size:19px;font-weight:700;color:${DARK};margin-bottom:8px;line-height:1.3">${topSummaryHeading}</div>
+      <div style="font-size:15px;color:#374151;line-height:1.6${topSummaryBottomLine ? ';margin-bottom:10px' : ''}">${topSummaryBody}</div>
+      ${topSummaryBottomLine ? `<div style="font-size:14px;color:#374151;line-height:1.5"><span style="font-weight:700">Bottom line:</span> ${topSummaryBottomLine}</div>` : ''}
+    </td>
+  </tr>
+</table>`;
+
   // ── Assemble ──────────────────────────────────────────────────────
   const sectionsHtml = [
     section(
-      'What your receiving server saw',
+      'How a real inbox sees your mail',
       'This is how a real inbox judged a message from your domain. These three checks largely decide whether your email lands in the inbox or gets flagged as suspicious.',
       authRows
     ),
@@ -309,12 +352,14 @@ export function formatReportHtml({ domain, headerAnalysis, dns }) {
   <!-- Domain banner + intro -->
   <tr><td style="background:#fff;padding:20px 32px;border-bottom:1px solid ${BORDER}">
     <div style="font-size:11px;color:${MUTED};text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Domain analyzed</div>
-    <div style="font-size:22px;font-weight:700;color:${DARK};margin-bottom:12px">${domain}</div>
-    <p style="margin:0;font-size:13px;color:#374151;line-height:1.6">Here's what I found when I checked how your domain sends and protects its email. Each item below has a plain-English summary, with the technical details kept underneath so nothing's hidden.</p>
+    <div style="font-size:22px;font-weight:700;color:${DARK};margin-bottom:6px">${domain}</div>
+    <div style="font-size:12px;color:#888;line-height:1.5;margin-bottom:18px">You're receiving this because a message was sent to analyze@flourcitylabs.com. Here's what came back.</div>
+    <p style="margin:0;font-size:13px;color:#374151;line-height:1.6">Here's a breakdown of your email setup and deliverability, with a plain-English summary for each check. In short: this is about whether your emails reach the inbox, and whether someone could fake a message from your domain.</p>
   </td></tr>
 
   <!-- Body -->
   <tr><td style="background:#fff;padding:24px 32px">
+    ${topSummaryBlock}
     ${sectionsHtml}
 
     <!-- Summary box -->
