@@ -39,7 +39,7 @@ export default {
     const plainBody = formatReport({ domain: reportDomain, headerAnalysis, dns });
     const htmlBody = formatReportHtml({ domain: reportDomain, headerAnalysis, dns });
 
-    const subject = `Re: ${message.headers.get('subject') || 'Header Analysis Request'} — Deliverability Report`;
+    const subject = `Re: ${message.headers.get('subject') || 'Header Analysis Request'} — Deliverability report for ${reportDomain}`;
 
     // Send report to client (BCC yourself to keep a copy)
     try {
