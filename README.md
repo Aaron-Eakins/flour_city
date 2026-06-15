@@ -1,6 +1,6 @@
 # Flour City Labs
 
-Web and email consulting for Rochester, NY small businesses. This monorepo contains the marketing site, a standalone email header analysis tool, and a 3D printing quoting app (secondary service).
+Web and email consulting for Rochester, NY small businesses. This monorepo contains the marketing site, a standalone email header analysis tool, a Cloudflare Email Worker that automates the analysis, and a 3D printing quoting app (secondary service).
 
 ---
 
@@ -8,8 +8,9 @@ Web and email consulting for Rochester, NY small businesses. This monorepo conta
 
 | App | Stack | Purpose |
 |-----|-------|---------|
-| `apps/labs` | Vite + React + Tailwind CSS v4 + Supabase | Marketing site + Header Analyzer tool |
-| `apps/email-parser` | Node.js CLI | Email header parser (powers the web tool) |
+| `apps/labs` | Vite + React + Tailwind CSS v4 + Supabase | Marketing site + browser-based Header Analyzer |
+| `apps/email-worker` | Cloudflare Email Worker | Inbound email → analysis → plain-English reply |
+| `apps/email-parser` | Node.js CLI | Standalone email header parser (development/testing tool) |
 | `apps/slicer` | Next.js 16 + Prisma + Stripe | 3D printing quote and order platform |
 
 Each app is independent. Run commands from inside the app directory.
@@ -18,28 +19,29 @@ Each app is independent. Run commands from inside the app directory.
 
 ## Email Header Analyzer
 
-The main portfolio piece. Accepts `.eml` or `.msg` files (or pasted raw headers), parses the Received chain, checks DKIM / SPF / DMARC authentication results, flags anomalies, and renders structured output in the browser. Analysis is client-side — no raw header content leaves the machine. A summary of findings (hop count, auth results, flags, from-domain) is saved to Supabase for follow-up.
+The main portfolio piece. There are three ways to use it:
 
-**Planned v1 additions:**
-- PTR / rDNS lookup on the sending IP
-- MX lookup on the From domain
-- DMARC policy lookup directly from `_dmarc.domain` (catches `p=none` enforcement gaps)
-- DKIM public key lookup at `selector._domainkey.domain` using the selector from the header
+1. **Email** (primary): send any message to `analyze@flourcitylabs.com`. The Cloudflare Email Worker intercepts it, runs the full analysis including live DNS lookups, and replies within seconds with a plain-English report.
+2. **File upload**: upload a `.eml` or `.msg` file on the website. Analysis runs in the browser — no raw content leaves the machine.
+3. **Paste**: paste raw headers directly into the text area on the site.
 
-DNS lookups will run through a Cloudflare Worker using DNS-over-HTTPS. Blacklist checks are out of scope — the tool links out to MXToolbox for that.
+The browser paths (file + paste) check headers only. The email path also does live DNS lookups for SPF records, DKIM public keys, DMARC policy, and MX records.
 
-**Planned email automation:**
-Inbound email to `audit@flourcitylabs.com` → Cloudflare Email Routing → Worker → header extraction → analysis → reply with findings + CTA. Same parser, same Supabase table, no new analysis logic.
+**Report design:** The report is structured for two audiences at once — a non-technical reader who wants to know "is my email okay," and a technical reader who wants to verify the analysis. The top of the report has a jargon-free plain-language verdict. The full raw data (DNS records, Authentication-Results headers, Received chain with hop timing) is preserved underneath as proof. A three-tier severity system (Pass / Warn / Fail) distinguishes low-stakes advisories like `DMARC p=none` from genuine failures like a missing SPF record.
+
+**Blacklist checks** are out of scope — the report links out to MXToolbox for that.
+
+See [`apps/email-worker/README.md`](apps/email-worker/README.md) for deployment details.
 
 ---
 
 ## Running locally
 
 ```bash
-# Marketing site + Header Analyzer
+# Marketing site + browser Header Analyzer
 cd apps/labs
 npm install
-npm run dev          # http://localhost:8888
+npm run dev          # http://localhost:5173
 
 # Email parser CLI
 cd apps/email-parser
@@ -63,6 +65,13 @@ VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
 ```
 
+**apps/email-worker** — Wrangler secrets (not in source):
+```
+RESEND_API_KEY=
+SUPABASE_URL=
+SUPABASE_SERVICE_KEY=
+```
+
 **apps/slicer** — `.env.local` file:
 ```
 DATABASE_URL=
@@ -79,4 +88,7 @@ ADMIN_PASSWORD=
 
 ## Supabase
 
-Schema migrations are in `apps/labs/supabase/migrations/`. Run them manually in the Supabase SQL editor. The `email_audits` table stores per-analysis metadata (no raw content). RLS is enabled — anonymous users can insert, authenticated users can read their own rows.
+Schema migrations are in `apps/labs/supabase/migrations/`. Run them manually in the Supabase SQL editor.
+
+- `email_audits` — per-analysis metadata from the browser tool (no raw content). Anonymous users can insert; RLS enabled.
+- `analyzer_leads` — per-email metadata from the Cloudflare Worker (domain, DNS results, issue count). Written server-side using the service role key.

@@ -31,10 +31,6 @@ The original version used a binary pass/fail. That caused a real problem: a DMAR
 
 The worker's email routing does not apply aggressive spam filtering. That's intentional: the users this tool exists to serve are exactly the senders most likely to be flagged. If a business has a misconfigured SPF or no DMARC record, their test email may itself fail spam checks. Filtering the intake inbox would silently drop the requests the tool is designed to handle.
 
-### Email address not in scrapeable plain text
-
-The intake address is displayed on the companion website but is split with a hidden HTML element so it doesn't appear as a complete, harvestable string in the page source. The inbox must stay permissive, so reducing harvesting matters more here than it would for a normal contact address.
-
 ### Three intake methods
 
 - **Email** (primary): send any message to the analysis address; no file or setup required. Designed for non-technical users.
@@ -139,7 +135,6 @@ The worker inserts one row per inbound email:
 
 ## What's Next
 
-- Blacklist checking (MXToolbox-style IP/domain reputation lookup)
 - Per-domain rate limiting to prevent abuse
-- A structured PDF version of the report for clients who want something to share with their IT person
 - Webhook or email notification when a new lead comes in, rather than relying on the BCC copy
+- Blacklist checks are out of scope — the report links out to MXToolbox for IP/domain reputation lookups
