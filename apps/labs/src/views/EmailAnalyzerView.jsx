@@ -306,7 +306,6 @@ export default function EmailAnalyzerView({ setView }) {
               </button>
             </div>
           </div>
-        </div>
         )}
 
         {/* Error state */}
