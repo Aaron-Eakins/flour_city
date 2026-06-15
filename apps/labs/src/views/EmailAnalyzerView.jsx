@@ -242,7 +242,7 @@ export default function EmailAnalyzerView({ setView }) {
                 I'll check your headers, SPF, DKIM, DMARC, and MX records, then reply with a plain-English report within minutes. No file needed — just hit send.
               </p>
               <p className="text-xs font-black uppercase tracking-widest mt-2 flex items-center gap-1.5">
-                analyze@flourcitylabs.com <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
+                analyze<span style={{display:'none'}}>nospam</span>@flourcitylabs.com <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
               </p>
             </div>
           </a>
