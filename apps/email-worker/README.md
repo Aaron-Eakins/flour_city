@@ -137,4 +137,4 @@ The worker inserts one row per inbound email:
 
 - Per-domain rate limiting to prevent abuse
 - Webhook or email notification when a new lead comes in, rather than relying on the BCC copy
-- Blacklist checks are out of scope — the report links out to MXToolbox for IP/domain reputation lookups
+- Blacklist and reputation checks — likely linking out to or embedding MXToolbox lookups rather than building from scratch

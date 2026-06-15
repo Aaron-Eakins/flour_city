@@ -29,7 +29,7 @@ The browser paths (file + paste) check headers only. The email path also does li
 
 **Report design:** The report is structured for two audiences at once — a non-technical reader who wants to know "is my email okay," and a technical reader who wants to verify the analysis. The top of the report has a jargon-free plain-language verdict. The full raw data (DNS records, Authentication-Results headers, Received chain with hop timing) is preserved underneath as proof. A three-tier severity system (Pass / Warn / Fail) distinguishes low-stakes advisories like `DMARC p=none` from genuine failures like a missing SPF record.
 
-**Blacklist checks** are out of scope — the report links out to MXToolbox for that.
+**Blacklist and reputation checks** are planned — likely linking out to or embedding MXToolbox lookups.
 
 See [`apps/email-worker/README.md`](apps/email-worker/README.md) for deployment details.
 
@@ -53,35 +53,6 @@ node src/index.js --json path/to/file.eml
 cd apps/slicer
 npm install
 npm run dev          # http://localhost:3000
-```
-
----
-
-## Environment variables
-
-**apps/labs** — `.env` file:
-```
-VITE_SUPABASE_URL=
-VITE_SUPABASE_PUBLISHABLE_KEY=
-```
-
-**apps/email-worker** — Wrangler secrets (not in source):
-```
-RESEND_API_KEY=
-SUPABASE_URL=
-SUPABASE_SERVICE_KEY=
-```
-
-**apps/slicer** — `.env.local` file:
-```
-DATABASE_URL=
-DIRECT_URL=
-BLOB_READ_WRITE_TOKEN=
-STRIPE_SECRET_KEY=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
-STRIPE_WEBHOOK_SECRET=
-RESEND_API_KEY=
-ADMIN_PASSWORD=
 ```
 
 ---
