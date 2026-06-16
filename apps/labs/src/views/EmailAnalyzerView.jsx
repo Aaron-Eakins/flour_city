@@ -62,7 +62,7 @@ function HopCard({ hop, delta }) {
         <span className="text-xs font-bold uppercase tracking-wide text-gray-400">
           Hop {hop.order}
         </span>
-        <span className={`text-xs font-mono font-semibold ${delayed ? 'text-red-400' : 'text-gray-400'}`}>
+        <span className={`text-xs font-semibold ${delayed ? 'text-red-400' : 'text-gray-400'}`}>
           {delayed && <AlertTriangle size={11} className="inline mr-1" />}
           {deltaLabel}
         </span>
@@ -230,8 +230,7 @@ export default function EmailAnalyzerView({ setView }) {
         </div>
 
         {/* Primary CTA — email-in flow */}
-        {!result && !error && (
-          <a
+        <
             href="mailto:analyze@flourcitylabs.com?subject=Header Analysis Request&body=Just hit send and you'll get your deliverability report in a few minutes!"
             rel="noopener noreferrer"
             onClick={(e) => {
@@ -251,7 +250,6 @@ export default function EmailAnalyzerView({ setView }) {
               </p>
             </div>
           </a>
-        )}
 
         {/* Secondary input — upload or paste */}
         {!result && !error && (
@@ -420,6 +418,16 @@ export default function EmailAnalyzerView({ setView }) {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A017] text-[#1A1B1E] font-bold text-sm hover:scale-[1.02] transition-transform"
               >
                 Book a free checkup <ArrowRight size={12} />
+              </button>
+            </div>
+
+            {/* Reset */}
+            <div className="flex justify-center pt-2">
+              <button
+                onClick={reset}
+                className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#D4A017] transition-colors"
+              >
+                <Upload size={13} /> Analyze another file
               </button>
             </div>
           </div>
