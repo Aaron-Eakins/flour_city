@@ -232,7 +232,7 @@ export default function EmailAnalyzerView({ setView }) {
         {/* Primary CTA — email-in flow */}
         {!result && !error && (
           <a
-            href="mailto:analyze@flourcitylabs.com?subject=Header Analysis Request"
+            href="mailto:analyze@flourcitylabs.com?subject=Header Analysis Request&body=Just hit send and you'll get your deliverability report in a few minutes!"
             className="flex items-start gap-5 p-7 bg-[#D4A017] text-[#1A1B1E] rounded-sm hover:bg-amber-400 transition-colors group"
           >
             <Mail size={28} className="shrink-0 mt-0.5" />
