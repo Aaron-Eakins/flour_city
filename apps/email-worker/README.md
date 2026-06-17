@@ -129,7 +129,7 @@ The worker inserts one row per inbound email:
 
 **Subdomain DMARC fallback is a heuristic.** For subdomain senders, the worker checks the organizational domain for a DMARC record if the subdomain has none. This uses a simple label-stripping approach (`newsletters.example.com` → `example.com`) that doesn't account for public suffixes like `.co.uk`. It's correct for the common case.
 
-**No blacklist checks.** Checking whether a domain or IP is on a known spam blacklist was planned but not yet built. The report flags what it can from headers and DNS; blacklist status is out of scope for now.
+**No blacklist checks yet.** Blacklist and IP reputation status isn't checked inline. Planned approach: link out to MXToolbox lookups rather than building from scratch, since MXToolbox already aggregates 100+ blacklists and republishes the results. The report flags what it can from headers and DNS in the meantime.
 
 ---
 

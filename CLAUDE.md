@@ -10,12 +10,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Historical planning notes** in `planning/notes/` and `apps/labs/planning/notes/` predate the consulting pivot and are focused on 3D printing. Treat them as context only — do not work from them.
 
-**Current priorities (before May 1 Tech Forum):**
-1. labs website copy reflects web/email consulting — DONE
-2. Follow up with Bob (first free audit lead) — DONE
-3. Attend Tech Forum, participate in Q&A
+**Status (June 2026):** Tech Forum attended. First free audits delivered (Bob + two others). Active job search — this project serves double duty as a real consulting tool and a portfolio piece. The priority right now is portfolio quality: clean code, good documentation, the system working end-to-end. Not optimizing for client acquisition.
 
-**Phase 2 (after forum):** Astro rebuild for SSG/SEO, Check My Email web tool, PDF audit template, recurring monitoring service.
+**What's shipped:**
+- Marketing site live at flourcitylabs.com (Vite + React + Supabase, auto-deploy via Vercel)
+- Email Header Analyzer: in-browser (file/paste, no data leaves the machine) and email-based (Cloudflare Worker → Resend reply within seconds)
+- Client project system: quote requests → email reply threading → client-facing note history at `/profile`
+- Email worker: three-tier severity, dual-audience report design, permissive intake inbox, Supabase lead logging
+
+**Phase 2 (next):** Astro rebuild for SSG/SEO, PDF audit template, recurring monitoring service, blacklist checks in email analyzer.
 
 ---
 

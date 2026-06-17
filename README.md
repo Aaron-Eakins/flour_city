@@ -17,6 +17,19 @@ Each app is independent. Run commands from inside the app directory.
 
 ---
 
+## Architecture at a glance
+
+The system spans three deployment targets and three runtime environments:
+
+- **Cloudflare Email Worker** (`apps/email-worker`) — stateless ES module that runs on email ingest. No persistent process, no queue. One email in, one DNS + header analysis, one reply out via Resend. Live at `analyze@flourcitylabs.com`.
+- **Supabase Edge Functions** (`apps/labs/supabase/functions/`) — two Deno functions. `send-notification` handles form submissions with Turnstile bot verification and Resend notifications. `inbound-reply` handles email reply threading: PostalMime parses the raw message, EmailReplyParser strips quoted content, the reply goes to Supabase as a project note and forwards to the client via Resend with `In-Reply-To` and `References` headers.
+- **Vite + React SPA** (`apps/labs`) — deployed on Vercel, auto-deploys from main. Hosts the marketing site, in-browser email analyzer, contact and checkup forms, and an authenticated client project dashboard at `/profile`.
+- **Next.js 16 app** (`apps/slicer`) — partially built 3D printing order platform. Not deployed; future work for `flourcityprints.com`.
+
+The interesting engineering decisions are documented in the code and inline notes: the email worker README covers the three-tier severity design, dual-audience report structure, and why the intake inbox is intentionally permissive.
+
+---
+
 ## Email Header Analyzer
 
 The main portfolio piece. There are three ways to use it:
