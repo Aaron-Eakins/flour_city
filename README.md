@@ -1,5 +1,10 @@
 # Flour City Labs
 
+Flour City Labs is a working full-stack project: a marketing site, an automated email deliverability analyzer, and a client project system with email reply threading. It runs in production and demonstrates serverless architecture, edge email parsing, and secure auth flows.
+
+**Live site:** https://flourcitylabs.com<br>
+**Email analyzer:** email any message to analyze@flourcitylabs.com
+
 Web and email consulting for Rochester, NY small businesses. This monorepo contains the marketing site, an automated email deliverability analyzer, a client project management system, and a 3D printing quoting app (secondary service).
 
 ---
@@ -66,7 +71,32 @@ The contact form is at `apps/labs/src/views/ContactView.jsx`. The checkup form i
 
 The labs site has a lightweight project management system built on Supabase, separate from the slicer's Prisma/Neon database.
 
-**Inbound:** When a client submits a quote request through the labs site, `send-notification` sends two emails via Resend: an auto-reply to the client (which establishes the email thread) and a lead alert to the admin. The reply-to on the client email is set to `reply+{quoteId}@flourcitylabs.com`.
+**Inbound:** When a client submits a quote request through the labs site, `send-notification` sends two emails via Resend: an auto-reply to the client (which establishes the email thread) and a lead alert to the admin. The auto-reply's reply-to is `lab@flourcitylabs.com`. The `reply+{quoteId}@flourcitylabs.com` threading address is introduced later, on the first lab reply forwarded by `inbound-reply`.
+
+```mermaid
+sequenceDiagram
+    actor User as User (lab@flourcitylabs.com)
+    participant CF as Cloudflare Email Routing
+    participant Fn as inbound-reply Edge Function
+    participant DB as Supabase (quotes / project_notes)
+    participant Resend as Resend API
+    actor Client as Client
+
+    User->>CF: Reply addressed to reply+{quoteId}@flourcitylabs.com
+    CF->>Fn: POST { raw, from, to } + Bearer FCL_INBOUND_SECRET
+    Fn->>Fn: Verify shared secret (401 if invalid)
+    Fn->>Fn: PostalMime parses raw MIME
+    Fn->>Fn: Extract quoteId from "to" via regex reply+([^@]+)@
+    Fn->>DB: SELECT quote (email, user_id, last_resend_message_id, file_name)
+    DB-->>Fn: quote row
+    Fn->>Fn: EmailReplyParser strips quoted text + signature
+    Fn->>DB: INSERT project_notes (author_role 'lab', user_id for RLS)
+    Fn->>Resend: POST /emails to client, reply_to reply+{quoteId}@, In-Reply-To + References
+    Resend-->>Client: Threaded reply lands in existing thread
+    Resend-->>Fn: { id }
+    Fn->>DB: UPDATE quotes.last_resend_message_id = id
+    Note over DB,Client: Client sees the note in their /profile dashboard (RLS by user_id)
+```
 
 **Outbound (reply threading):** When the admin replies from `lab@flourcitylabs.com`, Cloudflare Email Routing forwards the inbound reply to the `inbound-reply` Supabase Edge Function, authenticated with a shared secret. The function:
 - Parses the raw email using PostalMime
