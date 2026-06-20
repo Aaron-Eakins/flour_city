@@ -1,9 +1,7 @@
-'use strict';
-
 // Produces either a human-readable text summary or a JSON string.
 // opts.json = true  ->  JSON.stringify of { hops, analysis }
 // opts.json = false ->  formatted text (default)
-function format(hops, analysis, opts = {}) {
+export function format(hops, analysis, opts = {}) {
   if (opts.json) {
     return JSON.stringify({ hops, analysis }, null, 2);
   }
@@ -89,5 +87,3 @@ function format(hops, analysis, opts = {}) {
 
   return lines.join('\n');
 }
-
-module.exports = { format };

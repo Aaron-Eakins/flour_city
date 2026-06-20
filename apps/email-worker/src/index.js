@@ -1,5 +1,7 @@
-import { parseReceivedChain, parseAllHeaders } from './parser.js';
-import { analyze, getSenderDomain, getSenderEmail, getDkimSelector } from './analyzer.js';
+import {
+  parseReceivedChain, parseAllHeaders,
+  analyze, getSenderDomain, getSenderEmail, getDkimSelector,
+} from '@flour-city/email-core';
 import { lookupAll } from './dns.js';
 import { formatReport, getProblems } from './report.js';
 import { formatReportHtml } from './report-html.js';

@@ -1,7 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Upload, AlertTriangle, CheckCircle, XCircle, Clock, ArrowRight, FileText, Mail } from 'lucide-react';
-import { parseReceivedChain, splitHeaders, unfoldHeaders } from '../lib/email/parser.js';
-import { analyze, parseHeadersFromText } from '../lib/email/analyzer.js';
+import {
+  parseReceivedChain, splitHeaders, unfoldHeaders,
+  analyze, parseHeadersFromText,
+} from '@flour-city/email-core';
 import { supabase } from '../lib/supabaseClient.js';
 
 // Reads an .eml or .msg file and returns the raw header text string.

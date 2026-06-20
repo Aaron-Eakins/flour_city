@@ -1,29 +1,27 @@
-'use strict';
+// Characterization tests for the email-parser CLI path. Imports the parser +
+// analyzer from @flour-city/email-core and runs the canonical shared fixture
+// corpus through the CLI's own loader — proving the CLI agrees with the shared
+// behavioral spec.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
-// Characterization tests: pin down what the parser + analyzer ACTUALLY do today,
-// over a fixture corpus that isolates one behavior each. This is the behavioral
-// spec the shared/email-core consolidation must preserve — every implementation
-// (CLI, browser, worker) is expected to agree with these expectations.
+import { loadHeaders } from '../src/loader.js';
+import { unfoldHeaders, splitHeaders, parseReceivedChain, analyze } from '@flour-city/email-core';
 
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const path = require('path');
-
-const { loadHeaders } = require('../src/loader');
-const { unfoldHeaders, splitHeaders, parseReceivedChain } = require('../src/parser');
-const { analyze } = require('../src/analyzer');
-
-const FIXTURES = path.join(__dirname, '..', 'fixtures');
+// Canonical corpus lives with the shared package (single source of truth).
+const FIXTURES = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '..', '..', '..', 'shared', 'email-core', 'fixtures',
+);
 
 function run(file) {
-  const raw = loadHeaders(path.join(FIXTURES, file));
+  const raw = loadHeaders(join(FIXTURES, file));
   const headers = splitHeaders(unfoldHeaders(raw));
   const hops = parseReceivedChain(raw);
-  const analysis = analyze(headers, hops);
-  return { headers, hops, analysis };
+  return { headers, hops, analysis: analyze(headers, hops) };
 }
-
-// --- Flag rules: each fixture isolates exactly one outcome ---
 
 const flagCases = [
   { file: 'synthetic.eml',              hops: 3, flags: [] },
@@ -46,12 +44,9 @@ for (const c of flagCases) {
   });
 }
 
-// --- Deeper assertions on the clean baseline (synthetic.eml) ---
-
-test('synthetic.eml: hops are ordered oldest-first with correct deltas', () => {
+test('synthetic.eml: hops ordered oldest-first with correct deltas', () => {
   const { hops, analysis } = run('synthetic.eml');
   assert.deepEqual(hops.map(h => h.order), [1, 2, 3]);
-  // 15:00:01 -> 15:00:03 -> 15:00:05 = +2.0s per hop; origin hop has null delta.
   assert.deepEqual(analysis.hopDeltas.map(d => d.delta), [null, 2, 2]);
 });
 
@@ -66,7 +61,6 @@ test('synthetic.eml: authentication-results parsed into structured form', () => 
 
 test('synthetic.eml: first hop captures sending IP and protocol', () => {
   const { hops } = run('synthetic.eml');
-  const origin = hops[0];
-  assert.equal(origin.fromIp, '192.0.2.100');
-  assert.equal(origin.with, 'LMTP');
+  assert.equal(hops[0].fromIp, '192.0.2.100');
+  assert.equal(hops[0].with, 'LMTP');
 });

@@ -2,14 +2,15 @@
   "name": "@flour-city/email-parser",
   "version": "1.0.0",
   "description": "Email header analysis — Received chain, auth results, anomaly flags",
-  "main": "src/parser.js",
+  "type": "module",
+  "main": "src/index.js",
   "bin": { "email-parser": "./src/index.js" },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node --test test/characterization.test.js",
-    "test:smoke": "node test/test.js"
+    "test": "node --test test/characterization.test.js"
   },
   "dependencies": {
+    "@flour-city/email-core": "*",
     "@kenjiuno/msgreader": "^1.28.0"
   }
 }

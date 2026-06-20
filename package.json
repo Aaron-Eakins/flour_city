@@ -1,0 +1,15 @@
+{
+  "name": "flour-city",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Flour City Labs monorepo — marketing site, email deliverability analyzer, client project system.",
+  "workspaces": [
+    "shared/*",
+    "apps/labs",
+    "apps/email-worker",
+    "apps/email-parser"
+  ],
+  "scripts": {
+    "test": "npm test --workspaces --if-present"
+  }
+}

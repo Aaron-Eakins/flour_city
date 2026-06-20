@@ -1,9 +1,6 @@
-'use strict';
-
-const { loadHeaders }                                    = require('./loader');
-const { unfoldHeaders, splitHeaders, parseReceivedChain } = require('./parser');
-const { analyze }                                        = require('./analyzer');
-const { format }                                         = require('./formatter');
+import { loadHeaders } from './loader.js';
+import { unfoldHeaders, splitHeaders, parseReceivedChain, analyze } from '@flour-city/email-core';
+import { format } from './formatter.js';
 
 const args     = process.argv.slice(2);
 const jsonMode = args.includes('--json');
