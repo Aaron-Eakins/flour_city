@@ -10,7 +10,7 @@ const AboutView = ({ setView }) => (
             {/* Hero — who & what */}
             <header className="mb-24 space-y-12 text-left">
                 <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">About</span>
-                <DimensionedHeader line1="ONE PERSON." line2="NO SHORTCUTS." layerHt="Rochester·NY" partWd="Est·2024" variant="light" />
+                <DimensionedHeader line1="ONE PERSON." line2="NO SHORTCUTS." layerHt="Rochester·NY" partWd="Est·2024" variant="light" showUnits={false} />
             </header>
 
             {/* Bio */}

@@ -21,6 +21,7 @@ const HomeView = (props) => (
                             layerHt="SPF·DKIM"
                             partWd="DMARC·MX"
                             variant="dark"
+                            showUnits={false}
                         />
                     </div>
                     <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Is your email landing in spam? Are your DNS records a mess? Most small businesses don't know what they're losing until a customer says they never got the invoice. I find what's broken and fix it.</p>
@@ -36,7 +37,7 @@ const HomeView = (props) => (
                                 <Mail className="w-12 h-12 text-[#D4A017]" />
                                 <div className="text-right text-[#F2F1EF]">
                                     <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest leading-none">Audit Status</div>
-                                    <div className="text-xl font-display font-black tracking-tighter uppercase italic mt-1">Audit Ready</div>
+                                    <div className="text-xl font-display font-black tracking-tighter uppercase italic mt-1">In Progress</div>
                                 </div>
                             </div>
                             <div className="space-y-4 text-[#F2F1EF]">
