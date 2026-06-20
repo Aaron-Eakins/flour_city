@@ -78,6 +78,13 @@ worker passes live DNS). Each renderer then just *presents* that shared verdict 
 own medium. Result: all three surfaces agree on the substance and differ only in skin.
 This is itself good TDD material — the tiering rules are pure logic.
 
+**Concrete example of the drift risk:** the slow-hop threshold `> 60` is hardcoded in
+**four** places — `shared/email-core/src/analyzer.js` (the flag), `email-worker`
+`report.js` + `report-html.js`, and `labs` `EmailAnalyzerView.jsx` (per-hop styling).
+They all agree today, but nothing enforces that. Fix as part of verdict-sharing: define
+the threshold once in `shared/email-core` (e.g. `SLOW_HOP_SECONDS = 60`, or have
+`analyze()` tag each hop delta `slow: boolean`) and have every renderer consume it.
+
 ---
 
 ## Part 1 — Testing plan
