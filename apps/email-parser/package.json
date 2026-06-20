@@ -6,7 +6,8 @@
   "bin": { "email-parser": "./src/index.js" },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node test/test.js"
+    "test": "node --test test/characterization.test.js",
+    "test:smoke": "node test/test.js"
   },
   "dependencies": {
     "@kenjiuno/msgreader": "^1.28.0"
