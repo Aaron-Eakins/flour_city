@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { useTurnstile } from '../../hooks/useTurnstile';
 import { useAuth } from '../../context/AuthContext';
 
 const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
@@ -9,34 +10,9 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [status, setStatus] = useState('idle'); // idle, success, error
     const [errorMessage, setErrorMessage] = useState('');
-    const [turnstileToken, setTurnstileToken] = useState('');
-
-    useEffect(() => {
-        // Stop Turnstile logic entirely for authenticated users
-        if (user || loading) return;
-
-        const initTurnstile = () => {
-            if (window.turnstile && !turnstileToken) {
-                window.turnstile.render('#turnstile-container-note', {
-                    sitekey: '0x4AAAAAAC6yWDKB2X7isRW7',
-                    callback: (token) => setTurnstileToken(token),
-                    theme: 'light'
-                });
-            }
-        };
-
-        if (window.turnstile) {
-            initTurnstile();
-        } else {
-            const timer = setInterval(() => {
-                if (window.turnstile) {
-                    initTurnstile();
-                    clearInterval(timer);
-                }
-            }, 500);
-            return () => clearInterval(timer);
-        }
-    }, [turnstileToken, user, loading]);
+    // Turnstile is only needed for guests; the mount point below renders only when
+    // !user, so the hook simply won't attach a widget for authenticated users.
+    const { token: turnstileToken, containerRef: turnstileRef } = useTurnstile();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -117,7 +93,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
             </div>
 
             {/* Turnstile Container - Guest Only */}
-            {!user && <div id="turnstile-container-note" className="flex justify-start py-1"></div>}
+            {!user && <div ref={turnstileRef} className="flex justify-start py-1"></div>}
             
             {status === 'success' && (
                 <div className="flex items-center space-x-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-left-2">

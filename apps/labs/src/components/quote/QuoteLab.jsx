@@ -3,6 +3,7 @@ import { Upload, Settings, ChevronDown, ChevronUp, Palette, Minus, Plus, ArrowRi
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabaseClient';
 import { SITE_CONFIG } from '../../constants/site';
+import { useTurnstile } from '../../hooks/useTurnstile';
 
 const QuoteLab = ({
     quoteStep, setQuoteStep,
@@ -14,34 +15,7 @@ const QuoteLab = ({
     const [materials, setMaterials] = useState({});
     const [isLoadingMaterials, setIsLoadingMaterials] = useState(true);
     const [error, setError] = useState(null);
-    const [turnstileToken, setTurnstileToken] = useState('');
-
-    useEffect(() => {
-        const initTurnstile = () => {
-            const container = document.getElementById('turnstile-container-quote');
-            if (window.turnstile && container && !turnstileToken) {
-                window.turnstile.render('#turnstile-container-quote', {
-                    sitekey: '0x4AAAAAAC6yWDKB2X7isRW7',
-                    callback: (token) => setTurnstileToken(token),
-                    theme: 'light'
-                });
-            }
-        };
-
-        // Note: In QuoteLab, step 3 must be active for the element to exist.
-        // We'll run this on every render, but initTurnstile checks for the element.
-        if (window.turnstile) {
-            initTurnstile();
-        } else {
-            const timer = setInterval(() => {
-                if (window.turnstile) {
-                    initTurnstile();
-                    clearInterval(timer);
-                }
-            }, 500);
-            return () => clearInterval(timer);
-        }
-    });
+    const { token: turnstileToken, containerRef: turnstileRef } = useTurnstile();
 
     useEffect(() => {
         const fetchMaterials = async () => {
@@ -500,7 +474,7 @@ const QuoteLab = ({
 
                             {/* Turnstile Container */}
                             <div className="flex justify-center py-4">
-                                <div id="turnstile-container-quote"></div>
+                                <div ref={turnstileRef}></div>
                             </div>
 
                             {/* Inline script callback moved back to manual render for reliability */}

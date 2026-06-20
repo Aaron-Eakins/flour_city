@@ -3,6 +3,7 @@ import { CheckCircle, AlertCircle, Send, Mail } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import { SITE_CONFIG } from '../constants/site';
 import { supabase } from '../lib/supabaseClient';
+import { useTurnstile } from '../hooks/useTurnstile';
 
 const EmailCheckupView = ({ setView }) => {
     const [formData, setFormData] = useState({
@@ -14,32 +15,7 @@ const EmailCheckupView = ({ setView }) => {
     });
     const [status, setStatus] = useState('idle');
     const [errorMessage, setErrorMessage] = useState('');
-    const [turnstileToken, setTurnstileToken] = useState('');
-
-    useEffect(() => {
-        const initTurnstile = () => {
-            const container = document.getElementById('turnstile-container-checkup');
-            if (window.turnstile && container && !turnstileToken) {
-                window.turnstile.render('#turnstile-container-checkup', {
-                    sitekey: SITE_CONFIG.TURNSTILE_SITE_KEY,
-                    callback: (token) => setTurnstileToken(token),
-                    theme: 'light',
-                });
-            }
-        };
-
-        if (window.turnstile) {
-            initTurnstile();
-        } else {
-            const timer = setInterval(() => {
-                if (window.turnstile) {
-                    initTurnstile();
-                    clearInterval(timer);
-                }
-            }, 500);
-            return () => clearInterval(timer);
-        }
-    }, [turnstileToken]);
+    const { token: turnstileToken, reset: resetTurnstile, containerRef: turnstileRef } = useTurnstile();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -76,7 +52,7 @@ const EmailCheckupView = ({ setView }) => {
 
             setStatus('success');
             setFormData({ name: '', email: '', domain: '', notes: '', _honeypot: '' });
-            setTurnstileToken('');
+            resetTurnstile();
         } catch (err) {
             console.error('Checkup submission error:', err.message);
             setErrorMessage(`Something went wrong. Try again or email me at ${SITE_CONFIG.email}.`);
@@ -177,7 +153,7 @@ const EmailCheckupView = ({ setView }) => {
                                 )}
 
                                 <div className="flex justify-start py-2">
-                                    <div id="turnstile-container-checkup"></div>
+                                    <div ref={turnstileRef}></div>
                                 </div>
 
                                 <button type="submit" disabled={status === 'loading' || !turnstileToken}

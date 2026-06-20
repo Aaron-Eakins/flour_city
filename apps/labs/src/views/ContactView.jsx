@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import LogoIcon from '../components/common/LogoIcon';
 import { supabase } from '../lib/supabaseClient';
+import { useTurnstile } from '../hooks/useTurnstile';
 
 const ContactView = ({ setView }) => {
     const { user } = useAuth();
@@ -30,32 +31,7 @@ const ContactView = ({ setView }) => {
     
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [errorMessage, setErrorMessage] = useState('');
-    const [turnstileToken, setTurnstileToken] = useState('');
-
-    useEffect(() => {
-        const initTurnstile = () => {
-            const container = document.getElementById('turnstile-container-contact');
-            if (window.turnstile && container && !turnstileToken) {
-                window.turnstile.render('#turnstile-container-contact', {
-                    sitekey: '0x4AAAAAAC6yWDKB2X7isRW7',
-                    callback: (token) => setTurnstileToken(token),
-                    theme: 'light'
-                });
-            }
-        };
-
-        if (window.turnstile) {
-            initTurnstile();
-        } else {
-            const timer = setInterval(() => {
-                if (window.turnstile) {
-                    initTurnstile();
-                    clearInterval(timer);
-                }
-            }, 500);
-            return () => clearInterval(timer);
-        }
-    }, [turnstileToken]);
+    const { token: turnstileToken, reset: resetTurnstile, containerRef: turnstileRef } = useTurnstile();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -105,7 +81,7 @@ const ContactView = ({ setView }) => {
 
             setStatus('success');
             setFormData({ name: '', email: '', category: '3D printing', subject: '', message: '', _honeypot: '' });
-            setTurnstileToken(''); // Clear token for next time
+            resetTurnstile(); // Clear token for next time
         } catch (err) {
             console.error('Contact error:', err.message);
             setErrorMessage(`Something went wrong. Please try again or email me directly at ${SITE_CONFIG.email}.`);
@@ -239,7 +215,7 @@ const ContactView = ({ setView }) => {
 
                                     {/* Turnstile Container */}
                                     <div className="flex justify-start py-2">
-                                        <div id="turnstile-container-contact"></div>
+                                        <div ref={turnstileRef}></div>
                                     </div>
 
                                     <button 
