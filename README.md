@@ -17,8 +17,9 @@ Web and email consulting for Rochester, NY small businesses. This monorepo conta
 | `apps/email-worker` | Cloudflare Email Worker + Resend | Inbound email → deliverability analysis → plain-English reply |
 | `apps/email-parser` | Node.js CLI | Standalone email header parser (development/testing tool) |
 | `apps/slicer` | Next.js 16 + Prisma + Neon + Stripe + Resend | 3D printing order platform (partially built, not live — future work for flourcityprints.com) |
+| `shared/email-core` | Pure ESM (zero dependencies) | Shared email header parser + deliverability analyzer, imported by labs, the worker, and the CLI |
 
-Each app is independent. Run commands from inside the app directory.
+The repo is an **npm workspace**: run `npm install` once at the root, then per-app commands (`dev` / `build` / `test`) from each app directory. `apps/slicer` is intentionally excluded from the workspace (not live, native deps).
 
 ---
 
@@ -30,6 +31,7 @@ The system spans three deployment targets and three runtime environments:
 - **Supabase Edge Functions** (`apps/labs/supabase/functions/`) — two Deno functions. `send-notification` handles form submissions with Turnstile bot verification and Resend notifications. `inbound-reply` handles email reply threading: PostalMime parses the raw message, EmailReplyParser strips quoted content, the reply goes to Supabase as a project note and forwards to the client via Resend with `In-Reply-To` and `References` headers.
 - **Vite + React SPA** (`apps/labs`) — deployed on Vercel, auto-deploys from main. Hosts the marketing site, in-browser email analyzer, contact and checkup forms, and an authenticated client project dashboard at `/profile`.
 - **Next.js 16 app** (`apps/slicer`) — partially built 3D printing order platform. Not deployed; future work for `flourcityprints.com`.
+- **Shared core** (`shared/email-core`) — the email header parser and deliverability analyzer live in one pure, dependency-free ESM package. The browser analyzer, the email worker, and the CLI all import the same implementation, so there's one set of logic and one test suite behind three runtimes.
 
 The interesting engineering decisions are documented in the code and inline notes: the email worker README covers the three-tier severity design, dual-audience report structure, and why the intake inbox is intentionally permissive.
 
@@ -50,6 +52,19 @@ The browser paths (file + paste) check headers only. The email path also does li
 **Blacklist and reputation checks** are planned — likely linking out to or embedding MXToolbox lookups.
 
 See [`apps/email-worker/README.md`](apps/email-worker/README.md) for deployment details.
+
+---
+
+## Testing
+
+The valuable logic — the email header parser and deliverability analyzer in `shared/email-core` — is covered by a **characterization test suite**: a corpus of `.eml` fixtures that each isolate one behavior (SPF/DKIM/DMARC pass and fail, the DMARC `p=none` advisory, From/Return-Path mismatch vs. legitimate subdomain, folded headers, unusually slow hops, a missing Received chain). The same corpus runs against both the shared package and the CLI, proving every consumer agrees on behavior.
+
+```bash
+npm install            # once, at the repo root (npm workspace)
+npm test --workspaces  # runs every package's test suite
+```
+
+UI views and I/O surfaces (Resend, DNS, Supabase) are integration boundaries — smoke-tested, not unit-tested. New pure logic is written test-first (TDD); existing behavior is pinned with characterization tests before any refactor.
 
 ---
 
@@ -129,21 +144,22 @@ Auth is a custom env-var password check (`ADMIN_PASSWORD`). There is no per-rout
 ## Running locally
 
 ```bash
+# One-time install at the repo root — npm workspace links labs, worker,
+# email-parser, and shared/email-core together.
+npm install
+
 # Marketing site + browser Header Analyzer
-cd apps/labs
-npm install
-npm run dev          # http://localhost:5173
+npm run dev -w apps/labs                                          # http://localhost:5173
 
-# Email parser CLI
-cd apps/email-parser
-npm install
-node src/index.js fixtures/synthetic.eml
-node src/index.js --json path/to/file.eml
+# Email parser CLI (runs against the shared fixture corpus)
+node apps/email-parser/src/index.js shared/email-core/fixtures/synthetic.eml
+node apps/email-parser/src/index.js --json path/to/file.eml
 
-# 3D printing app
-cd apps/slicer
-npm install
-npm run dev          # http://localhost:3000
+# Email worker (local)
+npm run dev -w apps/email-worker
+
+# 3D printing app (NOT in the workspace — install separately)
+cd apps/slicer && npm install && npm run dev                      # http://localhost:3000
 ```
 
 ---
