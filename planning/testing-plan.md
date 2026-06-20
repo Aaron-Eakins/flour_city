@@ -134,6 +134,12 @@ corpus across all three implementations so they're provably equivalent:
 
 ### Phases
 
+> **Status (2026-06-20):** Phases 1–4 ✅ done on branch `chore/testing-and-shared-core`.
+> `shared/email-core` is live; all three apps import it; characterization suites green
+> (13 each); labs build + worker dry-run verified. Remaining: 5 (broaden suite + scripts),
+> 6 (CI), 7 (edge-function logic). Also surfaced + fixed a pre-existing build-breaking
+> typo in the labs Email Analyzer CTA (see commit `529bcbb`).
+
 1. **Characterization tests first (against canonical `email-parser`).**
    Table-driven `node:test` over the fixture corpus asserting: hop count + order,
    per-hop deltas, parsed auth results, and the exact `flags` array. This pins
