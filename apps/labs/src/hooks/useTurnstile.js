@@ -1,40 +1,37 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { SITE_CONFIG } from '../constants/site';
 
-// Shared Cloudflare Turnstile hook. Replaces the duplicated render-and-poll
-// pattern that lived in every form (QuoteLab, ContactView, EmailCheckupView,
-// ProjectNoteForm).
+// Shared Cloudflare Turnstile hook with DEFERRED execution.
 //
-// Key behavior change: the widget renders with appearance 'interaction-only', so
-// it stays invisible while the user browses and completes the managed challenge
-// in the background — no more Turnstile box appearing on every form. It only
-// surfaces UI if Cloudflare actually requires human interaction. The token still
-// arrives via the callback, so the existing "submit disabled until token" flow is
-// unchanged.
+// The widget renders as a small idle indicator but does NOT run the challenge on
+// load — it only runs when execute() is called, which the forms do on submit. This
+// replaces the duplicated render-and-poll pattern AND the old behavior where the
+// challenge fired on every form view.
 //
 // Usage:
-//   const { token, reset, containerRef } = useTurnstile();
-//   ...
-//   <div ref={containerRef} />            // mount point (was an id'd div)
-//   ...submit: guard on `token`, send it, then call `reset()` on success.
+//   const { execute, reset, containerRef } = useTurnstile();
+//   <div ref={containerRef} />               // the visible Turnstile indicator
+//   // in submit handler:
+//   const token = await execute();
+//   if (!token) { ...show verification error... } else { ...send with token... }
 export function useTurnstile() {
-  const [token, setToken] = useState('');
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
+  // Holds the in-flight execute() resolver so Turnstile's callbacks can settle it.
+  const settleRef = useRef(null);
 
   useEffect(() => {
     let pollTimer = null;
 
     const render = () => {
-      // Render once, only when the script is ready and the mount point exists.
       if (!window.turnstile || !containerRef.current || widgetIdRef.current !== null) return;
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: SITE_CONFIG.TURNSTILE_SITE_KEY,
-        appearance: 'interaction-only',
+        execution: 'execute', // defer the challenge until execute() is called (on submit)
         theme: 'light',
-        callback: (t) => setToken(t),
-        'error-callback': () => setToken(''),
-        'expired-callback': () => setToken(''),
+        callback: (t) => { settleRef.current?.(t); },
+        'error-callback': () => { settleRef.current?.(''); },
+        'timeout-callback': () => { settleRef.current?.(''); },
       });
     };
 
@@ -52,8 +49,6 @@ export function useTurnstile() {
 
     return () => {
       if (pollTimer) clearInterval(pollTimer);
-      // Tear the widget down on unmount so SPA navigation doesn't leave orphans
-      // or double-render on return.
       if (widgetIdRef.current !== null && window.turnstile) {
         try { window.turnstile.remove(widgetIdRef.current); } catch { /* already gone */ }
         widgetIdRef.current = null;
@@ -61,12 +56,37 @@ export function useTurnstile() {
     };
   }, []);
 
+  // Run the challenge now; resolves with a fresh token, or '' on error/timeout.
+  // Call this from the submit handler so the challenge only runs on a real click.
+  const execute = useCallback(() => new Promise((resolve) => {
+    if (!window.turnstile || widgetIdRef.current === null) { resolve(''); return; }
+
+    let done = false;
+    let safety;
+    const settle = (t) => {
+      if (done) return;
+      done = true;
+      clearTimeout(safety);
+      settleRef.current = null;
+      resolve(t || '');
+    };
+    // Never let a silent Turnstile hang the form.
+    safety = setTimeout(() => settle(''), 20000);
+    settleRef.current = settle;
+
+    try {
+      window.turnstile.reset(widgetIdRef.current);   // clear any prior result
+      window.turnstile.execute(widgetIdRef.current); // run the managed challenge now
+    } catch {
+      settle('');
+    }
+  }), []);
+
   const reset = useCallback(() => {
-    setToken('');
     if (widgetIdRef.current !== null && window.turnstile) {
       try { window.turnstile.reset(widgetIdRef.current); } catch { /* no-op */ }
     }
   }, []);
 
-  return { token, reset, containerRef };
+  return { execute, reset, containerRef };
 }

@@ -15,7 +15,7 @@ const QuoteLab = ({
     const [materials, setMaterials] = useState({});
     const [isLoadingMaterials, setIsLoadingMaterials] = useState(true);
     const [error, setError] = useState(null);
-    const { token: turnstileToken, containerRef: turnstileRef } = useTurnstile();
+    const { execute: executeTurnstile, containerRef: turnstileRef } = useTurnstile();
 
     useEffect(() => {
         const fetchMaterials = async () => {
@@ -130,8 +130,10 @@ const QuoteLab = ({
             return;
         }
 
+        // Run the Turnstile challenge on click, then require a token.
+        const turnstileToken = await executeTurnstile();
         if (!turnstileToken) {
-            setError('Security verification required');
+            setError('Security verification failed. Please try again.');
             return;
         }
 
@@ -481,7 +483,6 @@ const QuoteLab = ({
 
                             <button
                                 type="submit"
-                                disabled={!turnstileToken}
                                 className="w-full py-6 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-sm tracking-[0.4em] hover:bg-[#1A1B1E] hover:text-white transition-all shadow-2xl mt-4 disabled:opacity-50"
                             >
                                 Send for review

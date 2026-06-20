@@ -15,16 +15,10 @@ const EmailCheckupView = ({ setView }) => {
     });
     const [status, setStatus] = useState('idle');
     const [errorMessage, setErrorMessage] = useState('');
-    const { token: turnstileToken, reset: resetTurnstile, containerRef: turnstileRef } = useTurnstile();
+    const { execute: executeTurnstile, reset: resetTurnstile, containerRef: turnstileRef } = useTurnstile();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!turnstileToken) {
-            setErrorMessage('Security verification required.');
-            setStatus('error');
-            return;
-        }
 
         if (formData._honeypot) {
             setStatus('success');
@@ -32,6 +26,14 @@ const EmailCheckupView = ({ setView }) => {
         }
 
         setStatus('loading');
+
+        // Run the Turnstile challenge on click, then require a token.
+        const turnstileToken = await executeTurnstile();
+        if (!turnstileToken) {
+            setErrorMessage('Security verification failed. Please try again.');
+            setStatus('error');
+            return;
+        }
 
         try {
             const message = `[Email Checkup Request]\nDomain: ${formData.domain}${formData.notes ? `\n\n${formData.notes}` : ''}`;
@@ -156,7 +158,7 @@ const EmailCheckupView = ({ setView }) => {
                                     <div ref={turnstileRef}></div>
                                 </div>
 
-                                <button type="submit" disabled={status === 'loading' || !turnstileToken}
+                                <button type="submit" disabled={status === 'loading'}
                                     className="w-full py-5 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center justify-center gap-3 disabled:opacity-50">
                                     <span>{status === 'loading' ? 'Sending...' : 'Request checkup'}</span>
                                     {status !== 'loading' && <Send size={14} />}

@@ -12,21 +12,28 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
     const [errorMessage, setErrorMessage] = useState('');
     // Turnstile is only needed for guests; the mount point below renders only when
     // !user, so the hook simply won't attach a widget for authenticated users.
-    const { token: turnstileToken, containerRef: turnstileRef } = useTurnstile();
+    const { execute: executeTurnstile, containerRef: turnstileRef } = useTurnstile();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!content.trim() || isSubmitting) return;
-        if (!user && !turnstileToken) {
-            setErrorMessage('Security verification required');
-            setStatus('error');
-            return;
-        }
 
         setIsSubmitting(true);
         setStatus('idle');
         setErrorMessage('');
+
+        // Guests must pass Turnstile (challenge runs on submit); authed users skip it.
+        let turnstileToken = '';
+        if (!user) {
+            turnstileToken = await executeTurnstile();
+            if (!turnstileToken) {
+                setErrorMessage('Security verification failed. Please try again.');
+                setStatus('error');
+                setIsSubmitting(false);
+                return;
+            }
+        }
 
         try {
             const { data: note, error } = await supabase
@@ -85,7 +92,7 @@ const ProjectNoteForm = ({ quoteId, onNoteAdded }) => {
                 />
                 <button
                     type="submit"
-                    disabled={isSubmitting || !content.trim() || (!user && !turnstileToken)}
+                    disabled={isSubmitting || !content.trim()}
                     className="absolute bottom-3 right-3 p-2 bg-[#1A1B1E] text-white rounded-sm hover:bg-[#D4A017] transition-all disabled:opacity-50"
                 >
                     <Send size={14} />

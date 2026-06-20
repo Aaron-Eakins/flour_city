@@ -31,19 +31,12 @@ const ContactView = ({ setView }) => {
     
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [errorMessage, setErrorMessage] = useState('');
-    const { token: turnstileToken, reset: resetTurnstile, containerRef: turnstileRef } = useTurnstile();
+    const { execute: executeTurnstile, reset: resetTurnstile, containerRef: turnstileRef } = useTurnstile();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // 1. Bot check
-        if (!turnstileToken) {
-            setErrorMessage('Security verification required');
-            setStatus('error');
-            return;
-        }
 
-        // 2. Honeypot check: If the hidden field is filled, it's a bot
+        // 1. Honeypot check: If the hidden field is filled, it's a bot
         if (formData._honeypot) {
             console.warn('Spam detected via honeypot.');
             setStatus('success'); // Pretend success to bot
@@ -51,7 +44,15 @@ const ContactView = ({ setView }) => {
         }
 
         setStatus('loading');
-        
+
+        // 2. Run the Turnstile challenge now (on click), then require a token.
+        const turnstileToken = await executeTurnstile();
+        if (!turnstileToken) {
+            setErrorMessage('Security verification failed. Please try again.');
+            setStatus('error');
+            return;
+        }
+
         try {
             const composedMessage = `[${formData.category}] ${formData.subject}\n\n${formData.message}`;
 
@@ -219,7 +220,7 @@ const ContactView = ({ setView }) => {
                                     </div>
 
                                     <button 
-                                        disabled={status === 'loading' || !turnstileToken}
+                                        disabled={status === 'loading'}
                                         className="w-full py-5 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center justify-center space-x-3 disabled:opacity-50"
                                     >
                                         <span>{status === 'loading' ? 'Sending...' : 'Send message'}</span>
