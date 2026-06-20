@@ -1,9 +1,9 @@
 import {
   parseReceivedChain, parseAllHeaders,
-  analyze, getSenderDomain, getSenderEmail, getDkimSelector,
+  analyze, getSenderDomain, getSenderEmail, getDkimSelector, summarize,
 } from '@flour-city/email-core';
 import { lookupAll } from './dns.js';
-import { formatReport, getProblems } from './report.js';
+import { formatReport } from './report.js';
 import { formatReportHtml } from './report-html.js';
 
 async function readRaw(stream) {
@@ -37,7 +37,7 @@ export default {
     }
 
     const reportDomain = domain || message.from;
-    const { warns, fails } = getProblems({ dns, flags: headerAnalysis.flags });
+    const { warns, fails } = summarize({ dns, flags: headerAnalysis.flags });
     const plainBody = formatReport({ domain: reportDomain, headerAnalysis, dns });
     const htmlBody = formatReportHtml({ domain: reportDomain, headerAnalysis, dns });
 

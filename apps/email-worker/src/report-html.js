@@ -1,5 +1,5 @@
 // HTML email report — all styles inline, table-based layout for Outlook compat
-import { getProblems } from './report.js';
+import { summarize, SLOW_HOP_SECONDS } from '@flour-city/email-core';
 
 const DARK = '#1A1B1E';
 const GOLD = '#D4A017';
@@ -59,7 +59,7 @@ function section(title, intro, rows) {
 export function formatReportHtml({ domain, headerAnalysis, dns }) {
   const { authResults, hopDeltas, flags } = headerAnalysis;
   const auth = authResults[0] || {};
-  const { warns, fails } = getProblems({ dns, flags });
+  const { warns, fails } = summarize({ dns, flags });
 
   // ── Header auth rows ──────────────────────────────────────────────
   const authRows = [];
@@ -221,9 +221,9 @@ export function formatReportHtml({ domain, headerAnalysis, dns }) {
     .filter(h => h.delta !== null)
     .map(h => row({
       label: `Hop ${h.order}`,
-      status: h.delta > 60 ? 'warn' : 'pass',
+      status: h.delta > SLOW_HOP_SECONDS ? 'warn' : 'pass',
       detail: `${h.delta}s`,
-      summary: h.delta > 60
+      summary: h.delta > SLOW_HOP_SECONDS
         ? 'Worth noting. This hop took longer than usual — could be a relay configuration issue.'
         : 'Looks good. The message reached the mail server without delay.',
       subtext: null,

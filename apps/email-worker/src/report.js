@@ -1,28 +1,9 @@
 // Formats the plain-text reply email body
+import { summarize, SLOW_HOP_SECONDS } from '@flour-city/email-core';
 
 function pass(label) { return `✓ ${label}`; }
 function fail(label) { return `✗ ${label}`; }
 function warn(label) { return `⚠ ${label}`; }
-
-export function getProblems({ dns, flags }) {
-  const flagFails = flags.filter(f => /hard fail|dkim.*fail|dmarc.*fail/i.test(f));
-  const flagWarns = flags.filter(f => !flagFails.includes(f));
-
-  const fails = [
-    !dns.spf.found && 'No SPF record',
-    !dns.dkim.found && dns.dkim.selector !== null && 'DKIM key missing',
-    ...flagFails,
-  ].filter(Boolean);
-
-  const warns = [
-    !dns.dmarc.found && 'No DMARC record',
-    dns.dmarc.found && dns.dmarc.policy === 'none' && 'DMARC policy is p=none — monitoring only, not yet enforcing',
-    dns.dmarc.found && dns.dmarc.orgDomain && `DMARC inherited from ${dns.dmarc.orgDomain} — consider a subdomain-specific record`,
-    ...flagWarns,
-  ].filter(Boolean);
-
-  return { warns, fails };
-}
 
 export function formatReport({ domain, headerAnalysis, dns }) {
   const { authResults, hopDeltas, flags } = headerAnalysis;
@@ -132,14 +113,14 @@ export function formatReport({ domain, headerAnalysis, dns }) {
     lines.push('ROUTING');
     lines.push('-'.repeat(30));
     for (const h of hops) {
-      const slow = h.delta > 60;
+      const slow = h.delta > SLOW_HOP_SECONDS;
       lines.push(`  Hop ${h.order}: ${h.delta}s${slow ? ' ⚠ unusually slow' : ''}`);
     }
     lines.push('');
   }
 
   // --- Summary verdict ---
-  const { warns, fails } = getProblems({ dns, flags });
+  const { warns, fails } = summarize({ dns, flags });
 
   lines.push('SUMMARY');
   lines.push('-'.repeat(30));

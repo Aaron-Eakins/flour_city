@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Upload, AlertTriangle, CheckCircle, XCircle, Clock, ArrowRight, FileText, Mail } from 'lucide-react';
 import {
   parseReceivedChain, splitHeaders, unfoldHeaders,
-  analyze, parseHeadersFromText,
+  analyze, parseHeadersFromText, summarize, SLOW_HOP_SECONDS,
 } from '@flour-city/email-core';
 import { supabase } from '../lib/supabaseClient.js';
 
@@ -56,7 +56,7 @@ function HopCard({ hop, delta }) {
     ? '?'
     : `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}s`;
 
-  const delayed = delta !== null && delta > 60;
+  const delayed = delta !== null && delta > SLOW_HOP_SECONDS;
 
   return (
     <div className="border border-white/10 p-5 space-y-3">
@@ -213,6 +213,9 @@ export default function EmailAnalyzerView({ setView }) {
 
   const deltaMap = result ? new Map(result.analysis.hopDeltas.map(d => [d.order, d.delta])) : null;
   const hasFlags = result?.analysis.flags.length > 0;
+  // Browser path is header-only (no DNS), so the verdict comes from the flags alone —
+  // same shared classifier the email report uses, so severities agree across surfaces.
+  const verdict = result ? summarize({ flags: result.analysis.flags }) : { fails: [], warns: [] };
 
   return (
     <div className="min-h-screen bg-[#1A1B1E] pt-28 pb-24 px-6">
@@ -389,13 +392,29 @@ export default function EmailAnalyzerView({ setView }) {
                 Flags
               </h2>
               {hasFlags ? (
-                <div className="space-y-2">
-                  {result.analysis.flags.map((flag, i) => (
-                    <div key={i} className="flex items-start gap-3 border border-red-500/20 bg-red-500/5 p-4">
-                      <AlertTriangle size={14} className="text-red-400 mt-0.5 shrink-0" />
-                      <span className="text-sm text-red-300 font-mono">{flag}</span>
+                <div className="space-y-4">
+                  {verdict.fails.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-red-400">Needs attention</p>
+                      {verdict.fails.map((flag, i) => (
+                        <div key={`fail-${i}`} className="flex items-start gap-3 border border-red-500/20 bg-red-500/5 p-4">
+                          <XCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
+                          <span className="text-sm text-red-300 font-mono">{flag}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
+                  {verdict.warns.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-amber-400">Worth improving</p>
+                      {verdict.warns.map((flag, i) => (
+                        <div key={`warn-${i}`} className="flex items-start gap-3 border border-amber-500/20 bg-amber-500/5 p-4">
+                          <AlertTriangle size={14} className="text-amber-400 mt-0.5 shrink-0" />
+                          <span className="text-sm text-amber-300 font-mono">{flag}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center gap-3 border border-emerald-500/20 bg-emerald-500/5 p-4">
