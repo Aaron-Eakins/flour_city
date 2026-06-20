@@ -272,3 +272,64 @@ Process / About views. The slicer app is future work for a possible
   base64 cookie, no auth middleware) are **not** production-exposed today because
   slicer isn't deployed — but they must be fixed before any flourcityprints launch.
   Tracked here so they aren't forgotten.
+
+---
+
+## Part 5 — Astro migration: feasibility, limitations, what survives (NOT scheduled)
+
+Captured 2026-06-20 as reference. **Decision: not doing this now.** The site is
+~70% interactive, so Astro's payoff (zero-JS static pages, SEO) is modest here while
+the migration cost/risk is high. Notes for if/when it's revisited.
+
+### Why this site is an awkward Astro fit
+
+Astro is content-first: its superpower is shipping static HTML with zero JS, hydrating
+only interactive "islands." That rewards content-heavy sites. This site is the inverse —
+the analyzer, QuoteLab, AuthModal, the `/profile` dashboard, and all the forms are
+interactive. Those don't get faster or simpler under Astro; they become **client
+islands** running the same React. You don't *lose* functionality, but you also don't
+gain much, and you take on new structural problems:
+
+- **Global state across islands is the hard part (and likely what broke the last
+  attempt).** Today `AuthContext` wraps the entire SPA, so nav auth state, forms, and
+  the dashboard all share one session. Astro islands are **isolated** by default — a
+  React context in one island does not reach another. Sharing auth across islands on a
+  page means either nano-stores (Astro's recommended cross-island store), collapsing
+  related UI into one big island, or re-deriving auth per island. Design this up front.
+- **Client-side routing changes.** The SPA navigates via `setView(...)` with instant
+  swaps and `animate-in` mount transitions. Astro is MPA by default (real page loads).
+  Astro **View Transitions** can restore an SPA-like feel, but the `setView`
+  architecture doesn't map 1:1 — navigation gets restructured page by page.
+
+### What survives (the animation question)
+
+- **CSS / Tailwind animations, transitions, hover states, keyframes** — survive fully;
+  they're just CSS, framework-agnostic.
+- **Animations inside a React island** (analyzer result reveal, QuoteLab step
+  transitions) — survive, because the island is still React.
+- **Scroll- / IntersectionObserver-driven animations** — survive (vanilla JS or island).
+- **Harder:** animations tied to SPA *route* transitions (the fade between views on
+  `setView`). These don't carry over directly — they'd be re-expressed via Astro View
+  Transitions, which animate page swaps with a different model.
+
+### What a fresh start would take (high level)
+
+1. Scaffold Astro + Tailwind v4 + the existing design tokens; **pixel-match one static
+   page (Home hero) before porting anything else** — catches CSS/animation drift early.
+2. Port the static/marketing pages as `.astro` (About, Heritage, Process, Materials,
+   Legal, TOS, Privacy) — this is the real Astro win (fast, SEO-friendly).
+3. Bring interactive pieces over as React islands, reusing them largely as-is: Email
+   Analyzer, QuoteLab, Contact/Checkup forms, AuthModal, `/profile`, `useTurnstile`.
+   Import `@flour-city/email-core` directly (works if Astro lives in this workspace).
+4. **Decide the auth-across-islands strategy first** (nano-stores vs. single app-shell
+   island) — the riskiest piece.
+5. Map routes file-based; add View Transitions for SPA-like navigation/animation.
+6. Deploy on **Cloudflare Pages** to a throwaway domain (`flourcitylab.com`), carrying
+   the npm-workspace + fresh-install lessons from `apps/labs/vercel.json`. Isolated from
+   the live Vercel site.
+
+### Pragmatic alternative
+
+If SEO ever becomes the real goal, consider porting **only the marketing pages** to
+Astro (or adding selective prerendering) rather than migrating the whole app — keep the
+Vite SPA for the interactive surfaces. Lower risk, captures most of the SEO benefit.
