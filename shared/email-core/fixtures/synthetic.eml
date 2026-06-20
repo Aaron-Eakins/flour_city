@@ -1,0 +1,25 @@
+Received: from mail.mta2.example.net (mta2.example.net [203.0.113.42])
+        by mx.recipient.test (Postfix) with ESMTPS id 4ABCD1234EF
+        for <inbox@recipient.test>; Mon, 09 Jun 2026 15:00:05 +0000 (UTC)
+Received: from mail.mta1.example.net (mta1.example.net [198.51.100.17])
+        by mta2.example.net (Postfix) with ESMTPS id 7FGH5678IJK
+        for <inbox@recipient.test>; Mon, 09 Jun 2026 15:00:03 +0000 (UTC)
+Received: from submit.sender.test (submit.sender.test [192.0.2.100])
+        by mta1.example.net (Postfix) with LMTP id LMN9012OPQ
+        for <inbox@recipient.test>; Mon, 09 Jun 2026 15:00:01 +0000 (UTC)
+Authentication-Results: mx.recipient.test;
+        dkim=pass header.d=sender.test;
+        spf=pass (mx.recipient.test: 192.0.2.100 is permitted sender for sender.test) smtp.mailfrom=noreply@sender.test;
+        dmarc=pass (p=quarantine) header.from=sender.test
+DKIM-Signature: v=1; a=rsa-sha256; d=sender.test; s=default;
+        h=from:to:subject:date:message-id;
+        bh=abc123def456==;
+        b=xyz789==
+From: Alice Example <alice@sender.test>
+To: Bob Test <inbox@recipient.test>
+Return-Path: <noreply@sender.test>
+Subject: Test message for header analysis
+Date: Mon, 09 Jun 2026 15:00:00 +0000
+Message-ID: <20260609150000.abc123@sender.test>
+
+This is the body of the test message. It is not parsed.

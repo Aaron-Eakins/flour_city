@@ -1,0 +1,18 @@
+Received: from mx.recipient.test (mx.recipient.test [198.51.100.10])
+        by mx.recipient.test (Postfix) with ESMTPS id OOO555
+        for <inbox@recipient.test>; Mon, 09 Jun 2026 15:01:30 +0000 (UTC)
+Received: from submit.sender.test (submit.sender.test [192.0.2.100])
+        by mta1.example.net (Postfix) with ESMTP id PPP666
+        for <inbox@recipient.test>; Mon, 09 Jun 2026 15:00:00 +0000 (UTC)
+Authentication-Results: mx.recipient.test;
+        spf=pass (mx.recipient.test: 192.0.2.100 is permitted sender for sender.test) smtp.mailfrom=noreply@sender.test;
+        dkim=pass header.d=sender.test;
+        dmarc=pass (p=quarantine) header.from=sender.test
+From: Alice Example <alice@sender.test>
+To: Bob Test <inbox@recipient.test>
+Return-Path: <noreply@sender.test>
+Subject: Slow hop fixture (90s gap)
+Date: Mon, 09 Jun 2026 15:00:00 +0000
+Message-ID: <slow-hop@sender.test>
+
+Body is not parsed.

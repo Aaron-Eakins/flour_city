@@ -1,0 +1,15 @@
+{
+  "name": "@flour-city/email-core",
+  "version": "1.0.0",
+  "description": "Shared email header parser + deliverability analyzer — pure, dependency-free ESM. Consumed by the labs browser analyzer, the Cloudflare email worker, and the email-parser CLI.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./parser": "./src/parser.js",
+    "./analyzer": "./src/analyzer.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

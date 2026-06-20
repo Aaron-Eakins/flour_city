@@ -1,0 +1,12 @@
+Authentication-Results: mx.recipient.test;
+        spf=pass (mx.recipient.test: 192.0.2.100 is permitted sender for sender.test) smtp.mailfrom=noreply@sender.test;
+        dkim=pass header.d=sender.test;
+        dmarc=pass (p=quarantine) header.from=sender.test
+From: Alice Example <alice@sender.test>
+To: Bob Test <inbox@recipient.test>
+Return-Path: <noreply@sender.test>
+Subject: No Received chain fixture
+Date: Mon, 09 Jun 2026 15:00:00 +0000
+Message-ID: <no-received@sender.test>
+
+Body is not parsed.

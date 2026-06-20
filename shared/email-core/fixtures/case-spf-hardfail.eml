@@ -1,0 +1,18 @@
+Received: from evil.spammer.test (evil.spammer.test [203.0.113.99])
+        by mx.recipient.test (Postfix) with ESMTPS id AAA111
+        for <inbox@recipient.test>; Mon, 09 Jun 2026 15:00:03 +0000 (UTC)
+Received: from submit.sender.test (submit.sender.test [192.0.2.100])
+        by mta1.example.net (Postfix) with ESMTP id BBB222
+        for <inbox@recipient.test>; Mon, 09 Jun 2026 15:00:01 +0000 (UTC)
+Authentication-Results: mx.recipient.test;
+        spf=fail (mx.recipient.test: 203.0.113.99 is not permitted sender for sender.test) smtp.mailfrom=noreply@sender.test;
+        dkim=pass header.d=sender.test;
+        dmarc=pass (p=none) header.from=sender.test
+From: Alice Example <alice@sender.test>
+To: Bob Test <inbox@recipient.test>
+Return-Path: <noreply@sender.test>
+Subject: SPF hard fail fixture
+Date: Mon, 09 Jun 2026 15:00:00 +0000
+Message-ID: <spf-hardfail@sender.test>
+
+Body is not parsed.
