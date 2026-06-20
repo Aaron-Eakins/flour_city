@@ -10,7 +10,8 @@ const DimensionedHeader = ({
     line2,
     layerHt = "0.08mm",
     partWd = "114.2mm",
-    variant = "dark"
+    variant = "dark",
+    showUnits = true // false drops the "Ht_"/"Wd_" drafting prefixes (e.g. on email pages)
 }) => {
     const isDark = variant === "dark";
     const textColor = isDark ? "text-[#F2F1EF]" : "text-[#1A1B1E]";
@@ -28,7 +29,7 @@ const DimensionedHeader = ({
                         className="text-[8px] md:text-[10px] font-mono font-black tracking-[0.4em] text-[#D4A017] uppercase whitespace-nowrap"
                         style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
                     >
-                        Ht_{layerHt}
+                        {showUnits ? `Ht_${layerHt}` : layerHt}
                     </p>
                 </div>
 
@@ -56,7 +57,7 @@ const DimensionedHeader = ({
                     <div className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-3 bg-[#D4A017]"></div>
                     <div className="absolute top-8 md:top-10 left-1/2 -translate-x-1/2 opacity-80">
                         <p className="text-[8px] md:text-[10px] font-mono font-black tracking-[0.4em] text-[#D4A017] uppercase whitespace-nowrap">
-                            Wd_{partWd}
+                            {showUnits ? `Wd_${partWd}` : partWd}
                         </p>
                     </div>
                 </div>
