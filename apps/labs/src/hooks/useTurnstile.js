@@ -27,7 +27,8 @@ export function useTurnstile() {
       if (!window.turnstile || !containerRef.current || widgetIdRef.current !== null) return;
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: SITE_CONFIG.TURNSTILE_SITE_KEY,
-        execution: 'execute', // defer the challenge until execute() is called (on submit)
+        execution: 'execute',  // defer the challenge until execute() is called (on submit)
+        appearance: 'execute', // stay invisible until execute() runs — no idle box
         theme: 'light',
         callback: (t) => { settleRef.current?.(t); },
         'error-callback': () => { settleRef.current?.(''); },
