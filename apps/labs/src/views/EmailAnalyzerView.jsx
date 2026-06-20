@@ -230,7 +230,7 @@ export default function EmailAnalyzerView({ setView }) {
         </div>
 
         {/* Primary CTA — email-in flow */}
-        <
+        <a
             href="mailto:analyze@flourcitylabs.com?subject=Header Analysis Request&body=Just hit send and you'll get your deliverability report in a few minutes!"
             rel="noopener noreferrer"
             onClick={(e) => {
