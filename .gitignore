@@ -42,7 +42,7 @@ lerna-debug.log*
 .claude/
 src/generated/prisma
 
-# Planning and Notes
-planning/
+# Planning: the planning/ folder is public (portfolio), but working notes stay private
+planning/notes/
 CLAUDE.md
 **/IMPLEMENTATION_NOTES.md
