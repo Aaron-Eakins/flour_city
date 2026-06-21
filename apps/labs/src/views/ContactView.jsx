@@ -4,6 +4,7 @@ import { SITE_CONFIG } from '../constants/site';
 import { useAuth } from '../context/AuthContext';
 
 import DimensionedHeader from '../components/common/DimensionedHeader';
+import Button from '../components/common/Button';
 import LogoIcon from '../components/common/LogoIcon';
 import { supabase } from '../lib/supabaseClient';
 import { useTurnstile } from '../hooks/useTurnstile';
@@ -129,9 +130,9 @@ const ContactView = ({ setView }) => {
                             </div>
                             <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Send me your domain and I'll check SPF, DKIM, DMARC, MX, and blacklist status, then email you what's broken and how to fix it. No charge for the first look.</p>
                             <div className="pt-4">
-                                <button onClick={() => setView('email?section=analyzer')} className="w-full py-4 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                                <Button variant="primary" size="sm" fullWidth onClick={() => setView('email?section=analyzer')}>
                                     Start a checkup <ArrowRight size={12} />
-                                </button>
+                                </Button>
                             </div>
                         </section>
                     </div>
@@ -237,13 +238,10 @@ const ContactView = ({ setView }) => {
                                         <div ref={turnstileRef}></div>
                                     </div>
 
-                                    <button 
-                                        disabled={status === 'loading'}
-                                        className="w-full py-5 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center justify-center space-x-3 disabled:opacity-50"
-                                    >
+                                    <Button variant="secondary" fullWidth type="submit" disabled={status === 'loading'}>
                                         <span>{status === 'loading' ? 'Sending...' : 'Send message'}</span>
                                         {status !== 'loading' && <Send size={14} />}
-                                    </button>
+                                    </Button>
                                 </form>
                             )}
                         </div>

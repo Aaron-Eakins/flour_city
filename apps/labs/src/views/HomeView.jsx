@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mail, ChevronRight, ArrowRight } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
+import Button from '../components/common/Button';
 import LogoIcon from '../components/common/LogoIcon';
 
 const HomeView = (props) => (
@@ -25,9 +26,9 @@ const HomeView = (props) => (
                         />
                     </div>
                     <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Is your email landing in spam? Are your DNS records a mess? Most small businesses don't know what they're losing until a customer says they never got the invoice. I find what's broken and fix it.</p>
-                    <button onClick={() => props.setView('email')} className="px-10 py-5 bg-[#D4A017] text-[#1A1B1E] font-black rounded-sm flex items-center space-x-3 hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl">
+                    <Button variant="primary" size="lg" className="shadow-xl" onClick={() => props.setView('email')}>
                         <span>Get a Free Email Checkup</span><ChevronRight className="w-5 h-5" />
-                    </button>
+                    </Button>
                 </div>
                 <div className="relative hidden md:block">
                     <div className="relative w-full aspect-square flex items-center justify-center">

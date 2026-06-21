@@ -1,6 +1,7 @@
 import React from 'react';
 import { Cpu, Mail, ArrowRight } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
+import Button from '../components/common/Button';
 import LogoIcon from '../components/common/LogoIcon';
 
 const AboutView = ({ setView }) => (
@@ -43,9 +44,9 @@ const AboutView = ({ setView }) => (
                         </div>
                         <p className="text-sm font-medium leading-relaxed text-slate-400">I help small businesses get their web and infrastructure working reliably so they can focus on their business.</p>
                         <div className="pt-4">
-                            <button onClick={() => setView('email')} className="w-full py-4 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                            <Button variant="primary" size="sm" fullWidth onClick={() => setView('email')}>
                                 Get a free checkup <ArrowRight size={12} />
-                            </button>
+                            </Button>
                         </div>
                     </section>
 
@@ -56,9 +57,9 @@ const AboutView = ({ setView }) => (
                         </div>
                         <p className="text-sm font-medium leading-relaxed text-slate-400">Small-run parts, prototypes, and one-offs on a Bambu Lab P1S. Upload a file and I'll quote it.</p>
                         <div className="pt-4">
-                            <button onClick={() => setView('printing')} className="w-full py-4 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                            <Button variant="primary" size="sm" fullWidth onClick={() => setView('printing')}>
                                 Open the QuoteLab <ArrowRight size={12} />
-                            </button>
+                            </Button>
                         </div>
                     </section>
                 </div>

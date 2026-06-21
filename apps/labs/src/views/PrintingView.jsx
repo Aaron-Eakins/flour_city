@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, Layers, Cpu, Truck, CheckCircle } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
+import Button from '../components/common/Button';
 import QuoteLab from '../components/quote/QuoteLab';
 
 const PrintingView = (props) => (
@@ -75,12 +76,9 @@ const PrintingView = (props) => (
                     <p className="text-gray-600 text-sm font-medium italic text-left">
                         Don't see what you need? I source materials per project.
                     </p>
-                    <button
-                        onClick={() => props.setView('contact')}
-                        className="shrink-0 px-6 py-3 bg-[#1A1B1E] text-white font-black uppercase text-[10px] tracking-[0.3em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all"
-                    >
+                    <Button variant="secondary" size="sm" className="shrink-0" onClick={() => props.setView('contact')}>
                         Send me a message
-                    </button>
+                    </Button>
                 </div>
             </section>
 

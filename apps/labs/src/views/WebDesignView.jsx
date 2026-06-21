@@ -1,6 +1,7 @@
 import React from 'react';
 import { Globe, Server, Wrench, Plug, ArrowRight } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
+import Button from '../components/common/Button';
 
 const SERVICES = [
     {
@@ -65,12 +66,9 @@ const WebDesignView = ({ setView }) => (
                     <p className="text-gray-600 text-lg font-medium leading-relaxed mb-8">
                         Scope varies a lot with this kind of work, so the best place to start is a quick conversation. Tell me what's going on and you'll get an honest answer, no sales pitch.
                     </p>
-                    <button
-                        onClick={() => setView('contact')}
-                        className="px-10 py-4 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center gap-3"
-                    >
+                    <Button variant="secondary" onClick={() => setView('contact')}>
                         Get in touch <ArrowRight size={14} />
-                    </button>
+                    </Button>
                 </section>
 
             </div>

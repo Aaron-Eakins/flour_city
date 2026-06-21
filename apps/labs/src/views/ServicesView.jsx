@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mail, Cpu, Globe } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
+import Button from '../components/common/Button';
 
 const ServicesView = ({ setView }) => (
     <div className="animate-in fade-in duration-700">
@@ -61,12 +62,9 @@ const ServicesView = ({ setView }) => (
             <section className="text-center">
                 <hr className="border-gray-300 mb-12" />
                 <p className="text-gray-500 font-medium text-lg mb-6">Not sure where to start?</p>
-                <button
-                    onClick={() => setView('contact')}
-                    className="px-10 py-4 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all"
-                >
+                <Button variant="secondary" onClick={() => setView('contact')}>
                     Get in touch
-                </button>
+                </Button>
             </section>
 
         </div>
