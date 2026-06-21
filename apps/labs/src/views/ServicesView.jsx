@@ -3,46 +3,57 @@ import { Mail, Cpu, Globe } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 
 const ServicesView = ({ setView }) => (
-    <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700 text-[#1A1B1E]">
-        <div className="max-w-7xl mx-auto px-6">
+    <div className="animate-in fade-in duration-700">
+        {/* Header Section */}
+        <section className="relative pt-40 pb-24 overflow-hidden bg-[#1A1B1E] text-[#F2F1EF]">
+            <div className="absolute inset-0 z-0 opacity-10">
+                {[...Array(20)].map((_, i) => (
+                    <div key={i} className="absolute border-t border-slate-500 w-full" style={{ top: `${i * 5}%`, transform: `skewY(-2deg)` }}></div>
+                ))}
+            </div>
+            <div className="relative z-20 max-w-7xl mx-auto px-6">
+                <header className="space-y-12 text-left">
+                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">What We Do</span>
+                    <DimensionedHeader line1="WHAT I DO." line2="FOR YOU." layerHt="Rochester·NY" partWd="Est·2026" variant="dark" showUnits={false} />
+                    <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">Web consulting, email deliverability, and 3D printing — from one person who cares about the details.</p>
+                </header>
+            </div>
+        </section>
 
-            {/* Hero */}
-            <header className="mb-24 space-y-12 text-left">
-                <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">What We Do</span>
-                <DimensionedHeader line1="WHAT I DO." line2="FOR YOU." layerHt="Rochester·NY" partWd="Est·2026" variant="light" showUnits={false} />
-                <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Web consulting, email deliverability, and 3D printing — from one person who cares about the details.</p>
-            </header>
+        {/* Content Section */}
+        <section className="py-24 bg-[#F2F1EF] text-[#1A1B1E]">
+            <div className="max-w-7xl mx-auto px-6">
 
             {/* Service cards */}
             <section className="grid md:grid-cols-3 gap-8 mb-24">
                 {/* Email Deliverability */}
-                <div className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4">
-                    <Mail size={28} className="text-[#D4A017]" />
+                <div onClick={() => setView('email')} className="bg-gradient-to-br from-[#2C3E50] to-[#1A1B1E] p-8 rounded-2xl shadow-2xl border border-white/10 text-[#F2F1EF] space-y-4 hover:-translate-y-2 hover:shadow-3xl transition-all duration-300 cursor-pointer group">
+                    <Mail size={28} className="text-[#D4A017] group-hover:scale-110 transition-transform duration-300" />
                     <h3 className="font-display text-xl font-black uppercase italic tracking-tighter text-white">Email Deliverability</h3>
                     <p className="text-sm font-medium leading-relaxed text-gray-300">Your customers can't pay invoices they never received. I check your SPF, DKIM, DMARC, and MX records, find what's sending your mail to spam, and fix it. First checkup is free.</p>
-                    <button onClick={() => setView('email')} className="text-[10px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
+                    <div className="pt-2 text-[10px] font-black uppercase tracking-widest text-[#D4A017] group-hover:text-white transition-colors">
                         Check your email →
-                    </button>
+                    </div>
                 </div>
 
                 {/* 3D Printing */}
-                <div className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4">
-                    <Cpu size={28} className="text-[#D4A017]" />
+                <div onClick={() => setView('printing')} className="bg-gradient-to-br from-[#2C3E50] to-[#1A1B1E] p-8 rounded-2xl shadow-2xl border border-white/10 text-[#F2F1EF] space-y-4 hover:-translate-y-2 hover:shadow-3xl transition-all duration-300 cursor-pointer group">
+                    <Cpu size={28} className="text-[#D4A017] group-hover:scale-110 transition-transform duration-300" />
                     <h3 className="font-display text-xl font-black uppercase italic tracking-tighter text-white">3D Printing</h3>
                     <p className="text-sm font-medium leading-relaxed text-gray-300">Small-run parts, prototypes, and one-offs on a Bambu Lab P1S. Upload a file in the QuoteLab and I'll quote it within 24 hours.</p>
-                    <button onClick={() => setView('printing')} className="text-[10px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
+                    <div className="pt-2 text-[10px] font-black uppercase tracking-widest text-[#D4A017] group-hover:text-white transition-colors">
                         Open the QuoteLab →
-                    </button>
+                    </div>
                 </div>
 
                 {/* Web & Site Work */}
-                <div className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4">
-                    <Globe size={28} className="text-[#D4A017]" />
+                <div onClick={() => setView('contact')} className="bg-gradient-to-br from-[#2C3E50] to-[#1A1B1E] p-8 rounded-2xl shadow-2xl border border-white/10 text-[#F2F1EF] space-y-4 hover:-translate-y-2 hover:shadow-3xl transition-all duration-300 cursor-pointer group">
+                    <Globe size={28} className="text-[#D4A017] group-hover:scale-110 transition-transform duration-300" />
                     <h3 className="font-display text-xl font-black uppercase italic tracking-tighter text-white">Web & Site Work</h3>
                     <p className="text-sm font-medium leading-relaxed text-gray-300">DNS fixes, hosting, site updates, chatbot integrations, Google Reviews setup — if it touches the web, I can probably help. Scope varies, so let's talk about yours.</p>
-                    <button onClick={() => setView('contact')} className="text-[10px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
+                    <div className="pt-2 text-[10px] font-black uppercase tracking-widest text-[#D4A017] group-hover:text-white transition-colors">
                         Let's talk →
-                    </button>
+                    </div>
                 </div>
             </section>
 
@@ -59,6 +70,7 @@ const ServicesView = ({ setView }) => (
             </section>
 
         </div>
+        </section>
     </div>
 );
 

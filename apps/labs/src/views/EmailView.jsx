@@ -290,17 +290,28 @@ const EmailView = ({ setView }) => {
     const verdict = analyzerResult ? summarize({ flags: analyzerResult.analysis.flags }) : { fails: [], warns: [] };
 
     return (
-        <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700 text-[#1A1B1E]">
-            <div className="max-w-7xl mx-auto px-6">
+        <div className="animate-in fade-in duration-700">
+            {/* Header Section */}
+            <section className="relative pt-40 pb-24 overflow-hidden bg-[#1A1B1E] text-[#F2F1EF]">
+                <div className="absolute inset-0 z-0 opacity-10">
+                    {[...Array(20)].map((_, i) => (
+                        <div key={i} className="absolute border-t border-slate-500 w-full" style={{ top: `${i * 5}%`, transform: `skewY(-2deg)` }}></div>
+                    ))}
+                </div>
+                <div className="relative z-20 max-w-7xl mx-auto px-6">
+                    <header className="space-y-12 text-left">
+                        <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Email Deliverability</span>
+                        <DimensionedHeader line1="EMAIL" line2="DELIVERABILITY." layerHt="SPF·DMARC" partWd="CNAME·MX" variant="dark" showUnits={false} />
+                        <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">
+                            Your customers can't pay invoices they never received. If your email is landing in spam — or not arriving at all — the problem is almost always in your DNS records. I check the things that quietly break email delivery, find what's wrong, and fix it.
+                        </p>
+                    </header>
+                </div>
+            </section>
 
-                {/* ── Section 1: Hero ─────────────────────────────────── */}
-                <header className="mb-20 space-y-12 text-left">
-                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Email Deliverability</span>
-                    <DimensionedHeader line1="EMAIL" line2="DELIVERABILITY." layerHt="SPF·DMARC" partWd="CNAME·MX" variant="light" showUnits={false} />
-                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">
-                        Your customers can't pay invoices they never received. If your email is landing in spam — or not arriving at all — the problem is almost always in your DNS records. I check the things that quietly break email delivery, find what's wrong, and fix it.
-                    </p>
-                </header>
+            {/* Content Section */}
+            <section className="py-24 bg-[#F2F1EF] text-[#1A1B1E]">
+                <div className="max-w-7xl mx-auto px-6">
 
                 {/* ── Section 2: What I Check + Sidebar CTA ───────────── */}
                 <div className="grid lg:grid-cols-3 gap-12 mb-24">
@@ -312,7 +323,7 @@ const EmailView = ({ setView }) => {
                         </div>
 
                         <p className="text-gray-500 font-medium leading-relaxed text-lg">
-                            Most small businesses have no idea these records exist — until a customer says they never got the invoice. Here's what I look at:
+                            It's easy to overlook these records until a customer says they never got the invoice. Here's what I look at:
                         </p>
 
                         <div className="grid md:grid-cols-2 gap-6">
@@ -701,7 +712,8 @@ const EmailView = ({ setView }) => {
                 </section>
 
             </div>
-        </div>
+        </section>
+    </div>
     );
 };
 

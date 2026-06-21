@@ -91,13 +91,26 @@ const ContactView = ({ setView }) => {
     };
 
     return (
-        <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-700 text-[#1A1B1E]">
-            <div className="max-w-7xl mx-auto px-6">
-                <header className="mb-20 space-y-12 text-left text-[#1A1B1E]">
-                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Rochester, NY</span>
-                    <DimensionedHeader line1="LET'S" line2="TALK." layerHt="Rochester·NY" partWd="Reply·24h" variant="light" showUnits={false} />
-                    <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Based in Rochester, NY. Taking work nationwide.</p>
-                </header>
+        <div className="animate-in fade-in duration-700">
+            {/* Header Section */}
+            <section className="relative pt-40 pb-24 overflow-hidden bg-[#1A1B1E] text-[#F2F1EF]">
+                <div className="absolute inset-0 z-0 opacity-10">
+                    {[...Array(20)].map((_, i) => (
+                        <div key={i} className="absolute border-t border-slate-500 w-full" style={{ top: `${i * 5}%`, transform: `skewY(-2deg)` }}></div>
+                    ))}
+                </div>
+                <div className="relative z-20 max-w-7xl mx-auto px-6">
+                    <header className="space-y-12 text-left">
+                        <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Rochester, NY</span>
+                        <DimensionedHeader line1="LET'S" line2="TALK." layerHt="Rochester·NY" partWd="Reply·24h" variant="dark" showUnits={false} />
+                        <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">Based in Rochester, NY. Taking work nationwide.</p>
+                    </header>
+                </div>
+            </section>
+
+            {/* Content Section */}
+            <section className="py-24 bg-[#F2F1EF] text-[#1A1B1E]">
+                <div className="max-w-7xl mx-auto px-6">
 
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-1 space-y-12 text-left">
@@ -231,7 +244,8 @@ const ContactView = ({ setView }) => {
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
+            </section>
         </div>
     );
 };

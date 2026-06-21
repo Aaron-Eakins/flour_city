@@ -4,14 +4,25 @@ import DimensionedHeader from '../components/common/DimensionedHeader';
 import LogoIcon from '../components/common/LogoIcon';
 
 const AboutView = ({ setView }) => (
-    <div className="pt-40 pb-24 bg-[#F2F1EF] min-h-screen animate-in fade-in duration-1000 text-[#1A1B1E]">
-        <div className="max-w-7xl mx-auto px-6">
+    <div className="animate-in fade-in duration-1000">
+        {/* Header Section */}
+        <section className="relative pt-40 pb-24 overflow-hidden bg-[#1A1B1E] text-[#F2F1EF]">
+            <div className="absolute inset-0 z-0 opacity-10">
+                {[...Array(20)].map((_, i) => (
+                    <div key={i} className="absolute border-t border-slate-500 w-full" style={{ top: `${i * 5}%`, transform: `skewY(-2deg)` }}></div>
+                ))}
+            </div>
+            <div className="relative z-20 max-w-7xl mx-auto px-6">
+                <header className="space-y-12 text-left">
+                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">About</span>
+                    <DimensionedHeader line1="ONE PERSON." line2="NO SHORTCUTS." layerHt="Rochester·NY" partWd="Est·2026" variant="dark" showUnits={false} />
+                </header>
+            </div>
+        </section>
 
-            {/* Hero — who & what */}
-            <header className="mb-24 space-y-12 text-left">
-                <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">About</span>
-                <DimensionedHeader line1="ONE PERSON." line2="NO SHORTCUTS." layerHt="Rochester·NY" partWd="Est·2026" variant="light" showUnits={false} />
-            </header>
+        {/* Content Section */}
+        <section className="py-24 bg-[#F2F1EF] text-[#1A1B1E]">
+            <div className="max-w-7xl mx-auto px-6">
 
             {/* Bio */}
             <div className="grid md:grid-cols-2 gap-16 mb-24 items-start">
@@ -53,8 +64,8 @@ const AboutView = ({ setView }) => (
             </section>
 
             {/* Timeline — newest first */}
-            <section>
-                <h2 className="font-display text-3xl font-black uppercase italic tracking-tighter mb-12 text-[#1A1B1E]">The Making Tradition</h2>
+            <section className="bg-[#1A1B1E] p-10 md:p-14 rounded-sm text-[#F2F1EF] shadow-2xl mb-24 max-w-3xl">
+                <h2 className="font-display text-3xl font-black uppercase italic tracking-tighter mb-12 text-white">The Making Tradition</h2>
                 <div className="space-y-8">
                     {[
                         {
@@ -79,13 +90,13 @@ const AboutView = ({ setView }) => (
                             body: 'Water-powered mills on the Genesee made Rochester the largest flour producer in the world. Precision measured in the turn of the stone.',
                         },
                     ].map((entry) => (
-                        <div key={entry.year} className={`grid md:grid-cols-[120px_1fr] gap-6 items-start border-l-2 pl-6 ${entry.current ? 'border-[#D4A017]' : 'border-gray-300'}`}>
+                        <div key={entry.year} className={`grid md:grid-cols-[120px_1fr] gap-6 items-start border-l-2 pl-6 ${entry.current ? 'border-[#D4A017]' : 'border-white/10'}`}>
                             <div>
-                                <span className={`font-display text-3xl font-black italic ${entry.current ? 'text-[#D4A017]' : 'text-gray-400'}`}>{entry.year}</span>
+                                <span className={`font-display text-3xl font-black italic ${entry.current ? 'text-[#D4A017]' : 'text-gray-500'}`}>{entry.year}</span>
                             </div>
                             <div className="space-y-2">
-                                <h3 className={`font-display text-xl font-black uppercase italic tracking-tighter ${entry.current ? 'text-[#1A1B1E]' : 'text-gray-700'}`}>{entry.title}</h3>
-                                <p className="text-gray-500 font-medium leading-relaxed">{entry.body}</p>
+                                <h3 className={`font-display text-xl font-black uppercase italic tracking-tighter ${entry.current ? 'text-white' : 'text-gray-400'}`}>{entry.title}</h3>
+                                <p className="text-gray-400 font-medium leading-relaxed">{entry.body}</p>
                             </div>
                         </div>
                     ))}
@@ -93,6 +104,7 @@ const AboutView = ({ setView }) => (
             </section>
 
         </div>
+        </section>
     </div>
 );
 
