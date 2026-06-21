@@ -68,7 +68,7 @@ const EmailCheckupView = ({ setView }) => {
 
                 <header className="mb-20 space-y-12 text-left">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Email Deliverability</span>
-                    <DimensionedHeader line1="FREE EMAIL" line2="CHECKUP." layerHt="SPF·DKIM" partWd="DMARC·MX" variant="light" showUnits={false} />
+                    <DimensionedHeader line1="FREE EMAIL" line2="CHECKUP." layerHt="SPF·DMARC" partWd="CNAME·MX" variant="light" showUnits={false} />
                     <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">
                         Enter your domain and I'll check the things that quietly send your email to spam: SPF, DKIM, DMARC, MX records, and whether you're on any blacklists. I'll email you what's broken and how to fix it. The first look is free. If you want me to fix the issues, we can discuss the scope and cost.
                     </p>

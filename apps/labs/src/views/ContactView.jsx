@@ -95,7 +95,7 @@ const ContactView = ({ setView }) => {
             <div className="max-w-7xl mx-auto px-6">
                 <header className="mb-20 space-y-12 text-left text-[#1A1B1E]">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Rochester, NY</span>
-                    <DimensionedHeader line1="LET'S" line2="TALK." layerHt="SPF·DKIM" partWd="DMARC·MX" variant="light" showUnits={false} />
+                    <DimensionedHeader line1="LET'S" line2="TALK." layerHt="Rochester·NY" partWd="Reply·24h" variant="light" showUnits={false} />
                     <p className="text-gray-500 max-w-2xl font-medium leading-relaxed text-lg text-left">Based in Rochester, NY. Taking work nationwide.</p>
                 </header>
 

@@ -18,8 +18,8 @@ const HomeView = (props) => (
                         <DimensionedHeader
                             line1="WEB & EMAIL"
                             line2="CONSULTING."
-                            layerHt="SPF·DKIM"
-                            partWd="DMARC·MX"
+                            layerHt="Rochester·NY"
+                            partWd="Est·2026"
                             variant="dark"
                             showUnits={false}
                         />
