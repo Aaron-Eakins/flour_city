@@ -63,7 +63,7 @@ const WebDesignView = ({ setView }) => (
                 <section className="max-w-3xl">
                     <h2 className="font-display text-3xl font-black uppercase italic tracking-tighter mb-4">Not sure if it fits?</h2>
                     <p className="text-gray-600 text-lg font-medium leading-relaxed mb-8">
-                        Scope varies a lot with this kind of work, so the best place to start is a quick conversation. Tell me what's going on and I'll tell you straight whether it's something I can help with.
+                        Scope varies a lot with this kind of work, so the best place to start is a quick conversation. Tell me what's going on and you'll get an honest answer, no sales pitch.
                     </p>
                     <button
                         onClick={() => setView('contact')}
