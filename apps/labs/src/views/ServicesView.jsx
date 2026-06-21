@@ -27,7 +27,7 @@ const ServicesView = ({ setView }) => (
             {/* Service cards */}
             <section className="grid md:grid-cols-3 gap-8 mb-24">
                 {/* Email Deliverability */}
-                <div onClick={() => setView('email')} className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4 hover:scale-[1.02] transition-transform cursor-pointer group">
+                <div onClick={() => setView('email')} className="bg-gradient-to-br from-[#2C3E50] to-[#1A1B1E] p-8 rounded-2xl shadow-2xl border border-white/10 text-[#F2F1EF] space-y-4 hover:-translate-y-2 hover:shadow-3xl transition-all duration-300 cursor-pointer group">
                     <Mail size={28} className="text-[#D4A017] group-hover:scale-110 transition-transform duration-300" />
                     <h3 className="font-display text-xl font-black uppercase italic tracking-tighter text-white">Email Deliverability</h3>
                     <p className="text-sm font-medium leading-relaxed text-gray-300">Your customers can't pay invoices they never received. I check your SPF, DKIM, DMARC, and MX records, find what's sending your mail to spam, and fix it. First checkup is free.</p>
@@ -37,7 +37,7 @@ const ServicesView = ({ setView }) => (
                 </div>
 
                 {/* 3D Printing */}
-                <div onClick={() => setView('printing')} className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4 hover:scale-[1.02] transition-transform cursor-pointer group">
+                <div onClick={() => setView('printing')} className="bg-gradient-to-br from-[#2C3E50] to-[#1A1B1E] p-8 rounded-2xl shadow-2xl border border-white/10 text-[#F2F1EF] space-y-4 hover:-translate-y-2 hover:shadow-3xl transition-all duration-300 cursor-pointer group">
                     <Cpu size={28} className="text-[#D4A017] group-hover:scale-110 transition-transform duration-300" />
                     <h3 className="font-display text-xl font-black uppercase italic tracking-tighter text-white">3D Printing</h3>
                     <p className="text-sm font-medium leading-relaxed text-gray-300">Small-run parts, prototypes, and one-offs on a Bambu Lab P1S. Upload a file in the QuoteLab and I'll quote it within 24 hours.</p>
@@ -47,7 +47,7 @@ const ServicesView = ({ setView }) => (
                 </div>
 
                 {/* Web & Site Work */}
-                <div onClick={() => setView('contact')} className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4 hover:scale-[1.02] transition-transform cursor-pointer group">
+                <div onClick={() => setView('contact')} className="bg-gradient-to-br from-[#2C3E50] to-[#1A1B1E] p-8 rounded-2xl shadow-2xl border border-white/10 text-[#F2F1EF] space-y-4 hover:-translate-y-2 hover:shadow-3xl transition-all duration-300 cursor-pointer group">
                     <Globe size={28} className="text-[#D4A017] group-hover:scale-110 transition-transform duration-300" />
                     <h3 className="font-display text-xl font-black uppercase italic tracking-tighter text-white">Web & Site Work</h3>
                     <p className="text-sm font-medium leading-relaxed text-gray-300">DNS fixes, hosting, site updates, chatbot integrations, Google Reviews setup — if it touches the web, I can probably help. Scope varies, so let's talk about yours.</p>

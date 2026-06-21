@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MapPin, CheckCircle, AlertCircle, Send } from 'lucide-react';
+import { Mail, MapPin, CheckCircle, AlertCircle, Send, ArrowRight } from 'lucide-react';
 import { SITE_CONFIG } from '../constants/site';
 import { useAuth } from '../context/AuthContext';
 
@@ -123,11 +123,16 @@ const ContactView = ({ setView }) => {
                         </section>
 
                         <section className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4 text-left">
-                            <h4 className="text-sm font-black uppercase tracking-widest italic text-white">Free email checkup</h4>
+                            <div className="flex items-center gap-3 text-[#D4A017]">
+                                <Mail size={18} />
+                                <h4 className="text-sm font-black uppercase tracking-widest italic text-white">Free email checkup</h4>
+                            </div>
                             <p className="text-slate-400 text-xs font-medium leading-relaxed text-left">Send me your domain and I'll check SPF, DKIM, DMARC, MX, and blacklist status, then email you what's broken and how to fix it. No charge for the first look.</p>
-                            <button onClick={() => setView('email-checkup')} className="text-[9px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
-                                Start a checkup →
-                            </button>
+                            <div className="pt-4">
+                                <button onClick={() => setView('email-checkup')} className="w-full py-4 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                                    Start a checkup <ArrowRight size={12} />
+                                </button>
+                            </div>
                         </section>
                     </div>
 

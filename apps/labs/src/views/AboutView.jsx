@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu } from 'lucide-react';
+import { Cpu, Mail, ArrowRight } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import LogoIcon from '../components/common/LogoIcon';
 
@@ -36,22 +36,31 @@ const AboutView = ({ setView }) => (
                 </div>
 
                 <div className="space-y-6">
-                    <div className="p-8 bg-[#1A1B1E] text-[#F2F1EF] rounded-sm space-y-6">
-                        <div>
-                            <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#D4A017] mb-2">Web &amp; Email Consulting</p>
-                            <p className="text-sm font-medium leading-relaxed text-gray-300">I help small businesses get their web and infrastructure working reliably so they can focus on their business.</p>
-                            <button onClick={() => setView('email')} className="mt-4 text-[10px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
-                                Get a free checkup →
+                    <section className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4">
+                        <div className="flex items-center gap-3 text-[#D4A017]">
+                            <Mail size={18} />
+                            <h4 className="text-sm font-black uppercase tracking-widest italic text-white">Web &amp; Email Consulting</h4>
+                        </div>
+                        <p className="text-xs font-medium leading-relaxed text-slate-400">I help small businesses get their web and infrastructure working reliably so they can focus on their business.</p>
+                        <div className="pt-4">
+                            <button onClick={() => setView('email')} className="w-full py-4 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                                Get a free checkup <ArrowRight size={12} />
                             </button>
                         </div>
-                        <div className="border-t border-white/10 pt-6">
-                            <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#D4A017] mb-2">3D Printing</p>
-                            <p className="text-sm font-medium leading-relaxed text-gray-300">Small-run parts, prototypes, and one-offs on a Bambu Lab P1S. Upload a file and I'll quote it.</p>
-                            <button onClick={() => setView('printing')} className="mt-4 text-[10px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
-                                Open the QuoteLab →
+                    </section>
+
+                    <section className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4">
+                        <div className="flex items-center gap-3 text-[#D4A017]">
+                            <Cpu size={18} />
+                            <h4 className="text-sm font-black uppercase tracking-widest italic text-white">3D Printing</h4>
+                        </div>
+                        <p className="text-xs font-medium leading-relaxed text-slate-400">Small-run parts, prototypes, and one-offs on a Bambu Lab P1S. Upload a file and I'll quote it.</p>
+                        <div className="pt-4">
+                            <button onClick={() => setView('printing')} className="w-full py-4 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                                Open the QuoteLab <ArrowRight size={12} />
                             </button>
                         </div>
-                    </div>
+                    </section>
                 </div>
             </div>
 
