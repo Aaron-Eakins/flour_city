@@ -78,7 +78,7 @@ Both the contact form and the free email checkup form on the labs site share the
 4. The client calls the `send-notification` Supabase Edge Function with the new record
 5. The Edge Function verifies the Turnstile token with Cloudflare's API, then sends an email notification to `lab@flourcitylabs.com` via Resend
 
-The contact form is at `apps/labs/src/views/ContactView.jsx`. The checkup form is at `apps/labs/src/views/EmailCheckupView.jsx`. Both insert into the same `contacts` table; the message body distinguishes checkup requests from general inquiries.
+The contact form is at `apps/labs/src/views/ContactView.jsx`. The free email checkup form lives in `apps/labs/src/views/EmailView.jsx` (which also hosts the in-browser analyzer). Both insert into the same `contacts` table; the message body distinguishes checkup requests from general inquiries.
 
 ---
 
