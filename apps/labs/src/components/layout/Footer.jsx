@@ -20,6 +20,7 @@ const Footer = ({ setView }) => (
         </div>
         <div className="max-w-7xl mx-auto px-6 mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black uppercase tracking-widest text-gray-600">
             <div className="flex space-x-8">
+                <button onClick={() => { setView('services'); window.scrollTo(0, 0); }} className="hover:text-[#D4A017] transition-colors text-gray-500">Services</button>
                 <button onClick={() => { setView('tos'); window.scrollTo(0, 0); }} className="hover:text-[#D4A017] transition-colors text-gray-500">Terms of Service</button>
                 <button onClick={() => { setView('privacy'); window.scrollTo(0, 0); }} className="hover:text-[#D4A017] transition-colors text-gray-500">Privacy Policy</button>
             </div>

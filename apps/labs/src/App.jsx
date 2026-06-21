@@ -5,13 +5,14 @@ import Footer from './components/layout/Footer';
 import HomeView from './views/HomeView';
 import PrintingView from './views/PrintingView';
 import AboutView from './views/AboutView';
-import EmailCheckupView from './views/EmailCheckupView';
+import ServicesView from './views/ServicesView';
+import EmailView from './views/EmailView';
+import WebDesignView from './views/WebDesignView';
 import GalleryView from './views/GalleryView';
 import TOSView from './views/TOSView';
 import PrivacyView from './views/PrivacyView';
 import ContactView from './views/ContactView';
 import ProfileView from './views/ProfileView';
-import EmailAnalyzerView from './views/EmailAnalyzerView';
 import AuthModal from './components/auth/AuthModal';
 import { useAuth } from './context/AuthContext';
 
@@ -122,8 +123,15 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        // Backward-compat: remap retired hash routes to their replacements
+        const HASH_REDIRECTS = { 'email-checkup': 'email', 'audit': 'email' };
+
         const handleHashChange = () => {
-            const hash = window.location.hash.replace('#', '') || 'home';
+            let hash = window.location.hash.replace('#', '') || 'home';
+            if (HASH_REDIRECTS[hash]) {
+                hash = HASH_REDIRECTS[hash];
+                window.history.replaceState(null, '', `#${hash}`);
+            }
             setView(hash);
         };
         
@@ -154,6 +162,8 @@ const App = () => {
             
             <main>
                 {view === 'home' && <HomeView setView={navigateTo} />}
+                {view === 'services' && <ServicesView setView={navigateTo} />}
+                {view === 'email' && <EmailView setView={navigateTo} />}
                 {view === 'printing' && (
                     <PrintingView
                         quoteStep={quoteStep} setQuoteStep={setQuoteStep}
@@ -165,8 +175,7 @@ const App = () => {
                     />
                 )}
                 {view === 'about' && <AboutView setView={navigateTo} />}
-                {view === 'email-checkup' && <EmailCheckupView setView={navigateTo} />}
-                {view === 'audit' && <EmailAnalyzerView setView={navigateTo} />}
+                {view === 'web-design' && <WebDesignView setView={navigateTo} />}
                 {view === 'contact' && <ContactView setView={navigateTo} />}
                 {view === 'profile' && <ProfileView setView={navigateTo} />}
                 {view === 'gallery' && <GalleryView />}

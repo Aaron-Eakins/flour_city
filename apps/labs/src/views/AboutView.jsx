@@ -29,7 +29,7 @@ const AboutView = ({ setView }) => (
                         <div>
                             <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#D4A017] mb-2">Web &amp; Email Consulting</p>
                             <p className="text-sm font-medium leading-relaxed text-gray-300">I help small businesses get their web and infrastructure working reliably so they can focus on their business.</p>
-                            <button onClick={() => setView('email-checkup')} className="mt-4 text-[10px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
+                            <button onClick={() => setView('email')} className="mt-4 text-[10px] font-black uppercase tracking-widest text-[#D4A017] hover:text-white transition-colors">
                                 Get a free checkup →
                             </button>
                         </div>

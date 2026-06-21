@@ -25,7 +25,7 @@ const HomeView = (props) => (
                         />
                     </div>
                     <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-[#D4A017] pl-6 font-medium">Is your email landing in spam? Are your DNS records a mess? Most small businesses don't know what they're losing until a customer says they never got the invoice. I find what's broken and fix it.</p>
-                    <button onClick={() => props.setView('email-checkup')} className="px-10 py-5 bg-[#D4A017] text-[#1A1B1E] font-black rounded-sm flex items-center space-x-3 hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl">
+                    <button onClick={() => props.setView('email')} className="px-10 py-5 bg-[#D4A017] text-[#1A1B1E] font-black rounded-sm flex items-center space-x-3 hover:scale-105 transition-transform uppercase tracking-widest text-sm shadow-xl">
                         <span>Get a Free Email Checkup</span><ChevronRight className="w-5 h-5" />
                     </button>
                 </div>
