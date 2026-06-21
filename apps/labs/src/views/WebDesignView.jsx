@@ -6,22 +6,22 @@ const SERVICES = [
     {
         icon: Globe,
         title: 'DNS & Domains',
-        body: "Untangle DNS records, migrate domains, and get your mail and hosting records pointing where they should. The same care that goes into the email work.",
+        body: 'Untangle DNS records, migrate domains, and get your mail and hosting pointing where they should.',
     },
     {
         icon: Server,
         title: 'Hosting & Deployment',
-        body: 'Get your site live and keep it that way — Vercel, Cloudflare, or wherever fits. Static or dynamic, set up to deploy cleanly.',
+        body: "Get your site live and keep it running. Have a setup? I'll work with it. Need one? I'll set you up the right way.",
     },
     {
         icon: Wrench,
         title: 'Site Updates & Fixes',
-        body: 'Content changes, broken layouts, slow pages, mobile issues — the small stuff that piles up. Handled without the agency runaround.',
+        body: 'Content changes, broken layouts, slow pages, mobile issues. The small stuff that piles up, finally off your plate.',
     },
     {
         icon: Plug,
         title: 'Integrations',
-        body: 'Chatbots, Google Reviews, contact forms, analytics — connect the tools your business actually needs and make them work together.',
+        body: "Contact forms, scheduling, review widgets, chat tools, analytics. If your business uses a third-party service, I'll connect it to your site and make it work.",
     },
 ];
 
@@ -37,8 +37,8 @@ const WebDesignView = ({ setView }) => (
             <div className="relative z-20 max-w-7xl mx-auto px-6">
                 <header className="space-y-12 text-left">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Web &amp; Site Work</span>
-                    <DimensionedHeader line1="WEB & SITE" line2="WORK." layerHt="Rochester·NY" partWd="Est·2026" variant="dark" showUnits={false} />
-                    <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">If it touches the web, I can probably help. Same one-person shop, same attention to detail as the email work — no agency overhead, no runaround.</p>
+                    <DimensionedHeader line1="WEB & SITE" line2="WORK." layerHt="Rochester·NY" partWd="Build·Fix·Integrate" variant="dark" showUnits={false} />
+                    <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">If it touches the web, I can help. From a full build to a single broken form.</p>
                 </header>
             </div>
         </section>
