@@ -6,8 +6,8 @@ import React from 'react';
 // Hover is intentionally crisp (scale / colour fill), NOT the card shadow-grow —
 // buttons and cards should feel like different things.
 const VARIANTS = {
-    primary: 'bg-[#D4A017] text-[#1A1B1E] hover:scale-[1.02]',
-    secondary: 'bg-[#1A1B1E] text-white hover:bg-[#D4A017] hover:text-[#1A1B1E]',
+    primary: 'bg-[#D4A017] text-[#1A1B1E] hover:bg-amber-400',
+    secondary: 'bg-[#1A1B1E] text-white hover:bg-amber-400 hover:text-[#1A1B1E]',
 };
 
 const SIZES = {

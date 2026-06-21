@@ -151,10 +151,10 @@ const PrintingView = (props) => (
                     <div className="p-6 bg-[#EAE8E4] border border-gray-300 rounded-sm space-y-3">
                         <div className="flex items-center gap-3 text-[#2C3E50]">
                             <Layers size={18} />
-                            <h4 className="text-sm font-black uppercase tracking-widest italic text-[#1A1B1E]">Support policy</h4>
+                            <h4 className="text-sm font-black uppercase tracking-widest italic text-[#1A1B1E]">Surface finish</h4>
                         </div>
                         <p className="text-xs text-gray-500 leading-relaxed font-medium">
-                            Parts ship with supports intact to protect details in transit. Removal and finishing available per project.
+                            Some finishing may be required where supports and overhangs connect.
                         </p>
                     </div>
                 </div>
