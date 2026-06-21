@@ -22,21 +22,21 @@ const PrivacyView = () => (
                         <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
                             <Database size={18} /> What we collect
                         </h3>
-                        <p className="text-gray-600 leading-relaxed font-medium relative z-10">When you create an account, we collect your name and email address. This is the minimum required to manage your lab identity.</p>
+                        <p className="text-gray-600 leading-relaxed font-medium relative z-10">When you create an account, we collect your name and email address. If you use the Email Analyzer or request a deliverability checkup, we collect the necessary email header data to diagnose your domain. This is the minimum required to provide our services.</p>
                     </section>
 
                     <section className="space-y-4 p-8 bg-white border border-gray-200 rounded-sm shadow-sm">
                         <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
                             <Eye size={18} /> How it's used
                         </h3>
-                        <p className="text-gray-600 leading-relaxed font-medium">Your information is used to manage your account, track your 3D printing orders, and send you technical status updates.</p>
+                        <p className="text-gray-600 leading-relaxed font-medium">Your information is used to manage your account, track your 3D printing orders, and send you technical status updates. We may also reach out to you directly regarding the results of your email deliverability checkups.</p>
                     </section>
 
                     <section className="space-y-4 p-8 bg-white border border-gray-200 rounded-sm shadow-sm">
                         <h3 className="text-lg font-black uppercase tracking-widest text-[#D4A017] flex items-center gap-3">
                             <ShieldCheck size={18} /> Third-party sharing
                         </h3>
-                        <p className="text-gray-600 leading-relaxed font-medium">We do not sell, rent, or share your personal data or CAD files with third parties. Your designs stay in the lab.</p>
+                        <p className="text-gray-600 leading-relaxed font-medium">We do not sell, rent, or share your personal data, email headers, or CAD files with third parties. Ever.</p>
                     </section>
 
                     <section className="space-y-4 p-8 bg-white border border-gray-200 rounded-sm shadow-sm">

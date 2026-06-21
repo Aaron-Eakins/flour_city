@@ -41,7 +41,7 @@ const AboutView = ({ setView }) => (
                             <Mail size={18} />
                             <h4 className="text-sm font-black uppercase tracking-widest italic text-white">Web &amp; Email Consulting</h4>
                         </div>
-                        <p className="text-xs font-medium leading-relaxed text-slate-400">I help small businesses get their web and infrastructure working reliably so they can focus on their business.</p>
+                        <p className="text-sm font-medium leading-relaxed text-slate-400">I help small businesses get their web and infrastructure working reliably so they can focus on their business.</p>
                         <div className="pt-4">
                             <button onClick={() => setView('email')} className="w-full py-4 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
                                 Get a free checkup <ArrowRight size={12} />
@@ -54,7 +54,7 @@ const AboutView = ({ setView }) => (
                             <Cpu size={18} />
                             <h4 className="text-sm font-black uppercase tracking-widest italic text-white">3D Printing</h4>
                         </div>
-                        <p className="text-xs font-medium leading-relaxed text-slate-400">Small-run parts, prototypes, and one-offs on a Bambu Lab P1S. Upload a file and I'll quote it.</p>
+                        <p className="text-sm font-medium leading-relaxed text-slate-400">Small-run parts, prototypes, and one-offs on a Bambu Lab P1S. Upload a file and I'll quote it.</p>
                         <div className="pt-4">
                             <button onClick={() => setView('printing')} className="w-full py-4 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
                                 Open the QuoteLab <ArrowRight size={12} />

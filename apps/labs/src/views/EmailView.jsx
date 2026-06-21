@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { CheckCircle, AlertCircle, Send, Mail, Upload, AlertTriangle, XCircle, ArrowRight, FileText, ArrowDown } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
 import { SITE_CONFIG } from '../constants/site';
@@ -166,6 +166,15 @@ const EmailView = () => {
     const scrollToAnalyzer = () => {
         analyzerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
+
+    useEffect(() => {
+        const query = window.location.hash.split('?')[1];
+        if (query === 'section=analyzer') {
+            setTimeout(() => {
+                scrollToAnalyzer();
+            }, 100);
+        }
+    }, []);
 
     // ── Checkup form handler ─────────────────────────────────────────
     const handleSubmit = async (e) => {

@@ -23,7 +23,7 @@ const TOSView = () => (
                         </div>
                         <div className="space-y-2">
                             <h3 className="text-xl font-black uppercase tracking-tighter">1. Service scope</h3>
-                            <p className="text-gray-600 leading-relaxed font-medium">We provide 3D printing services based on the files you submit. We are not licensed engineers. Technical review is for printability, not structural safety.</p>
+                            <p className="text-gray-600 leading-relaxed font-medium">We provide 3D printing and email deliverability consulting services. Our 3D printing technical review is for printability, not structural safety. Our email analysis is diagnostic and provided as-is without guarantees of resolving third-party mail routing policies.</p>
                         </div>
                     </section>
 
@@ -42,8 +42,8 @@ const TOSView = () => (
                             <FileCode size={24} />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-xl font-black uppercase tracking-tighter">3. File ownership</h3>
-                            <p className="text-gray-600 leading-relaxed font-medium">You retain full ownership of any files you upload. We use them only to fulfill your order and will not share or sell your designs.</p>
+                            <h3 className="text-xl font-black uppercase tracking-tighter">3. File and Data ownership</h3>
+                            <p className="text-gray-600 leading-relaxed font-medium">You retain full ownership of any 3D models or email headers you upload. We use them only to fulfill your order or analyze your deliverability and will never share or sell your data.</p>
                         </div>
                     </section>
 

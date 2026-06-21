@@ -15,10 +15,10 @@ const PrintingView = (props) => (
             </header>
 
             {/* QuoteLab tool */}
-            <section className="mb-24 bg-[#1A1B1E] p-10 md:p-14 rounded-sm shadow-2xl text-[#F2F1EF]">
+            <section className="mb-24">
                 <header className="mb-10 space-y-2">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block border-l-2 border-[#D4A017] pl-4">Quote Tool</span>
-                    <h2 className="font-display text-4xl font-black uppercase italic tracking-tighter text-white">The QuoteLab</h2>
+                    <h2 className="font-display text-4xl font-black uppercase italic tracking-tighter">The QuoteLab</h2>
                 </header>
                 <QuoteLab
                     quoteStep={props.quoteStep}
@@ -33,11 +33,11 @@ const PrintingView = (props) => (
             </section>
 
             {/* Materials */}
-            <section className="mb-24 bg-[#1A1B1E] p-10 md:p-14 rounded-sm shadow-2xl text-[#F2F1EF]">
+            <section className="mb-24">
                 <header className="mb-10 space-y-2">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block border-l-2 border-[#D4A017] pl-4">What's in stock</span>
-                    <h2 className="font-display text-4xl font-black uppercase italic tracking-tighter text-white">Materials</h2>
-                    <p className="text-gray-400 font-medium leading-relaxed">What I keep stocked for most orders. More available on request.</p>
+                    <h2 className="font-display text-4xl font-black uppercase italic tracking-tighter">Materials</h2>
+                    <p className="text-gray-500 font-medium leading-relaxed">What I keep stocked for most orders. More available on request.</p>
                 </header>
 
                 <div className="overflow-x-auto">
@@ -50,17 +50,17 @@ const PrintingView = (props) => (
                                 <th className="text-left py-3 text-[10px] font-mono font-bold uppercase tracking-widest text-[#D4A017]">Notes</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/10">
-                            <tr className="hover:bg-white/5 transition-colors">
-                                <td className="py-4 pr-8 font-black uppercase text-white">PLA</td>
-                                <td className="py-4 pr-8 text-gray-400 font-medium">Detailed models, prototypes, low-stress parts</td>
-                                <td className="py-4 pr-8 text-gray-400 font-medium">Matte / Silk / Standard</td>
+                        <tbody className="divide-y divide-gray-200">
+                            <tr className="hover:bg-gray-100/50 transition-colors">
+                                <td className="py-4 pr-8 font-black uppercase">PLA</td>
+                                <td className="py-4 pr-8 text-gray-600 font-medium">Detailed models, prototypes, low-stress parts</td>
+                                <td className="py-4 pr-8 text-gray-600 font-medium">Matte / Silk / Standard</td>
                                 <td className="py-4 text-gray-500 font-medium">Stable up to ~55°C</td>
                             </tr>
-                            <tr className="hover:bg-white/5 transition-colors">
-                                <td className="py-4 pr-8 font-black uppercase text-white">PETG</td>
-                                <td className="py-4 pr-8 text-gray-400 font-medium">Mechanical parts, outdoor use, heat / stress</td>
-                                <td className="py-4 pr-8 text-gray-400 font-medium">Glossy / Semi-clear</td>
+                            <tr className="hover:bg-gray-100/50 transition-colors">
+                                <td className="py-4 pr-8 font-black uppercase">PETG</td>
+                                <td className="py-4 pr-8 text-gray-600 font-medium">Mechanical parts, outdoor use, heat / stress</td>
+                                <td className="py-4 pr-8 text-gray-600 font-medium">Glossy / Semi-clear</td>
                                 <td className="py-4 text-gray-500 font-medium">Holds up to ~80°C</td>
                             </tr>
                         </tbody>
@@ -68,16 +68,16 @@ const PrintingView = (props) => (
                 </div>
 
                 <blockquote className="mt-10 border-l-4 border-[#D4A017] pl-6 max-w-xl">
-                    <p className="font-display text-xl font-black italic tracking-tight text-white">"If your part needs to handle heat, stress, or the outdoors, PETG is the call."</p>
+                    <p className="font-display text-xl font-black italic tracking-tight text-[#1A1B1E]">"If your part needs to handle heat, stress, or the outdoors, PETG is the call."</p>
                 </blockquote>
 
-                <div className="mt-8 p-6 border border-white/10 bg-white/5 rounded-sm flex flex-col md:flex-row items-center justify-between gap-6 max-w-2xl">
-                    <p className="text-gray-400 text-sm font-medium italic text-left">
+                <div className="mt-8 p-6 border border-[#D4A017]/20 bg-[#1A1B1E]/5 rounded-sm flex flex-col md:flex-row items-center justify-between gap-6 max-w-2xl">
+                    <p className="text-gray-600 text-sm font-medium italic text-left">
                         Don't see what you need? I source materials per project.
                     </p>
                     <button
                         onClick={() => props.setView('contact')}
-                        className="shrink-0 px-6 py-3 bg-[#D4A017] text-[#1A1B1E] font-black uppercase text-[10px] tracking-[0.3em] hover:bg-white hover:text-[#1A1B1E] transition-all"
+                        className="shrink-0 px-6 py-3 bg-[#1A1B1E] text-white font-black uppercase text-[10px] tracking-[0.3em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all"
                     >
                         Send me a message
                     </button>

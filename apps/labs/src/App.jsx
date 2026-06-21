@@ -127,10 +127,11 @@ const App = () => {
         const HASH_REDIRECTS = { 'email-checkup': 'email', 'audit': 'email' };
 
         const handleHashChange = () => {
-            let hash = window.location.hash.replace('#', '') || 'home';
+            const rawHash = window.location.hash.replace('#', '') || 'home';
+            let [hash, query] = rawHash.split('?');
             if (HASH_REDIRECTS[hash]) {
                 hash = HASH_REDIRECTS[hash];
-                window.history.replaceState(null, '', `#${hash}`);
+                window.history.replaceState(null, '', `#${hash}${query ? '?' + query : ''}`);
             }
             setView(hash);
         };
