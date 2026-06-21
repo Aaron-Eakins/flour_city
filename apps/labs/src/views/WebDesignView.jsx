@@ -14,7 +14,7 @@ const WebDesignView = ({ setView }) => (
                 <header className="space-y-12 text-left">
                     <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Coming Soon</span>
                     <DimensionedHeader line1="WEB" line2="DESIGN." layerHt="Rochester·NY" partWd="Est·2026" variant="dark" showUnits={false} />
-                    <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">This service is currently under development. In the meantime, feel free to reach out if you need help with your website.</p>
+                    <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">This service is currently under development. In the meantime, feel free to reach out if you need help with your website integrations.</p>
                 </header>
             </div>
         </section>

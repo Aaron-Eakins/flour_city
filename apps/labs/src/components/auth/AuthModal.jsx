@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, User, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoIcon from '../common/LogoIcon';
@@ -13,6 +13,16 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
     const [loading, setLoading] = useState(false);
 
     const { signIn, signUp } = useAuth();
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') onClose();
+        };
+        if (isOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+        }
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, onClose]);
 
     if (!isOpen) return null;
 
@@ -43,7 +53,10 @@ const AuthModal = ({ isOpen, onClose, setView }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#1A1B1E]/90 backdrop-blur-sm animate-in fade-in duration-300">
+        <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#1A1B1E]/90 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+        >
             <div className="relative w-full max-w-md bg-[#F2F1EF] border border-gray-300 shadow-2xl rounded-sm overflow-hidden text-[#1A1B1E]">
                 {/* Branding Header */}
                 <div className="bg-[#1A1B1E] p-8 text-center relative overflow-hidden">

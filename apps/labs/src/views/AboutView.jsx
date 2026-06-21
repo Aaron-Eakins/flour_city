@@ -62,9 +62,12 @@ const AboutView = ({ setView }) => (
                     Rochester was the Flour City before it was anything else. In the 1830s its Genesee River mills made it the largest flour producer in the world. When milling moved west, the nurseries took over and the city quietly renamed itself the Flower City — same sound, different spelling, a small civic pun that stuck. Either way, the through-line is the same: Rochester has always been a place that makes things. That's the part I'm continuing.
                 </p>
             </section>
+            </div>
+        </section>
 
-            {/* Timeline — newest first */}
-            <section className="bg-[#1A1B1E] p-10 md:p-14 rounded-sm text-[#F2F1EF] shadow-2xl mb-24 max-w-3xl">
+        {/* Timeline — newest first */}
+        <section className="bg-[#1A1B1E] py-24 text-[#F2F1EF]">
+            <div className="max-w-3xl mx-auto px-6">
                 <h2 className="font-display text-3xl font-black uppercase italic tracking-tighter mb-12 text-white">The Making Tradition</h2>
                 <div className="space-y-8">
                     {[
@@ -101,9 +104,7 @@ const AboutView = ({ setView }) => (
                         </div>
                     ))}
                 </div>
-            </section>
-
-        </div>
+            </div>
         </section>
     </div>
 );

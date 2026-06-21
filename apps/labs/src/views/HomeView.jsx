@@ -45,7 +45,9 @@ const HomeView = (props) => (
                                     {['SPF', 'DKIM', 'DMARC', 'Blacklist'].map((check) => (
                                         <div key={check} className="flex justify-between text-[10px] font-mono font-bold uppercase tracking-widest">
                                             <span className="text-gray-500">{check}</span>
-                                            <span className="text-[#D4A017]">Checking...</span>
+                                            <span className={check === 'SPF' || check === 'DMARC' ? "text-emerald-500" : "text-[#D4A017]"}>
+                                                {check === 'SPF' || check === 'DMARC' ? 'PASS' : 'Checking...'}
+                                            </span>
                                         </div>
                                     ))}
                                 </div>

@@ -5,7 +5,7 @@ import { SITE_CONFIG } from '../constants/site';
 import { supabase } from '../lib/supabaseClient';
 import { useTurnstile } from '../hooks/useTurnstile';
 import {
-  parseReceivedChain, splitHeaders, unfoldHeaders,
+  parseReceivedChain,
   analyze, parseHeadersFromText, summarize, SLOW_HOP_SECONDS,
 } from '@flour-city/email-core';
 
@@ -133,7 +133,7 @@ function AuthSection({ authResults }) {
 
 // ── Main View ────────────────────────────────────────────────────────
 
-const EmailView = ({ setView }) => {
+const EmailView = () => {
     // ── Checkup form state ───────────────────────────────────────────
     const [formData, setFormData] = useState({
         name: '',
@@ -412,8 +412,20 @@ const EmailView = ({ setView }) => {
                                 Email Analyzer
                             </h2>
                             <p className="text-gray-300 text-lg leading-relaxed max-w-xl">
-                                Upload a <code className="text-[#D4A017] font-mono text-sm">.eml</code> or{' '}
-                                <code className="text-[#D4A017] font-mono text-sm">.msg</code> file, or paste raw headers.
+                                Upload a <span className="relative group inline-block cursor-help">
+                                    <code className="text-[#D4A017] font-mono text-sm border-b border-dashed border-[#D4A017]/50">.eml</code>
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 p-3 bg-[#EAE8E4] text-[#1A1B1E] text-xs font-medium leading-relaxed rounded-sm shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none text-center">
+                                        You can upload a file if you have one, paste a header, or just email me from your domain address and I'll figure it all out.
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#EAE8E4]"></div>
+                                    </div>
+                                </span> or{' '}
+                                <span className="relative group inline-block cursor-help">
+                                    <code className="text-[#D4A017] font-mono text-sm border-b border-dashed border-[#D4A017]/50">.msg</code>
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 p-3 bg-[#EAE8E4] text-[#1A1B1E] text-xs font-medium leading-relaxed rounded-sm shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none text-center">
+                                        You can upload a file if you have one, paste a header, or just email me from your domain address and I'll figure it all out.
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#EAE8E4]"></div>
+                                    </div>
+                                </span> file, or paste raw headers.
                                 I'll parse the Received chain, check DKIM, SPF, and DMARC, and flag anything suspicious.
                             </p>
                         </div>

@@ -193,8 +193,8 @@ const QuoteLab = ({
     };
 
     return (
-        <div className="bg-[#F2F1EF] border border-gray-300 shadow-2xl rounded-sm overflow-hidden text-[#1A1B1E] selection:bg-[#D4A017] selection:text-[#1A1B1E]">
-            <div className="flex h-1 bg-gray-300/30">
+        <div className="bg-[#1A1B1E] border border-white/10 shadow-2xl rounded-sm overflow-hidden text-[#F2F1EF] selection:bg-[#D4A017] selection:text-[#1A1B1E]">
+            <div className="flex h-1 bg-white/10">
                 <div className={`transition-all duration-700 bg-[#D4A017] ${quoteStep === 1 ? 'w-1/4' : quoteStep === 2 ? 'w-1/2' : quoteStep === 3 ? 'w-3/4' : 'w-full'}`}></div>
             </div>
             {user ? (
@@ -228,8 +228,8 @@ const QuoteLab = ({
                 {quoteStep === 1 && (
                     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
                         <div className="text-center space-y-2">
-                            <h3 className="font-display text-4xl font-black uppercase italic tracking-tighter">1. Upload your file</h3>
-                            <p className="text-gray-500 font-medium text-sm italic tracking-tight text-center">STL, 3MF, or OBJ. Max 50MB.</p>
+                            <h3 className="font-display text-4xl font-black uppercase italic tracking-tighter text-white">1. Upload your file</h3>
+                            <p className="text-gray-400 font-medium text-sm italic tracking-tight text-center">STL, 3MF, or OBJ. Max 50MB.</p>
                         </div>
 
                         <label className="group border-2 border-dashed border-gray-300 rounded-sm p-20 flex flex-col items-center justify-center text-center space-y-6 hover:border-[#D4A017] hover:bg-[#2C3E50]/10 transition-all cursor-pointer bg-[#2C3E50]/5 relative overflow-hidden">
@@ -259,11 +259,11 @@ const QuoteLab = ({
 
                 {quoteStep === 2 && (
                     <div className="space-y-10 animate-in fade-in slide-in-from-right-4">
-                        <div className="text-center space-y-2 text-center text-[#1A1B1E]">
+                        <div className="text-center space-y-2 text-white">
                             <h3 className="font-display text-4xl font-black uppercase italic tracking-tighter">2. Configure your print</h3>
-                            <p className="text-gray-500 font-medium text-sm italic tracking-tight text-center">File: {formData.fileName}</p>
+                            <p className="text-gray-400 font-medium text-sm italic tracking-tight text-center">File: {formData.fileName}</p>
                         </div>
-                        <div className="grid md:grid-cols-2 gap-10 text-[#1A1B1E]">
+                        <div className="grid md:grid-cols-2 gap-10 text-[#F2F1EF]">
                             <div className="space-y-8">
                                 <div className="space-y-3">
                                     <label className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Filament Selection</label>
@@ -390,10 +390,10 @@ const QuoteLab = ({
                 )}
 
                 {quoteStep === 3 && (
-                    <div className="space-y-10 animate-in fade-in zoom-in-95 text-[#1A1B1E]">
+                    <div className="space-y-10 animate-in fade-in zoom-in-95 text-[#F2F1EF]">
                         <div className="text-center space-y-2">
-                            <h3 className="font-display text-4xl font-black uppercase italic tracking-tighter">3. Send for review</h3>
-                            <p className="text-gray-500 font-medium text-sm italic text-center">I'll review your file personally and email a quote within 24 hours.</p>
+                            <h3 className="font-display text-4xl font-black uppercase italic tracking-tighter text-white">3. Send for review</h3>
+                            <p className="text-gray-400 font-medium text-sm italic text-center">I'll review your file personally and email a quote within 24 hours.</p>
                         </div>
                         <form onSubmit={handleTransmit} className="max-w-md mx-auto space-y-4">
                             {/* Honeypot field (hidden from humans) */}
@@ -426,7 +426,7 @@ const QuoteLab = ({
                                 />
                             </div>
 
-                            <div className="space-y-4 pt-4 border-t border-gray-200">
+                            <div className="space-y-4 pt-4 border-t border-white/10">
                                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 block pb-2">Shipping</label>
                                 <input
                                     type="text"
@@ -494,16 +494,16 @@ const QuoteLab = ({
                 {quoteStep === 4 && (
                     <div className="py-16 text-center space-y-8 animate-in fade-in zoom-in-95 duration-700">
                         <CheckCircle className="w-24 h-24 text-green-700 mx-auto" />
-                        <div className="space-y-4 text-[#1A1B1E]">
-                            <h3 className="font-display text-5xl font-black uppercase tracking-tighter text-center">IN THE QUEUE.</h3>
+                        <div className="space-y-4 text-[#F2F1EF]">
+                            <h3 className="font-display text-5xl font-black uppercase tracking-tighter text-center text-white">IN THE QUEUE.</h3>
                             <div className="w-16 h-1 bg-[#D4A017] mx-auto"></div>
-                            <p className="text-gray-600 max-w-sm mx-auto font-medium leading-relaxed italic opacity-90 text-center">
+                            <p className="text-gray-400 max-w-sm mx-auto font-medium leading-relaxed italic opacity-90 text-center">
                                 Got it. I'll personally review your design and email a quote within 24 hours.
                             </p>
                         </div>
                         <button 
                             onClick={() => setQuoteStep(1)} 
-                            className="px-8 py-3 bg-white border border-gray-300 text-[10px] font-black uppercase tracking-[0.4em] text-[#1A1B1E] hover:border-[#D4A017] hover:text-[#D4A017] transition-all flex items-center justify-center space-x-3 mx-auto shadow-sm"
+                            className="px-8 py-3 bg-[#D4A017] border border-transparent text-[10px] font-black uppercase tracking-[0.4em] text-[#1A1B1E] hover:bg-white transition-all flex items-center justify-center space-x-3 mx-auto shadow-sm"
                         >
                             <FileText size={14} />
                             <span>Start another print</span>
