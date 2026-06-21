@@ -1,5 +1,29 @@
 import React from 'react';
+import { Globe, Server, Wrench, Plug, ArrowRight } from 'lucide-react';
 import DimensionedHeader from '../components/common/DimensionedHeader';
+
+const SERVICES = [
+    {
+        icon: Globe,
+        title: 'DNS & Domains',
+        body: "Untangle DNS records, migrate domains, and get your mail and hosting records pointing where they should. The same care that goes into the email work.",
+    },
+    {
+        icon: Server,
+        title: 'Hosting & Deployment',
+        body: 'Get your site live and keep it that way — Vercel, Cloudflare, or wherever fits. Static or dynamic, set up to deploy cleanly.',
+    },
+    {
+        icon: Wrench,
+        title: 'Site Updates & Fixes',
+        body: 'Content changes, broken layouts, slow pages, mobile issues — the small stuff that piles up. Handled without the agency runaround.',
+    },
+    {
+        icon: Plug,
+        title: 'Integrations',
+        body: 'Chatbots, Google Reviews, contact forms, analytics — connect the tools your business actually needs and make them work together.',
+    },
+];
 
 const WebDesignView = ({ setView }) => (
     <div className="animate-in fade-in duration-700">
@@ -12,9 +36,9 @@ const WebDesignView = ({ setView }) => (
             </div>
             <div className="relative z-20 max-w-7xl mx-auto px-6">
                 <header className="space-y-12 text-left">
-                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Coming Soon</span>
-                    <DimensionedHeader line1="WEB" line2="DESIGN." layerHt="Rochester·NY" partWd="Est·2026" variant="dark" showUnits={false} />
-                    <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">This service is currently under development. In the meantime, feel free to reach out if you need help with your website integrations.</p>
+                    <span className="text-[#D4A017] font-mono tracking-[0.3em] uppercase text-xs font-bold block mb-4 border-l-2 border-[#D4A017] pl-4">Web &amp; Site Work</span>
+                    <DimensionedHeader line1="WEB & SITE" line2="WORK." layerHt="Rochester·NY" partWd="Est·2026" variant="dark" showUnits={false} />
+                    <p className="text-gray-400 max-w-2xl font-medium leading-relaxed text-lg text-left">If it touches the web, I can probably help. Same one-person shop, same attention to detail as the email work — no agency overhead, no runaround.</p>
                 </header>
             </div>
         </section>
@@ -23,12 +47,31 @@ const WebDesignView = ({ setView }) => (
         <section className="py-24 bg-[#F2F1EF] text-[#1A1B1E]">
             <div className="max-w-7xl mx-auto px-6">
 
-            <button
-                onClick={() => setView('contact')}
-                className="px-10 py-4 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all"
-            >
-                Get in touch
-            </button>
+                <section className="grid md:grid-cols-2 gap-8 mb-20">
+                    {SERVICES.map(({ icon: Icon, title, body }) => (
+                        <div key={title} className="bg-[#1A1B1E] p-8 rounded-sm text-[#F2F1EF] space-y-4">
+                            <div className="flex items-center gap-3 text-[#D4A017]">
+                                <Icon size={18} />
+                                <h3 className="text-sm font-black uppercase tracking-widest italic text-white">{title}</h3>
+                            </div>
+                            <p className="text-sm font-medium leading-relaxed text-slate-400">{body}</p>
+                        </div>
+                    ))}
+                </section>
+
+                {/* Closing CTA */}
+                <section className="max-w-3xl">
+                    <h2 className="font-display text-3xl font-black uppercase italic tracking-tighter mb-4">Not sure if it fits?</h2>
+                    <p className="text-gray-600 text-lg font-medium leading-relaxed mb-8">
+                        Scope varies a lot with this kind of work, so the best place to start is a quick conversation. Tell me what's going on and I'll tell you straight whether it's something I can help with.
+                    </p>
+                    <button
+                        onClick={() => setView('contact')}
+                        className="px-10 py-4 bg-[#1A1B1E] text-white font-black uppercase text-xs tracking-[0.4em] hover:bg-[#D4A017] hover:text-[#1A1B1E] transition-all flex items-center gap-3"
+                    >
+                        Get in touch <ArrowRight size={14} />
+                    </button>
+                </section>
 
             </div>
         </section>

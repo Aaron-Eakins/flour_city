@@ -55,7 +55,7 @@ const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
                                         Email Deliverability
                                     </button>
                                     <button onClick={() => handleLinkClick('web-design')} className={`w-full text-left px-5 py-3 text-[11px] font-black tracking-widest uppercase hover:text-[#D4A017] hover:bg-white/5 transition-colors ${view === 'web-design' ? 'text-[#D4A017]' : ''}`}>
-                                        Web Design
+                                        Web &amp; Site Work
                                     </button>
                                     <button onClick={() => handleLinkClick('printing')} className={`w-full text-left px-5 py-3 text-[11px] font-black tracking-widest uppercase hover:text-[#D4A017] hover:bg-white/5 transition-colors ${view === 'printing' ? 'text-[#D4A017]' : ''}`}>
                                         3D Printing
@@ -117,7 +117,7 @@ const Navigation = ({ view, setView, isScrolled, isHome, openAuth }) => {
                             {servicesMobileOpen && (
                                 <div className="pl-4 pb-3 space-y-1">
                                     <button onClick={() => handleLinkClick('email')} className={`w-full text-left py-2 text-[11px] tracking-widest ${view === 'email' ? 'text-[#D4A017]' : 'text-gray-500'}`}>Email Deliverability</button>
-                                    <button onClick={() => handleLinkClick('web-design')} className={`w-full text-left py-2 text-[11px] tracking-widest ${view === 'web-design' ? 'text-[#D4A017]' : 'text-gray-500'}`}>Web Design</button>
+                                    <button onClick={() => handleLinkClick('web-design')} className={`w-full text-left py-2 text-[11px] tracking-widest ${view === 'web-design' ? 'text-[#D4A017]' : 'text-gray-500'}`}>Web &amp; Site Work</button>
                                     <button onClick={() => handleLinkClick('printing')} className={`w-full text-left py-2 text-[11px] tracking-widest ${view === 'printing' ? 'text-[#D4A017]' : 'text-gray-500'}`}>3D Printing</button>
                                 </div>
                             )}
