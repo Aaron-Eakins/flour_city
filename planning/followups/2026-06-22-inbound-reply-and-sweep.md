@@ -54,21 +54,23 @@ Unify all form notifications into one shared notify core + a generic thread mode
 form notifies both sides, supports two-way email reply, and shows up in `/profile` for
 logged-in users. **Decision already made:** option (A), a generic thread/conversation table.
 
-⚠ Reality check from the sweep (see #4): `/profile` does **not** render note history today
-(only a count), and `ProjectNoteForm` is orphaned. So this refactor has to *build* the
-dashboard thread, not just generalize it. When ready, ask Claude to draft a plan (plan mode)
-before editing — needs a DB migration (run by hand in Supabase SQL editor per CLAUDE.md),
-edge-function deploys, and RLS changes.
+Note (resolved via #4): the dashboard↔email thread mirror was **intentionally dropped** by
+Aaron as not worth the troubleshooting effort — email-based comms is the accepted working
+state, not a bug. `/profile` is a project status/summary view by design; `ProjectNoteForm`
+is leftover dead code from that dropped attempt. So if #2 is ever pursued, treat the
+in-dashboard thread as **optional/out-of-scope** unless explicitly revived; the real value
+is unifying form notifications (notify both sides + two-way email reply). When ready, ask
+Claude to draft a plan (plan mode) before editing.
 
 ---
 
-## Sweep findings (issues #3–#5, all `unverified`)
+## Sweep findings
 
-| # | Title | Verify by |
+| # | Title | Status / verify by |
 |---|-------|-----------|
-| #3 | inbound-reply injects reply text into email HTML without escaping | send a reply with `<b>`/`<script>`; check forwarded email shows literal text |
-| #4 | `/profile` doesn't render note history; `ProjectNoteForm` orphaned (contradicts README) | product decision first: email-only (update docs, delete dead form) vs regression (render thread, re-mount form) |
-| #5 | quote auto-reply threading assumes `@resend.dev` Message-ID — may silently break threading | open raw headers of a real auto-reply, compare `Message-ID` to `<{id}@resend.dev>` |
+| #3 | inbound-reply injects reply text into email HTML without escaping | `unverified` — send a reply with `<b>`/`<script>`; check forwarded email shows literal text |
+| #4 | `/profile` note history / `ProjectNoteForm` orphaned | **CLOSED (not planned)** — intentional drop, not a bug. README corrected on branch `docs/dashboard-comms-accuracy`. |
+| #5 | quote auto-reply threading assumes `@resend.dev` Message-ID — may silently break threading | `unverified` — open raw headers of a real auto-reply, compare `Message-ID` to `<{id}@resend.dev>` |
 
 Also folded into #2's hardening list: add the missing `res.ok` check in `send-notification`'s
 `sendEmail`, and tighten the bridge-secret check from `.includes()` to an exact comparison.
