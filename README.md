@@ -110,7 +110,7 @@ sequenceDiagram
     Resend-->>Client: Threaded reply lands in existing thread
     Resend-->>Fn: { id }
     Fn->>DB: UPDATE quotes.last_resend_message_id = id
-    Note over DB,Client: Client sees the note in their /profile dashboard (RLS by user_id)
+    Note over DB,Client: Reply is forwarded to the client over email; the note is stored against the project (RLS by user_id). /profile shows project status; comms stay in the email thread.
 ```
 
 **Outbound (reply threading):** When the admin replies from `lab@flourcitylabs.com`, Cloudflare Email Routing forwards the inbound reply to the `inbound-reply` Supabase Edge Function, authenticated with a shared secret. The function:
@@ -120,7 +120,7 @@ sequenceDiagram
 - Inserts the cleaned reply into `project_notes` as `author_role: 'lab'`
 - Forwards the reply to the client via Resend with threading headers so it lands in the same email thread
 
-**Client dashboard:** Authenticated clients can see their projects and the full note history at `/profile`. Project notes from both sides appear there in sequence.
+**Client dashboard:** Authenticated clients can see their projects — status and technical summary — at `/profile`. Project communication happens over email: the dashboard points clients back to their confirmation thread to reply, rather than mirroring the conversation in-app. (Notes from email replies are still stored against the project server-side for record-keeping.)
 
 ---
 
