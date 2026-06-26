@@ -15,6 +15,17 @@ const FCL_INBOUND_SECRET = Deno.env.get('FCL_INBOUND_SECRET')
 
 const supabaseAdmin = createClient(SUPABASE_URL || '', SUPABASE_SERVICE_ROLE_KEY || '')
 
+/**
+ * Normalize a "from" value (string like "Name <a@b.com>" or a parsed
+ * address object) down to a bare, lowercased email for comparison.
+ */
+function extractEmail(input: any): string {
+  if (!input) return ''
+  const raw = typeof input === 'string' ? input : (input.address || input.email || '')
+  const match = String(raw).match(/[^<\s]+@[^>\s]+/)
+  return (match ? match[0] : String(raw)).trim().toLowerCase()
+}
+
 // @ts-ignore: Deno is built-in to the Supabase runtime
 Deno.serve(async (req: Request) => {
   // 1. Authorization Check (Shared Secret from Cloudflare)
@@ -74,9 +85,19 @@ Deno.serve(async (req: Request) => {
       return new Response('Empty reply ignored', { status: 200 })
     }
 
-    console.log(`Processing clean reply for Project: ${quote.name}`)
+    // 5.5. Determine who sent this reply.
+    // The forwarded emails set reply_to: reply+{id}@, so BOTH the lab and the
+    // client can land here. Attribute by sender so a client's emailed reply is
+    // stored as 'client' (and forwarded to the lab) rather than mislabeled 'lab'
+    // and echoed back to the client.
+    const fromEmail = extractEmail(from) || extractEmail(email.from?.address)
+    const isFromClient = !!fromEmail && fromEmail === (quote.email || '').toLowerCase()
+    const authorRole = isFromClient ? 'client' : 'lab'
+    const forwardTo = isFromClient ? FCL_EMAIL : quote.email
 
-    // 6. Insert into Project Notes as 'lab'
+    console.log(`Processing ${authorRole} reply for Project: ${quote.name}`)
+
+    // 6. Insert into Project Notes with the resolved author role
     // Note: setting user_id ensures the partner can see the note in their dashboard (RLS)
     const { error: insertError } = await supabaseAdmin
       .from('project_notes')
@@ -84,7 +105,7 @@ Deno.serve(async (req: Request) => {
         quote_id: quote.id,
         user_id: quote.user_id,
         content: cleanReply,
-        author_role: 'lab'
+        author_role: authorRole
       })
 
     if (insertError) {
@@ -92,8 +113,10 @@ Deno.serve(async (req: Request) => {
       throw insertError
     }
 
-    // 7. Threaded Forwarding to Client via Resend
-    console.log(`Forwarding threaded reply to client: ${quote.email}`)
+    // 7. Threaded Forwarding to the OTHER party via Resend.
+    // Lab reply -> forward to client; client reply -> forward to lab.
+    // Either way reply_to stays reply+{id}@ so the thread keeps routing here.
+    console.log(`Forwarding threaded ${authorRole} reply to: ${forwardTo}`)
     const forwardRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -102,9 +125,11 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         from: `The Lab <lab@flourcitylabs.com>`,
-        to: [quote.email],
+        to: [forwardTo],
         reply_to: `reply+${quote.id}@flourcitylabs.com`,
-        subject: `Re: Your Quote for ${quote.file_name || 'Project'}`,
+        subject: isFromClient
+          ? `Client reply: ${quote.name || quote.file_name || 'Project'}`
+          : `Re: Your Quote for ${quote.file_name || 'Project'}`,
         html: `
           <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
             <p style="font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${cleanReply}</p>
