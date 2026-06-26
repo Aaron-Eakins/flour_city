@@ -196,6 +196,37 @@ const ProfileView = ({ setView }) => {
                                                 </div>
 
                                                 <div className="pt-8 border-t border-gray-100">
+                                                    <div className="flex items-center space-x-2 mb-4">
+                                                        <MessageSquare size={14} className="text-[#D4A017]" />
+                                                        <h6 className="text-[9px] font-black uppercase tracking-widest text-gray-400">Message History</h6>
+                                                    </div>
+                                                    {(quote.project_notes && quote.project_notes.length > 0) ? (
+                                                        <div className="space-y-3">
+                                                            {[...quote.project_notes]
+                                                                .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+                                                                .map((note, i) => {
+                                                                    const isLab = note.author_role === 'lab';
+                                                                    return (
+                                                                        <div key={note.id || i} className={`flex ${isLab ? 'justify-start' : 'justify-end'}`}>
+                                                                            <div className={`max-w-[80%] p-4 rounded-sm text-left ${isLab ? 'bg-[#1A1B1E] text-[#F2F1EF]' : 'bg-white border border-gray-300 text-[#1A1B1E]'}`}>
+                                                                                <p className={`text-[8px] font-black uppercase tracking-widest mb-1 ${isLab ? 'text-[#D4A017]' : 'text-gray-400'}`}>
+                                                                                    {isLab ? 'Flour City Labs' : 'You'}
+                                                                                </p>
+                                                                                <p className="text-[11px] leading-relaxed whitespace-pre-wrap font-medium">{note.content}</p>
+                                                                                <p className={`text-[8px] mt-2 ${isLab ? 'text-gray-500' : 'text-gray-400'}`}>
+                                                                                    {new Date(note.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-[10px] text-gray-400 italic">No messages yet. Replies to your confirmation email will appear here.</p>
+                                                    )}
+                                                </div>
+
+                                                <div className="pt-8 border-t border-gray-100">
                                                     <div className="bg-[#1A1B1E] p-6 rounded-sm text-left relative overflow-hidden group">
                                                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                                                             <Mail size={48} className="text-[#D4A017]" />

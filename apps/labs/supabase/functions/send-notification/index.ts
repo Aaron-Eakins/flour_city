@@ -167,7 +167,10 @@ Deno.serve(async (req: Request) => {
       const sName = sanitizeHtml(record.name);
       const sMessage = sanitizeHtml(record.message);
 
-      await sendEmail({
+      // 1. Lead alert to the lab FIRST. The client confirmation below is only sent
+      //    once this hand-off to Resend is accepted, so "we got your message" is
+      //    backed by an accepted send rather than fired optimistically.
+      const labResult = await sendEmail({
         to: FCL_EMAIL,
         replyTo: record.email,
         subject: `Lab Inquiry: ${sName}`,
@@ -181,9 +184,29 @@ Deno.serve(async (req: Request) => {
         `
       })
 
-      return new Response(JSON.stringify({ success: true }), { 
-        status: 200, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      // 2. Auto-reply confirming receipt to the client — only if the lab send landed.
+      if (labResult.ok) {
+        await sendEmail({
+          to: record.email,
+          replyTo: FCL_EMAIL,
+          subject: `Thanks for reaching out, ${record.name}`,
+          html: `
+            <div style="font-family: sans-serif; background: #F2F1EF; padding: 40px; color: #1A1B1E; border: 1px solid #D4A017;">
+              <p>Hi ${sName},</p>
+              <p>Thanks for reaching out — your message landed in my inbox and I've got it. I'll follow up personally within 24 hours.</p>
+              <p style="margin-top: 30px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; color: #D4A017;">
+                FLOUR CITY LABS // ROCHESTER NY
+              </p>
+            </div>
+          `
+        })
+      } else {
+        console.error('Skipping client confirmation: lab alert send was not accepted.')
+      }
+
+      return new Response(JSON.stringify({ success: labResult.ok }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
 
     } else if (table === 'project_notes') {
@@ -249,5 +272,13 @@ async function sendEmail({ to, subject, html, replyTo, headers }: { to: any, sub
       headers: headers || undefined
     })
   })
-  return res.json()
+
+  // Surface failures instead of swallowing them: Resend returns a non-2xx with an
+  // error body when a send is rejected. Callers can branch on `ok`.
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    console.error(`Resend send failed (${res.status}) to ${to}:`, JSON.stringify(data))
+    return { ok: false, id: null, error: data }
+  }
+  return { ok: true, id: data.id ?? null, ...data }
 }
