@@ -410,6 +410,8 @@ const QuoteLab = ({
                             <div className="grid md:grid-cols-2 gap-4">
                                 <input
                                     type="text"
+                                    name="name"
+                                    autoComplete="name"
                                     placeholder="Full Name"
                                     required
                                     className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
@@ -418,6 +420,8 @@ const QuoteLab = ({
                                 />
                                 <input
                                     type="email"
+                                    name="email"
+                                    autoComplete="email"
                                     placeholder="Email Address"
                                     required
                                     className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
@@ -430,6 +434,8 @@ const QuoteLab = ({
                                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 block pb-2">Shipping</label>
                                 <input
                                     type="text"
+                                    name="address"
+                                    autoComplete="street-address"
                                     placeholder="Street Address"
                                     required
                                     className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
@@ -439,6 +445,8 @@ const QuoteLab = ({
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <input
                                         type="text"
+                                        name="city"
+                                        autoComplete="address-level2"
                                         placeholder="City"
                                         required
                                         className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
@@ -448,6 +456,8 @@ const QuoteLab = ({
                                     <div className="grid grid-cols-2 gap-2">
                                         <input
                                             type="text"
+                                            name="state"
+                                            autoComplete="address-level1"
                                             placeholder="State"
                                             required
                                             className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
@@ -456,6 +466,8 @@ const QuoteLab = ({
                                         />
                                         <input
                                             type="text"
+                                            name="zip"
+                                            autoComplete="postal-code"
                                             placeholder="Zip"
                                             required
                                             className="w-full p-4 bg-white border border-gray-300 rounded-sm text-sm font-medium text-[#1A1B1E] outline-none focus:border-[#D4A017]"
